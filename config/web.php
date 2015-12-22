@@ -10,6 +10,7 @@ $config = [
     'id' => 'user',
     'language' => 'ru',
     'name' => 'Конференции',
+    'layout' => 'frontend01',
     'components' => [
         'user' => [
             'identityClass' => 'app\models\User',

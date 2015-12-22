@@ -3,11 +3,17 @@
 namespace app\controllers;
 
 use Yii;
-use app\models\Conference;
-use app\models\ConferenceSearch;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
+use yii\web\Response;
+use yii\widgets\ActiveForm;
+use yii\filters\AccessControl;
+
+use app\models\Conference;
+use app\models\ConferenceSearch;
+use app\models\User;
+use app\models\LoginForm;
 
 /**
  * ConferenceController implements the CRUD actions for Conference model.
@@ -17,6 +23,29 @@ class BaseConferenceController extends Controller
     public $conferenceId = null;
 
     public $layout = 'frontend_conference';
+
+//    public function behaviors()
+//    {
+//        return [
+//            'verbs' => [
+//                'class' => VerbFilter::className(),
+//                'actions' => [
+//                    'delete' => ['post'],
+//                ],
+//            ],
+//            'access' => [
+//                'class' => AccessControl::className(),
+//                'only' => ['index', 'view', 'testuserdata', ],
+//                'rules' => [
+//                    [
+//                        'allow' => true,
+//                        'actions' => ['index', 'view', 'testuserdata', ],
+//                        'roles' => ['@'],
+//                    ],
+//                ],
+//            ],
+//        ];
+//    }
 
     /**
      * Show conference info
@@ -57,8 +86,78 @@ class BaseConferenceController extends Controller
      */
     public function actionRegister()
     {
-        return $this->render('register', []);
+        if( Yii::$app->user->isGuest ) {
+            $oConference = $this->findConferenceModel();
+            $model = new User();
+            $model->us_conference_id = $oConference->cnf_id;
+            $model->scenario = 'register';
+
+            if (Yii::$app->request->isAjax && $model->load(Yii::$app->request->post())) {
+                Yii::$app->response->format = Response::FORMAT_JSON;
+                return ActiveForm::validate($model);
+            }
+
+            if ($model->load(Yii::$app->request->post()) && $model->save()) {
+                return $this->render(
+                    '//user/ok_register',
+                    [
+                        'conference' => $oConference,
+                        'model' => $model,
+                    ]
+                );
+            } else {
+                return $this->render(
+                    '//user/_formregister',
+                    [
+                        'conference' => $oConference,
+                        'model' => $model,
+                    ]
+                );
+            }
+        }
+        else {
+            return $this->redirect(['', ]);
+        }
     }
+
+    /**
+     * Displays
+     * @param integer $id
+     * @return mixed
+     */
+    public function actionConfirm($id)
+    {
+        $oConference = $this->findConferenceModel();
+        return $this->render(
+            '//user/confirm_register',
+            [
+                'conference' => $oConference,
+            ]
+        );
+    }
+
+    public function actionLogin()
+    {
+        if (!\Yii::$app->user->isGuest) {
+            return $this->goHome();
+        }
+
+        $model = new LoginForm();
+        if ($model->load(Yii::$app->request->post()) && $model->login()) {
+            return $this->redirect(['list']);
+        }
+        return $this->render('//site/login', [
+            'model' => $model,
+        ]);
+    }
+
+    public function actionLogout()
+    {
+        Yii::$app->user->logout();
+
+        return $this->goHome();
+    }
+
 
     /**
      * Finds the Conference model based on its primary key value.
@@ -74,4 +173,5 @@ class BaseConferenceController extends Controller
             throw new NotFoundHttpException('Не найдена информация о конференции');
         }
     }
+
 }

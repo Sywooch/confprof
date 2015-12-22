@@ -10,7 +10,7 @@ class m151222_120545_add_user_table extends Migration
         $tableOptionsMyISAM = 'CHARACTER SET utf8 COLLATE utf8_general_ci ENGINE=MyISAM';
         $this->createTable('{{%user}}', [
             'us_id' => Schema::TYPE_PK,
-            'us_group' => Schema::TYPE_STRING . '(16) Not Null Comment \'Группа\'',
+            'us_group' => Schema::TYPE_STRING . '(16) Comment \'Группа\'',
             'us_active' => Schema::TYPE_SMALLINT . ' Default 1 Comment \'Активен\'',
             'us_email' => Schema::TYPE_STRING . '(64) Not Null Comment \'Электронная почта\'',
             'us_pass' => Schema::TYPE_STRING . ' Not Null Comment \'Пароль\'',

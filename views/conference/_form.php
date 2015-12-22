@@ -16,7 +16,7 @@ use yii\widgets\ActiveForm;
 
     <?= $form->field($model, 'cnf_class')->textInput(['maxlength' => true]) ?>
 
-    <?= '' // $form->field($model, 'cnf_controller')->textInput(['maxlength' => true]) ?>
+    <?= $form->field($model, 'cnf_controller')->textInput(['maxlength' => true]) ?>
 
     <?= $form->field($model, 'cnf_description')->textarea(['rows' => 2]) ?>
 

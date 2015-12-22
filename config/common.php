@@ -42,6 +42,8 @@ $configComm = [
 
         'mailer' => [
             'class' => 'yii\swiftmailer\Mailer',
+            'viewPath' => '@app/views/mail',
+            'htmlLayout' => false,
             'useFileTransport' => true,
         ],
 
