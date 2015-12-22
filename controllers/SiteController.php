@@ -49,7 +49,13 @@ class SiteController extends Controller
 
     public function actionIndex()
     {
-        return $this->render('index');
+        if( Yii::$app->id == 'user' ) {
+            $this->layout = 'frontend01';
+            return $this->render('index');
+        }
+        else {
+            return $this->render('admin');
+        }
     }
 
     public function actionLogin()

@@ -1,0 +1,122 @@
+<?php
+
+namespace app\models;
+
+use Yii;
+use yii\behaviors\TimestampBehavior;
+use yii\db\ActiveRecord;
+use yii\db\Expression;
+use yii\helpers\ArrayHelper;
+
+/**
+ * This is the model class for table "{{%conference}}".
+ *
+ * @property integer $cnf_id
+ * @property string $cnf_title
+ * @property string $cnf_class
+ * @property string $cnf_controller
+ * @property string $cnf_description
+ * @property string $cnf_created
+ * @property string $cnf_pagetitle
+ * @property string $cnf_about
+ */
+class Conference extends \yii\db\ActiveRecord
+{
+    public static $_list = null; // список для форм и валидации
+    public static $_alllist = null; // все записо
+
+    public function behaviors()
+    {
+        return [
+            [
+                'class' => TimestampBehavior::className(),
+                'attributes' => [
+                    ActiveRecord::EVENT_BEFORE_INSERT => ['cnf_created'],
+                ],
+                'value' => new Expression('NOW()'),
+            ],
+        ];
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public static function tableName()
+    {
+        return '{{%conference}}';
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function rules()
+    {
+        return [
+            [['cnf_title', ], 'required'],
+            [['cnf_description', 'cnf_about'], 'string'],
+            [['cnf_created'], 'safe'],
+            [['cnf_title', 'cnf_controller', 'cnf_pagetitle'], 'string', 'max' => 255],
+            [['cnf_class'], 'string', 'max' => 64]
+        ];
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function attributeLabels()
+    {
+        return [
+            'cnf_id' => 'Cnf ID',
+            'cnf_title' => 'Название',
+            'cnf_class' => 'Класс шаблона',
+            'cnf_controller' => 'Контроллер',
+            'cnf_description' => 'Текст',
+            'cnf_created' => 'Создан',
+            'cnf_pagetitle' => 'Заголовок страниц',
+            'cnf_about' => 'Текст О конференции',
+        ];
+    }
+
+    /**
+     * @param $id id конференции
+     * @param int $nType тип результата
+     * @return string|Conference
+     */
+    public static function getById($id, $nType = 0) {
+        if( $nType == 0 ) {
+            $a = self::getList();
+            $ret = isset($a[$id]) ? $a[$id] : null; // or throw new Excaption
+        }
+        else {
+            $a = self::getAll();
+            $ret = null;
+            foreach($a As $ob) {
+                if( $ob->cnf_id == $id ) {
+                    $ret = $ob;
+                    break;
+                }
+            }
+        }
+        return $ret;
+    }
+
+    /**
+     * @return array for form select and validation
+     */
+    public static function getList() {
+        if( self::$_list === null ) {
+            self::$_list = ArrayHelper::map(self::getAll(), 'cnf_id', 'cnf_title');
+        }
+        return self::$_list;
+    }
+
+    /**
+     * @return array with all records
+     */
+    public static function getAll() {
+        if( self::$_alllist === null ) {
+            self::$_alllist = self::find()->all();
+        }
+        return self::$_alllist;
+    }
+}
