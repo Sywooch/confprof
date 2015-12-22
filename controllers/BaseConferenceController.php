@@ -3,6 +3,7 @@
 namespace app\controllers;
 
 use Yii;
+use yii\helpers\ArrayHelper;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
@@ -14,6 +15,7 @@ use app\models\Conference;
 use app\models\ConferenceSearch;
 use app\models\User;
 use app\models\LoginForm;
+use app\models\Doclad;
 
 /**
  * ConferenceController implements the CRUD actions for Conference model.
@@ -116,7 +118,7 @@ class BaseConferenceController extends Controller
             }
         }
         else {
-            return $this->redirect(['', ]);
+            return $this->addDoclad();
         }
     }
 
@@ -144,7 +146,10 @@ class BaseConferenceController extends Controller
 
         $model = new LoginForm();
         if ($model->load(Yii::$app->request->post()) && $model->login()) {
-            return $this->redirect(['list']);
+            $a = Doclad::getAllList([
+                'doc_us_id' => Yii::$app->user->getId(),
+            ]);
+            return $this->redirect([empty($a) ? 'register' : 'list']);
         }
         return $this->render('//site/login', [
             'model' => $model,
@@ -156,6 +161,36 @@ class BaseConferenceController extends Controller
         Yii::$app->user->logout();
 
         return $this->goHome();
+    }
+
+    /**
+     * Добавляем доклад
+     * @return string
+     */
+    public function addDoclad()
+    {
+        $oConference = $this->findConferenceModel();
+        $model = new Doclad();
+
+        $model->aSectionList = ArrayHelper::map($oConference->sections, 'sec_id', 'sec_title');
+        $model->setDocType((Yii::$app->user->identity->us_group == User::USER_GROUP_ORGANIZATION) ? Doclad::DOC_TYPE_ORG : Doclad::DOC_TYPE_PERSONAL);
+        $model->doc_us_id = Yii::$app->user->getId();
+
+        $model->scenario = 'create';
+
+        if (Yii::$app->request->isAjax && $model->load(Yii::$app->request->post())) {
+            Yii::$app->response->format = Response::FORMAT_JSON;
+            return ActiveForm::validate($model);
+        }
+
+        if ($model->load(Yii::$app->request->post()) && $model->save()) {
+            return $this->redirect(['list']);
+        } else {
+            return $this->render('//doclad/create', [
+                'model' => $model,
+                'conference' => $oConference,
+            ]);
+        }
     }
 
 

@@ -147,6 +147,7 @@ class User extends \yii\db\ActiveRecord  implements IdentityInterface
         ];
         return $aRet;
     }
+
     /**
      * Список всех групп пользователей
      * @return array

@@ -119,4 +119,8 @@ class Conference extends \yii\db\ActiveRecord
         }
         return self::$_alllist;
     }
+
+    public function getSections() {
+        return $this->hasMany(Section::className(), ['sec_cnf_id' => 'cnf_id']);
+    }
 }

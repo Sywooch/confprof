@@ -11,7 +11,7 @@ class m151222_095835_add_section_table extends Migration
         $this->createTable('{{%section}}', [
             'sec_id' => Schema::TYPE_PK,
             'sec_title' => Schema::TYPE_STRING . '(255) Not Null Comment \'Название\'',
-            'sec_cnf_id' => Schema::TYPE_STRING . '(64) Comment \'Конференция\'',
+            'sec_cnf_id' => Schema::TYPE_INTEGER . ' Comment \'Конференция\'',
             'sec_created' => Schema::TYPE_DATETIME . ' Not Null Comment \'Создан\''
         ], $tableOptionsMyISAM);
 

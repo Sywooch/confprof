@@ -10,6 +10,7 @@ class m151222_142626_add_doclad_table extends Migration
         $tableOptionsMyISAM = 'CHARACTER SET utf8 COLLATE utf8_general_ci ENGINE=MyISAM';
         $this->createTable('{{%doclad}}', [
             'doc_id' => Schema::TYPE_PK,
+            'doc_us_id' => Schema::TYPE_INTEGER . ' Comment \'Пользователь\'',
             'doc_sec_id' => Schema::TYPE_INTEGER . ' Comment \'Секция\'',
             'doc_type' => Schema::TYPE_STRING . '(16) Not Null Comment \'Тип доклада\'',
             'doc_subject' => Schema::TYPE_STRING . '(255) Not Null Comment \'Название\'',
@@ -30,6 +31,7 @@ class m151222_142626_add_doclad_table extends Migration
 
         $this->createIndex('idx_doc_sec_id', '{{%doclad}}', 'doc_sec_id');
         $this->createIndex('idx_doc_type', '{{%doclad}}', 'doc_type');
+        $this->createIndex('idx_doc_us_id', '{{%doclad}}', 'doc_us_id');
 
         // need refrash cache after change table strusture
         $this->refreshCache();
