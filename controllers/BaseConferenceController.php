@@ -11,11 +11,15 @@ use yii\web\Response;
 use yii\widgets\ActiveForm;
 use yii\filters\AccessControl;
 
+use mosedu\multirows\MultirowsBehavior;
+
 use app\models\Conference;
 use app\models\ConferenceSearch;
 use app\models\User;
 use app\models\LoginForm;
 use app\models\Doclad;
+use app\models\DocladSearch;
+use app\models\Person;
 
 /**
  * ConferenceController implements the CRUD actions for Conference model.
@@ -26,9 +30,13 @@ class BaseConferenceController extends Controller
 
     public $layout = 'frontend_conference';
 
-//    public function behaviors()
-//    {
-//        return [
+    public function behaviors()
+    {
+        return [
+            'validatePermissions' => [
+                'class' => MultirowsBehavior::className(),
+                'model' => Person::className(),
+            ],
 //            'verbs' => [
 //                'class' => VerbFilter::className(),
 //                'actions' => [
@@ -46,8 +54,8 @@ class BaseConferenceController extends Controller
 //                    ],
 //                ],
 //            ],
-//        ];
-//    }
+        ];
+    }
 
     /**
      * Show conference info
@@ -164,35 +172,87 @@ class BaseConferenceController extends Controller
     }
 
     /**
+     * @param $id integer
+     * @return Response
+     */
+    public function actionUpdate($id)
+    {
+        return $this->addDoclad($id);
+    }
+
+    /**
      * Добавляем доклад
+     * @param $id integer id доклада
      * @return string
      */
-    public function addDoclad()
+    public function addDoclad($id = 0)
     {
         $oConference = $this->findConferenceModel();
-        $model = new Doclad();
+
+        if( $id == 0 ) {
+            $model = new Doclad();
+            $model->setDocType((Yii::$app->user->identity->us_group == User::USER_GROUP_ORGANIZATION) ? Doclad::DOC_TYPE_ORG : Doclad::DOC_TYPE_PERSONAL);
+            $model->doc_us_id = Yii::$app->user->getId();
+        }
+        else {
+            $model = $this->findModel($id);
+        }
 
         $model->aSectionList = ArrayHelper::map($oConference->sections, 'sec_id', 'sec_title');
-        $model->setDocType((Yii::$app->user->identity->us_group == User::USER_GROUP_ORGANIZATION) ? Doclad::DOC_TYPE_ORG : Doclad::DOC_TYPE_PERSONAL);
-        $model->doc_us_id = Yii::$app->user->getId();
 
         $model->scenario = 'create';
 
         if (Yii::$app->request->isAjax && $model->load(Yii::$app->request->post())) {
             Yii::$app->response->format = Response::FORMAT_JSON;
-            return ActiveForm::validate($model);
+            $aValidate = ActiveForm::validate($model);
+            $result = $this->getBehavior('validatePermissions')->validateData();
+            $data = $this->getBehavior('validatePermissions')->getData();
+            if( count($data['data']) == 0 ) {
+                $sId = Html::getInputId($model, 'doc_subject');
+
+                if( !isset($aValidate[$sId]) ) {
+                    $aValidate[$sId] = [];
+                }
+                $aValidate[$sId][] = 'Необходимо указать руководителя.';
+            }
+            Yii::info('addDoclad(): return json ' . print_r($aValidate, true));
+            $aRes = array_merge($aValidate, $result);
+            return $aRes;
+
+//            Yii::$app->response->format = Response::FORMAT_JSON;
+//            return ActiveForm::validate($model);
         }
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
+            $bNew = $model->isNewRecord;
+
+            $data = $this->getBehavior('validatePermissions')->getData();
+            Yii::info('data = ' . print_r($data, true));
+
+            $model->saveConsultants($data['data']);
             return $this->redirect(['list']);
-        } else {
+        }
+        else {
+            Yii::info('Error save: ' . print_r($model->getErrors(), true));
+        }
             return $this->render('//doclad/create', [
                 'model' => $model,
                 'conference' => $oConference,
             ]);
-        }
     }
 
+    public function actionList() {
+        $aDop = ['doc_us_id' => Yii::$app->user->getId()];
+        $searchModel = new DocladSearch();
+        $dataProvider = $searchModel->search(Yii::$app->request->queryParams, $aDop);
+
+        return $this->render(
+            '//doclad/userdoclist', [
+                'searchModel' => $searchModel,
+                'dataProvider' => $dataProvider,
+            ]
+        );
+    }
 
     /**
      * Finds the Conference model based on its primary key value.
@@ -206,6 +266,22 @@ class BaseConferenceController extends Controller
             return $model;
         } else {
             throw new NotFoundHttpException('Не найдена информация о конференции');
+        }
+    }
+
+    /**
+     * Finds the Doclad model based on its primary key value.
+     * If the model is not found, a 404 HTTP exception will be thrown.
+     * @param integer $id
+     * @return Doclad the loaded model
+     * @throws NotFoundHttpException if the model cannot be found
+     */
+    protected function findModel($id)
+    {
+        if (($model = Doclad::findOne($id)) !== null) {
+            return $model;
+        } else {
+            throw new NotFoundHttpException('The requested page does not exist.');
         }
     }
 

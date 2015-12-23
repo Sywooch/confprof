@@ -3,6 +3,7 @@
 namespace app\models;
 
 use Yii;
+use app\models\Person;
 
 /**
  * This is the model class for table "{{%doclad}}".
@@ -48,7 +49,7 @@ class Doclad extends \yii\db\ActiveRecord
         return [
             [['doc_sec_id', 'ekis_id', 'doc_us_id', ], 'integer'],
             [['doc_sec_id', ], 'in', 'range' => array_keys($this->aSectionList)],
-            [['doc_type', 'doc_subject', 'doc_lider_fam', 'doc_lider_name', 'doc_lider_otch', 'doc_lider_email', 'doc_lider_phone', 'ekis_id', 'doc_lider_group', 'doc_lider_level', 'doc_lider_position', 'doc_lider_lesson'], 'required'],
+            [['doc_type', 'doc_sec_id', 'doc_subject', 'doc_description', 'doc_lider_fam', 'doc_lider_name', 'doc_lider_otch', 'doc_lider_email', 'doc_lider_phone', 'ekis_id', 'doc_lider_group', 'doc_lider_level', 'doc_lider_position', 'doc_lider_lesson'], 'required'],
             [['doc_description'], 'string'],
             [['doc_created'], 'safe'],
             [['doc_type'], 'string', 'max' => 16],
@@ -77,11 +78,26 @@ class Doclad extends \yii\db\ActiveRecord
             'doc_lider_phone',
             'ekis_id',
             'doc_lider_org',
-            'doc_lider_group',
-            'doc_lider_level',
-            'doc_lider_position',
-            'doc_lider_lesson',
         ];
+
+        if($this->doc_type == self::DOC_TYPE_ORG) {
+            $aRet['create'] = array_merge(
+                $aRet['create'],
+                [
+                    'doc_lider_position',
+                    'doc_lider_lesson',
+                ]
+            );
+        }
+        else {
+            $aRet['create'] = array_merge(
+                $aRet['create'],
+                [
+                    'doc_lider_group',
+                    'doc_lider_level',
+                ]
+            );
+        }
 
         $aRet['confirmregister'] = [ // подтвкрждение регистрации
             'us_active',
@@ -99,8 +115,8 @@ class Doclad extends \yii\db\ActiveRecord
             'doc_sec_id' => 'Секция',
             'doc_us_id' => 'Пользователь',
             'doc_type' => 'Тип доклада',
-            'doc_subject' => 'Название',
-            'doc_description' => 'Содержание',
+            'doc_subject' => 'Тема',
+            'doc_description' => 'Описание работы',
             'doc_created' => 'Создан',
             'doc_lider_fam' => 'Фамилия',
             'doc_lider_name' => 'Имя',
@@ -144,5 +160,71 @@ class Doclad extends \yii\db\ActiveRecord
         if( in_array($sType, array_keys(self::getAllTypes())) ) {
             $this->doc_type = $sType;
         }
+    }
+
+    /**
+     * Название типа доклада - персональный или от организации
+     * @return string|null
+     */
+    public function typeTitle() {
+        $a = self::getAllTypes();
+        return isset($a[$this->doc_type]) ? $a[$this->doc_type] : null;
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getPersons() {
+        return $this->hasMany(Person::className(), ['prs_doc_id' => 'doc_id']);
+    }
+
+    /**
+     * @param $data
+     */
+    public function saveConsultants($data) {
+        $aModels = $this->persons;
+        $aNeedDel = [];
+        Person::updateAll(
+            [
+                'prs_active' => 0,
+                'prs_type' => 0,
+                'prs_sec_id' => 0,
+                'prs_doc_id' => 0,
+            ],
+            [
+                'prs_doc_id' => $this->doc_id,
+            ]
+        );
+
+        foreach($data as $ob) {
+            $ob['prs_type'] = Person::PERSON_TYPE_CONSULTANT;
+            $ob['prs_doc_id'] = $this->doc_id;
+            $ob['prs_active'] = Person::PERSON_STATE_ACTIVE;
+
+            Yii::info('ob = ' . print_r($ob, true));
+
+            $s = 'Update ' . Person::tableName() . ' Set ';
+            $param = [];
+            $sDelim = '';
+
+            foreach($ob As $k=>$v) {
+                $s .= $sDelim . $k . ' = ' . ':'.$k;
+                $param[':'.$k] = $v;
+                $sDelim = ', ';
+            }
+
+            $s .= ' Where prs_active = 0 And prs_type = 0 And prs_sec_id = 0 And prs_doc_id = 0 Limit 1';
+
+            Yii::info($s);
+            $n = Yii::$app->db->createCommand($s, $param)->execute();
+            if( $n == 0 ) {
+                $oNew = new Person();
+                $oNew->attributes = $ob;
+                if( !$oNew->save() ) {
+                    Yii::info('Error save oNew: ' . print_r($oNew->getErrors(), true));
+                }
+            }
+        }
+
     }
 }

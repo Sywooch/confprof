@@ -39,13 +39,18 @@ class DocladSearch extends Doclad
      *
      * @return ActiveDataProvider
      */
-    public function search($params)
+    public function search($params, $aDop = [])
     {
         $query = Doclad::find();
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
         ]);
+
+        if( !isset($params['DocladSearch']) ) {
+            $params['DocladSearch'] = [];
+        }
+        $params['DocladSearch'] = array_merge($params['DocladSearch'], $aDop);
 
         $this->load($params);
 
