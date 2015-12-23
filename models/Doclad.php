@@ -4,6 +4,7 @@ namespace app\models;
 
 use Yii;
 use app\models\Person;
+use app\models\Docmedal;
 
 /**
  * This is the model class for table "{{%doclad}}".
@@ -179,6 +180,13 @@ class Doclad extends \yii\db\ActiveRecord
     }
 
     /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getMedals() {
+        return $this->hasMany(Docmedal::className(), ['mdl_doc_id' => 'doc_id']);
+    }
+
+    /**
      * @param $data
      */
     public function saveConsultants($data) {
@@ -222,6 +230,53 @@ class Doclad extends \yii\db\ActiveRecord
                 $oNew->attributes = $ob;
                 if( !$oNew->save() ) {
                     Yii::info('Error save oNew: ' . print_r($oNew->getErrors(), true));
+                }
+            }
+        }
+
+    }
+
+    /**
+     * @param $data
+     */
+    public function saveMedals($data) {
+//        $aModels = $this->persons;
+        $aNeedDel = [];
+        Docmedal::updateAll(
+            [
+                'mdl_doc_id' => 0,
+                'mdl_competition' => '',
+                'mdl_title' => '',
+            ],
+            [
+                'mdl_doc_id' => $this->doc_id,
+            ]
+        );
+
+        foreach($data as $ob) {
+            $ob['mdl_doc_id'] = $this->doc_id;
+
+            Yii::info('medal = ' . print_r($ob, true));
+
+            $s = 'Update ' . Docmedal::tableName() . ' Set ';
+            $param = [];
+            $sDelim = '';
+
+            foreach($ob As $k=>$v) {
+                $s .= $sDelim . $k . ' = ' . ':'.$k;
+                $param[':'.$k] = $v;
+                $sDelim = ', ';
+            }
+
+            $s .= ' Where mdl_doc_id = 0 Limit 1';
+
+//            Yii::info($s);
+            $n = Yii::$app->db->createCommand($s, $param)->execute();
+            if( $n == 0 ) {
+                $oNew = new Docmedal();
+                $oNew->attributes = $ob;
+                if( !$oNew->save() ) {
+                    Yii::info('Error save Docmedal: ' . print_r($oNew->getErrors(), true));
                 }
             }
         }

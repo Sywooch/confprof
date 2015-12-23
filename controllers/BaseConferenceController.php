@@ -20,6 +20,7 @@ use app\models\LoginForm;
 use app\models\Doclad;
 use app\models\DocladSearch;
 use app\models\Person;
+use app\models\Docmedal;
 
 /**
  * ConferenceController implements the CRUD actions for Conference model.
@@ -33,9 +34,13 @@ class BaseConferenceController extends Controller
     public function behaviors()
     {
         return [
-            'validatePermissions' => [
+            'validateConsultant' => [
                 'class' => MultirowsBehavior::className(),
                 'model' => Person::className(),
+            ],
+            'validateMedals' => [
+                'class' => MultirowsBehavior::className(),
+                'model' => Docmedal::className(),
             ],
 //            'verbs' => [
 //                'class' => VerbFilter::className(),
@@ -205,8 +210,11 @@ class BaseConferenceController extends Controller
         if (Yii::$app->request->isAjax && $model->load(Yii::$app->request->post())) {
             Yii::$app->response->format = Response::FORMAT_JSON;
             $aValidate = ActiveForm::validate($model);
-            $result = $this->getBehavior('validatePermissions')->validateData();
-            $data = $this->getBehavior('validatePermissions')->getData();
+
+            $result = $this->getBehavior('validateConsultant')->validateData();
+            $resultMedals = $this->getBehavior('validateMedals')->validateData();
+
+            $data = $this->getBehavior('validateConsultant')->getData();
             if( count($data['data']) == 0 ) {
                 $sId = Html::getInputId($model, 'doc_subject');
 
@@ -216,7 +224,7 @@ class BaseConferenceController extends Controller
                 $aValidate[$sId][] = 'Необходимо указать руководителя.';
             }
             Yii::info('addDoclad(): return json ' . print_r($aValidate, true));
-            $aRes = array_merge($aValidate, $result);
+            $aRes = array_merge($aValidate, $result, $resultMedals);
             return $aRes;
 
 //            Yii::$app->response->format = Response::FORMAT_JSON;
@@ -226,10 +234,12 @@ class BaseConferenceController extends Controller
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
             $bNew = $model->isNewRecord;
 
-            $data = $this->getBehavior('validatePermissions')->getData();
+            $data = $this->getBehavior('validateConsultant')->getData();
+            $dataMedals = $this->getBehavior('validateMedals')->getData();
             Yii::info('data = ' . print_r($data, true));
 
             $model->saveConsultants($data['data']);
+            $model->saveMedals($dataMedals['data']);
             return $this->redirect(['list']);
         }
         else {

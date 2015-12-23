@@ -12,6 +12,9 @@ use kartik\select2\Select2;
 
 use app\models\Doclad;
 use app\models\Person;
+use app\models\Docmedal;
+
+use mosedu\multirows\MultirowsWidget;
 
 $sCss = <<<EOT
 div.required label:after {
@@ -271,6 +274,48 @@ $ekis_id = [
                         <?= $form->field($model, 'doc_description')->textarea(['rows' => 5, 'class'=>'form-control', 'placeholder'=>$model->getAttributeLabel('doc_description'), ]) ?>
                     </div>
                 </div>
+
+                <div class="row">
+                    <div class="col-xs-12">
+                        <div class="lio_form_WLine"></div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-xs-12">
+                        <div class="lio_form_name">Представление работы на конференциях/конкурсах, представленных на сайте mgk.olimpiada.ru</div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-xs-12">
+                        <div class="add_remove">
+                            <a class="lio_add_el add_medal">Добавить</a>
+                        </div>
+                    </div>
+                </div>
+
+                <?php
+                echo MultirowsWidget::widget(
+                    [
+                        'model' => Docmedal::className(),
+                        'form' => $form,
+//                        'viewparam' => ['ekis_id' => $ekis_id],
+                        'records' => $model->medals,
+//                        'scenario' => 'createconsultant',
+                        'rowview' => '@app/views/docmedal/_form_indoclad.php',
+//                        'tagOptions' => ['class' => 'userdata-row'],
+//                        'defaultattributes' => ['prs_type' => Person::PERSON_TYPE_CONSULTANT, ],
+                        'addlinkselector' => '.add_medal',
+                        'dellinkselector' => '.del_medal',
+//                        'beforeInsert' => 'function(ob){var obOrg = ob.find(\'[name$="[ekis_id]"]\'); obOrg.removeData();}',
+//                        'afterInsert' => 'function(ob){}',
+                        'afterDelete' => 'function(){ }',
+                        'canDeleteLastRow' => true,
+//                        'script' => $sScript,
+                    ]
+                );
+                ?>
 
                 <div class="row">
                     <div class="col-xs-12">
