@@ -4,6 +4,7 @@ namespace app\models;
 
 use Yii;
 use app\models\Person;
+use app\models\Member;
 use app\models\Docmedal;
 
 /**
@@ -177,6 +178,13 @@ class Doclad extends \yii\db\ActiveRecord
      */
     public function getPersons() {
         return $this->hasMany(Person::className(), ['prs_doc_id' => 'doc_id']);
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getMembers() {
+        return $this->hasMany(Member::className(), ['prs_doc_id' => 'doc_id']);
     }
 
     /**

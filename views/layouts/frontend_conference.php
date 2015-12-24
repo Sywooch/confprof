@@ -36,15 +36,11 @@ $conference = $activeController->findConferenceModel();
                 <div class="col-xs-8 top_bg">
                     <!--metka main banner-->
                     <a href="/" class="main_logo"></a>
-                    <div class="logo_text"><?php echo $conference->cnf_pagetitle ?>
-<!--                        Научно-практическая конференция <br> -->
-<!--                        <a href="/">«Инженеры будущего»</a> -->
-
-                    </div>
+                    <div class="logo_text"><?php echo $conference->cnf_pagetitle ?></div>
                 </div>
                 <div class="col-xs-4 lio_login">
                     <a class="lich_kab" href="/login.html">Личный кабинет</a>
-                    <a class="lich_kab" href="#">Участвовать</a>
+                    <?php //<a class="lich_kab" href="#">Участвовать</a> ?>
                 </div>
             </div>
             <div class="row main_menu">

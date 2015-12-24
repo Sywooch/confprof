@@ -3,10 +3,14 @@
 use mosedu\multirows\MultirowsWidget;
 
 use app\models\Person;
+use app\models\Member;
 use yii\helpers\Html;
 use yii\web\JsExpression;
 
-/** @var $consultants array of app\models\Person */
+/* @var $persontype integer */
+/* @var $modelname string */
+/* @var $parttitle string */
+/* @var $persons array of app\models\Person */
 /* @var $this yii\web\View */
 /* @var $model app\models\Doclad */
 /* @var $form yii\widgets\ActiveForm */
@@ -134,7 +138,7 @@ $s1 = <<<EOT
 EOT;
 
 // var paramSelect2EkisId = {$sSelect2Param};
-$sId0Cons = Html::getInputId($consultants[0], '[0]ekis_id');
+$sId0Cons = Html::getInputId(count($persons) ? $persons[0] : new $modelname, '[0]ekis_id');
 
 $sScript = <<<EOT
 var paramSelect2EkisId = {$s1};
@@ -147,25 +151,33 @@ EOT;
 
 <div class="row">
     <div class="col-xs-12">
-        <div class="lio_block_header">Научный руководитель</div>
+        <div class="lio_block_header"><?php echo Html::encode($parttitle); ?> <?php
+            if($persontype == Person::PERSON_TYPE_PARTNER) {
+            ?>
+                <a class="lio_add_el add_member">Добавить</a>
+            <?php
+
+            } ?></div>
     </div>
 </div>
 
 <?php
 //if( false )
 //'.$s1.'
+$sLinkNamePart = ($persontype == Person::PERSON_TYPE_PARTNER) ? 'member' : 'consultant';
+// echo '<p>persontype = '.$persontype.'</p>';
 echo MultirowsWidget::widget(
     [
-        'model' => Person::className(),
+        'model' => (new $modelname)->className(),
         'form' => $form,
-        'viewparam' => ['ekis_id' => $ekis_id],
-        'records' => $consultants,
-        'scenario' => 'createconsultant',
+        'viewparam' => ['ekis_id' => $ekis_id, 'linkname' => $sLinkNamePart, ],
+        'records' => $persons,
+        'scenario' => 'create' . $sLinkNamePart,
         'rowview' => '@app/views/person/_form_indoclad.php',
         'tagOptions' => ['class' => 'userdata-row'],
-        'defaultattributes' => ['prs_type' => Person::PERSON_TYPE_CONSULTANT, ],
-        'addlinkselector' => '.add_consultant',
-        'dellinkselector' => '.del_consultant',
+        'defaultattributes' => ['prs_type' => $persontype, ],
+        'addlinkselector' => '.add_' . $sLinkNamePart,
+        'dellinkselector' => '.del_' . $sLinkNamePart,
         'beforeInsert' => 'function(ob){var obOrg = ob.find(\'[name$="[ekis_id]"]\'); obOrg.removeData();}',
         'afterInsert' => 'function(ob){
                 var obEkis = ob.find(\'[name$="[ekis_id]"]\'),

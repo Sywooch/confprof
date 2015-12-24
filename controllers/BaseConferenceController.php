@@ -20,6 +20,7 @@ use app\models\LoginForm;
 use app\models\Doclad;
 use app\models\DocladSearch;
 use app\models\Person;
+use app\models\Member;
 use app\models\Docmedal;
 
 /**
@@ -41,6 +42,10 @@ class BaseConferenceController extends Controller
             'validateMedals' => [
                 'class' => MultirowsBehavior::className(),
                 'model' => Docmedal::className(),
+            ],
+            'validateMembers' => [
+                'class' => MultirowsBehavior::className(),
+                'model' => Member::className(),
             ],
 //            'verbs' => [
 //                'class' => VerbFilter::className(),
@@ -235,23 +240,35 @@ class BaseConferenceController extends Controller
         $model->scenario = 'create';
 
         if (Yii::$app->request->isAjax && $model->load(Yii::$app->request->post())) {
+
             Yii::$app->response->format = Response::FORMAT_JSON;
+
             $aValidate = ActiveForm::validate($model);
 
-            $result = $this->getBehavior('validateConsultant')->validateData();
+            if( $model->doc_type == Doclad::DOC_TYPE_PERSONAL ) {
+                // для доклада от персонального участника нужен хотя бы 1 руководитель
+                $resultConsultant = $this->getBehavior('validateConsultant')->validateData();
+                $dataConsultant = $this->getBehavior('validateConsultant')->getData();
+                if( count($dataConsultant['data']) == 0 ) {
+                    $sId = Html::getInputId($model, 'doc_subject');
+
+                    if( !isset($aValidate[$sId]) ) {
+                        $aValidate[$sId] = [];
+                    }
+                    $aValidate[$sId][] = 'Необходимо указать руководителя.';
+                }
+            }
+            else {
+                $resultConsultant = [];
+            }
+
+            $resultMembers = $this->getBehavior('validateMembers')->validateData();
+
             $resultMedals = $this->getBehavior('validateMedals')->validateData();
 
-            $data = $this->getBehavior('validateConsultant')->getData();
-            if( count($data['data']) == 0 ) {
-                $sId = Html::getInputId($model, 'doc_subject');
+            $aRes = array_merge($aValidate, $resultConsultant, $resultMedals, $resultMembers);
 
-                if( !isset($aValidate[$sId]) ) {
-                    $aValidate[$sId] = [];
-                }
-                $aValidate[$sId][] = 'Необходимо указать руководителя.';
-            }
-            Yii::info('addDoclad(): return json ' . print_r($aValidate, true));
-            $aRes = array_merge($aValidate, $result, $resultMedals);
+            Yii::info('addDoclad(): return json ' . print_r($aRes, true));
             return $aRes;
 
 //            Yii::$app->response->format = Response::FORMAT_JSON;
@@ -261,11 +278,11 @@ class BaseConferenceController extends Controller
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
             $bNew = $model->isNewRecord;
 
-            $data = $this->getBehavior('validateConsultant')->getData();
+            $dataConsultant = $this->getBehavior('validateConsultant')->getData();
             $dataMedals = $this->getBehavior('validateMedals')->getData();
-            Yii::info('data = ' . print_r($data, true));
+            Yii::info('data = ' . print_r($dataConsultant, true));
 
-            $model->saveConsultants($data['data']);
+            $model->saveConsultants($dataConsultant['data']);
             $model->saveMedals($dataMedals['data']);
             return $this->redirect(['list']);
         }

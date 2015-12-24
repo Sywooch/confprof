@@ -12,6 +12,7 @@ use kartik\select2\Select2;
 
 use app\models\Doclad;
 use app\models\Person;
+use app\models\Member;
 use app\models\Docmedal;
 
 use mosedu\multirows\MultirowsWidget;
@@ -226,11 +227,20 @@ $ekis_id = [
                     </div>
                 </div>
 
-                <div class="row">
-                    <div class="col-xs-12">
-                        <div class="lio_form_WLine"></div>
+                <?php
+//                if( $model->doc_type == Doclad::DOC_TYPE_PERSONAL ) {
+                ?>
+                    <div class="row">
+                        <div class="col-xs-12">
+                            <div class="lio_form_line"></div>
+                        </div>
                     </div>
-                </div>
+
+                    <!-- div class="row">
+                        <div class="col-xs-12">
+                            <div class="lio_block_header">Участники проекта</div>
+                        </div>
+                    </div -->
 
                 <?php
                     echo $this->render(
@@ -238,10 +248,35 @@ $ekis_id = [
                         [
                             'form' => $form,
                             'model' => $model,
-                            'consultants' => $model->isNewRecord ? [$emptyConsultant] : $model->persons,
-                            'ekis_id' => $ekis_id,
+                            'persons' => $model->isNewRecord ? [] : $model->members,
+                            'persontype' => Person::PERSON_TYPE_PARTNER,
+                            'modelname' => 'app\models\Member',
+                            'parttitle' => 'Участники проекта',
                         ]
                     );
+//                }
+                ?>
+
+                <!-- div class="row">
+                    <div class="col-xs-12">
+                        <div class="lio_form_WLine"></div>
+                    </div>
+                </div -->
+
+                <?php
+                if( $model->doc_type == Doclad::DOC_TYPE_PERSONAL ) {
+                    echo $this->render(
+                        'part_consultants',
+                        [
+                            'form' => $form,
+                            'model' => $model,
+                            'persons' => $model->isNewRecord ? [$emptyConsultant] : $model->persons,
+                            'persontype' => Person::PERSON_TYPE_CONSULTANT,
+                            'modelname' => 'app\models\Person',
+                            'parttitle' => 'Научный руководитель',
+                        ]
+                    );
+                }
                 ?>
 
 
