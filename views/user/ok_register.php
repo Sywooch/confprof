@@ -10,7 +10,6 @@ $this->title = 'Регистрация пользователя';
 ?>
 
 <div class="registration user-formregister">
-
     <?php $form = ActiveForm::begin([
         'id' => 'register-form',
         'options' => [
@@ -33,7 +32,7 @@ $this->title = 'Регистрация пользователя';
     <fieldset>
     <legend>Регистрация пользователя</legend>
 
-		<p>Ваша регистрация прошла успешно. На Вашу электронную почту <?php echo $model->us_email; ?> отправлено письмо с сылкой на активацию учетной записи.</p>
+		<p>Ваша регистрация прошла успешно. На Вашу электронную почту <?php echo $model->us_email; ?> отправлено письмо с ссылкой на активацию учетной записи.</p>
 
     <fieldset>
 

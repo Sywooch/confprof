@@ -91,7 +91,34 @@ class BaseConferenceController extends Controller
      */
     public function actionGuest()
     {
-        return $this->render('guest', []);
+        $model = new Person();
+        $model->prs_type = Person::PERSON_TYPE_GUEST;
+        $oConference = $this->findConferenceModel();
+
+        $model->aSectionList = ArrayHelper::map($oConference->sections, 'sec_id', 'sec_title');
+
+        if (Yii::$app->request->isAjax && $model->load(Yii::$app->request->post())) {
+            Yii::$app->response->format = Response::FORMAT_JSON;
+            return ActiveForm::validate($model);
+        }
+
+        if ($model->load(Yii::$app->request->post()) && $model->save()) {
+            return $this->render(
+                '//person/ok_guest',
+                [
+                    'oConference' => $oConference,
+                    'model' => $model,
+                ]
+            );
+        }
+
+        return $this->render(
+            '//person/_form_guest',
+            [
+                'oConference' => $oConference,
+                'model' => $model,
+            ]
+        );
     }
 
     /**
@@ -260,6 +287,13 @@ class BaseConferenceController extends Controller
             '//doclad/userdoclist', [
                 'searchModel' => $searchModel,
                 'dataProvider' => $dataProvider,
+            ]
+        );
+    }
+
+    public function actionRegthankyou() {
+        return $this->render(
+            '//person/ok_guestregistr', [
             ]
         );
     }

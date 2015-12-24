@@ -7,6 +7,7 @@ use app\models\Person;
 use app\models\PersonSearch;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
+use yii\base\InvalidValueException;
 use yii\filters\VerbFilter;
 
 /**
@@ -101,6 +102,39 @@ class PersonController extends Controller
         $this->findModel($id)->delete();
 
         return $this->redirect(['index']);
+    }
+
+    /**
+     * Подтверждение email
+     *
+     * @return mixed
+     * @throws NotFoundHttpException if the model cannot be found
+     */
+    public function actionConfirmemail()
+    {
+        $sKey = Yii::$app->request->getQueryParam('key', 'nokey');
+        /** @var Person $model */
+        $model = Person::find()
+            ->where(['prs_confirmkey' => $sKey, ])
+            ->one();
+
+        if( $model === null ) {
+            throw new NotFoundHttpException('Not found confirm key.');
+        }
+
+        Yii::info('Person: ' . print_r($model->attributes, true));
+
+        $model->prs_confirmkey = '';
+        $model->prs_active = 1;
+        $model->scenario = 'confirmemail';
+        if( $model->save() ) {
+            $controller = $model->section->conference->cnf_controller;
+            return $this->redirect([$controller . '/regthankyou']);
+        }
+
+        Yii::info('Error save person: ' . print_r($model->getErrors(), true));
+
+        throw new InvalidValueException('Error save data.');
     }
 
     /**
