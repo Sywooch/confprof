@@ -245,7 +245,7 @@ class BaseConferenceController extends Controller
 
             $aValidate = ActiveForm::validate($model);
 
-            if( $model->doc_type == Doclad::DOC_TYPE_PERSONAL ) {
+//            if( $model->doc_type == Doclad::DOC_TYPE_PERSONAL ) {
                 // для доклада от персонального участника нужен хотя бы 1 руководитель
                 $resultConsultant = $this->getBehavior('validateConsultant')->validateData();
                 $dataConsultant = $this->getBehavior('validateConsultant')->getData();
@@ -257,10 +257,10 @@ class BaseConferenceController extends Controller
                     }
                     $aValidate[$sId][] = 'Необходимо указать руководителя.';
                 }
-            }
-            else {
-                $resultConsultant = [];
-            }
+//            }
+//            else {
+//                $resultConsultant = [];
+//            }
 
             $resultMembers = $this->getBehavior('validateMembers')->validateData();
 
@@ -275,24 +275,27 @@ class BaseConferenceController extends Controller
 //            return ActiveForm::validate($model);
         }
 
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            $bNew = $model->isNewRecord;
+        if ($model->load(Yii::$app->request->post()) ) {
+            if( $model->save() ) {
+                $bNew = $model->isNewRecord;
 
-            $dataConsultant = $this->getBehavior('validateConsultant')->getData();
-            $dataMedals = $this->getBehavior('validateMedals')->getData();
-            Yii::info('data = ' . print_r($dataConsultant, true));
+                $dataConsultant = $this->getBehavior('validateConsultant')->getData();
+                $dataMedals = $this->getBehavior('validateMedals')->getData();
+                Yii::info('data = ' . print_r($dataConsultant, true));
 
-            $model->saveConsultants($dataConsultant['data']);
-            $model->saveMedals($dataMedals['data']);
-            return $this->redirect(['list']);
+                $model->saveConsultants($dataConsultant['data']);
+                $model->saveMedals($dataMedals['data']);
+                return $this->redirect(['list']);
+            }
+            else {
+                Yii::info('Error save: ' . print_r($model->getErrors(), true));
+            }
         }
-        else {
-            Yii::info('Error save: ' . print_r($model->getErrors(), true));
-        }
-            return $this->render('//doclad/create', [
-                'model' => $model,
-                'conference' => $oConference,
-            ]);
+
+        return $this->render('//doclad/create', [
+            'model' => $model,
+            'conference' => $oConference,
+        ]);
     }
 
     public function actionList() {

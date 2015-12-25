@@ -264,7 +264,7 @@ $ekis_id = [
                 </div -->
 
                 <?php
-                if( $model->doc_type == Doclad::DOC_TYPE_PERSONAL ) {
+//                if( $model->doc_type == Doclad::DOC_TYPE_PERSONAL ) {
                     echo $this->render(
                         'part_consultants',
                         [
@@ -276,7 +276,7 @@ $ekis_id = [
                             'parttitle' => 'Научный руководитель',
                         ]
                     );
-                }
+//                }
                 ?>
 
 
@@ -369,6 +369,7 @@ $ekis_id = [
         </div>
     </div>
 
+<?= '' // nl2br(str_replace(' ', '&nbsp;', print_r($form->attributes, true)))  ?>
 
 <?php
 /*

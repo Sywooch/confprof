@@ -177,14 +177,14 @@ class Doclad extends \yii\db\ActiveRecord
      * @return \yii\db\ActiveQuery
      */
     public function getPersons() {
-        return $this->hasMany(Person::className(), ['prs_doc_id' => 'doc_id']);
+        return $this->hasMany(Person::className(), ['prs_doc_id' => 'doc_id'])->where(['prs_type' => Person::PERSON_TYPE_CONSULTANT]);
     }
 
     /**
      * @return \yii\db\ActiveQuery
      */
     public function getMembers() {
-        return $this->hasMany(Member::className(), ['prs_doc_id' => 'doc_id']);
+        return $this->hasMany(Member::className(), ['prs_doc_id' => 'doc_id'])->where(['prs_type' => Person::PERSON_TYPE_PARTNER]);
     }
 
     /**

@@ -19,6 +19,7 @@ if( isset($viewparam) && isset($viewparam['ekis_id']) ) {
 /* @var $form yii\widgets\ActiveForm */
 /* @var $viewparam array of view pameters */
 
+// Yii::info('Start template: ' . $model->className() . ' prs_type = ' . $model->prs_type);
 ?>
 
 <div class="row">
@@ -89,7 +90,10 @@ if( isset($viewparam) && isset($viewparam['ekis_id']) ) {
         <div class="add_remove">
             <?php // echo 'index = ' . $index . ' startindex = ' . $startindex; ?>
             <?php if( $index == ($startindex + 1) ) { ?>
-                <?php if( $model->prs_type == Person::PERSON_TYPE_CONSULTANT ) { ?>
+                <?php if( $model->prs_type == Person::PERSON_TYPE_CONSULTANT ) {
+                    // у консультантов есть один и в нем уже будет ссылка на добавление
+                    // у участников нет изначально ничего и ссылка на добавление в названии раздел (Участники)
+                ?>
                     <a class="lio_add_el add_<?php echo $viewparam['linkname']; ?>">Добавить</a>
                 <?php }?>
             <?php } else { ?>
@@ -99,6 +103,10 @@ if( isset($viewparam) && isset($viewparam['ekis_id']) ) {
     </div>
 </div>
 
+<!-- div style="color: #770000; font-weight: bold; background-color: #ddffcc;">
+<?= '' // nl2br(str_replace(' ', '&nbsp;', print_r($form->attributes, true)))  ?>
+</div -->
 <?= '' // $form->field($model, '[' . $index . ']prs_phone')->textInput(['maxlength' => true, 'class'=>'lio_input', 'placeholder'=>$model->getAttributeLabel('prs_phone'),]) ?>
+
 
 

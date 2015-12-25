@@ -108,7 +108,7 @@ class Person extends \yii\db\ActiveRecord
 //            [['prs_type', ], 'filter', 'filter'=>[$this, 'setPersonType'], ],
             [['prs_active', 'prs_type', 'prs_sec_id', 'prs_doc_id', 'ekis_id'], 'integer'],
             [['prs_sec_id', ], 'in', 'range' => array_keys($this->aSectionList)],
-            [['prs_type', 'prs_fam', 'prs_name', 'prs_otch', 'prs_email', 'prs_position', 'prs_lesson'], 'required'],
+            [['prs_type', 'prs_fam', 'prs_name', 'prs_otch', 'prs_email', 'prs_position', 'prs_lesson', 'ekis_id', 'prs_group', 'prs_level', 'prs_position', 'prs_lesson', ], 'required'],
 
             [['prs_email', ], 'email', ],
             [['prs_created', ], 'save', ],
@@ -149,6 +149,9 @@ class Person extends \yii\db\ActiveRecord
         if( $this->prs_type == self::PERSON_TYPE_CONSULTANT ) {
             $this->scenario = 'createconsultant';
         }
+        else if( $this->prs_type == self::PERSON_TYPE_PARTNER ) {
+            $this->scenario = 'createmember';
+        }
         else if( $this->prs_type == self::PERSON_TYPE_GUEST ) {
             $this->scenario = $this->isNewRecord ? 'createguest' : $this->scenario;
         }
@@ -163,6 +166,18 @@ class Person extends \yii\db\ActiveRecord
             'prs_email',
             'prs_position',
             'prs_lesson',
+        ];
+
+        $aRet['createmember'] = [ // руководитель
+            'prs_doc_id',
+            'prs_fam',
+            'prs_name',
+            'prs_otch',
+            'ekis_id',
+            'prs_org',
+            'prs_email',
+            'prs_group',
+            'prs_level',
         ];
 
         $aRet['createguest'] = [ // гость
