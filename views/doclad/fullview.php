@@ -13,10 +13,13 @@ $this->title = $model->doc_subject;
 $this->params['breadcrumbs'][] = ['label' => 'Doclads', 'url' => ['list']];
 $this->params['breadcrumbs'][] = $this->title;
 
+// ***************************************************************************************************
 $attributes = [
 //    'doc_id',
-//    'doc_sec_id',
-//    'doc_type',
+    [
+        'attribute' => 'doc_type',
+        'value' => $model->typeTitle(),
+    ],
     [
         'attribute' => 'doc_sec_id',
         'value' => $model->section ? (Html::encode($model->section->sec_title) . '<br />' . Html::encode($model->section->conference->cnf_title)) : '',
@@ -30,7 +33,8 @@ $attributes = [
     ],
     [
         'attribute' => 'doc_lider_fam',
-        'value' => $model->getLeadername(false),
+        'value' => Html::tag('strong', Html::encode($model->getLeadername(false))),
+        'format' => 'raw',
     ],
 //    'doc_lider_fam',
 //    'doc_lider_name',
@@ -41,6 +45,7 @@ $attributes = [
     'doc_lider_org',
 ];
 
+// ***************************************************************************************************
 // Добавим участников
 if( count($model->members) > 0 ) {
     $sValue = implode(
@@ -50,7 +55,7 @@ if( count($model->members) > 0 ) {
             'prs_id',
             function($ob, $default) {
                 /** @var $ob app\models\Person */
-                return Html::encode($ob->getPersonname(false));
+                return Html::tag('strong', Html::encode($ob->getPersonname(false))) . ' ' . Html::encode($ob->prs_org);
             }
         )
     );
@@ -67,6 +72,7 @@ if( count($model->members) > 0 ) {
     );
 }
 
+// ***************************************************************************************************
 // Добавим руководителей
 if( count($model->persons) > 0 ) {
     $sValue = implode(
@@ -76,7 +82,7 @@ if( count($model->persons) > 0 ) {
             'prs_id',
             function($ob, $default) {
                 /** @var $ob app\models\Person */
-                return Html::encode($ob->getPersonname(false));
+                return Html::tag('strong', Html::encode($ob->getPersonname(false)))  . ' ' . Yii::$app->formatter->format($ob->prs_email, 'email') . ' ' . Html::encode($ob->prs_org);
             }
         )
     );
@@ -92,9 +98,8 @@ if( count($model->persons) > 0 ) {
         ]
     );
 }
-//'doc_members' => 'Участники',
-//'doc_consultants' => 'Руководители',
 
+// ***************************************************************************************************
 if( $model->doc_type == Doclad::DOC_TYPE_PERSONAL ) {
     $attributes = array_merge(
         $attributes,
@@ -113,6 +118,8 @@ else {
         ]
     );
 }
+
+// ***************************************************************************************************
 ?>
 <div class="doclad-view">
 
