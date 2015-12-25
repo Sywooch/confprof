@@ -42,6 +42,7 @@ class DocladSearch extends Doclad
     public function search($params, $aDop = [])
     {
         $query = Doclad::find();
+        $query->with(['section', 'section.conference',]);
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
@@ -65,6 +66,7 @@ class DocladSearch extends Doclad
             'doc_sec_id' => $this->doc_sec_id,
             'doc_created' => $this->doc_created,
             'ekis_id' => $this->ekis_id,
+            'doc_us_id' => Yii::$app->user->getId(), // TODO: добавил пока в черновую сюда, потом посмотрим, что поменять для модератора
         ]);
 
         $query->andFilterWhere(['like', 'doc_type', $this->doc_type])

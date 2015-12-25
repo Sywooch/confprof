@@ -9,15 +9,17 @@ use yii\grid\GridView;
 
 $this->title = 'Doclads';
 $this->params['breadcrumbs'][] = $this->title;
+
+/* <h1><?= Html::encode($this->title) ?></h1> */
+
 ?>
 <div class="doclad-index">
 
-    <h1><?= Html::encode($this->title) ?></h1>
     <?php // echo $this->render('_search', ['model' => $searchModel]); ?>
 
-    <p>
-        <?= Html::a('Create Doclad', ['create'], ['class' => 'btn btn-success']) ?>
-    </p>
+    <!-- p>
+        <?= '' // Html::a('Create Doclad', ['create'], ['class' => 'btn btn-success']) ?>
+    </p -->
 
     <?= GridView::widget([
         'dataProvider' => $dataProvider,
@@ -28,7 +30,25 @@ $this->params['breadcrumbs'][] = $this->title;
 //            'doc_id',
 //            'doc_sec_id',
 //            'doc_type',
-            'doc_subject',
+            [
+                'class' => 'yii\grid\DataColumn',
+                'attribute' => 'doc_subject',
+                'format' => 'raw',
+                'value' => function ($model, $key, $index, $column) {
+                    /** @var $model app\models\Doclad */
+                    return Html::encode($model->doc_subject)
+                        . (
+                            $model->section !== null ? (
+                                  '<br />'
+                                . Html::encode($model->section->sec_title)
+                                . '<br />'
+                                . Html::encode($model->section->conference->cnf_title)
+                                ) : ''
+                          )
+                        ;
+                },
+            ],
+//            'doc_subject',
 //            'doc_description:ntext',
             // 'doc_created',
             // 'doc_lider_fam',

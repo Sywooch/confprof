@@ -1,0 +1,137 @@
+<?php
+
+use yii\helpers\Html;
+use yii\widgets\DetailView;
+use yii\helpers\ArrayHelper;
+
+use app\models\Doclad;
+
+/* @var $this yii\web\View */
+/* @var $model app\models\Doclad */
+
+$this->title = $model->doc_subject;
+$this->params['breadcrumbs'][] = ['label' => 'Doclads', 'url' => ['list']];
+$this->params['breadcrumbs'][] = $this->title;
+
+$attributes = [
+//    'doc_id',
+//    'doc_sec_id',
+//    'doc_type',
+    [
+        'attribute' => 'doc_sec_id',
+        'value' => $model->section ? (Html::encode($model->section->sec_title) . '<br />' . Html::encode($model->section->conference->cnf_title)) : '',
+        'format' => 'raw',
+    ],
+    'doc_subject',
+    'doc_description:ntext',
+    [
+        'attribute' => 'doc_created',
+        'value' => date('d.m.Y H:i:s', strtotime($model->doc_created)),
+    ],
+    [
+        'attribute' => 'doc_lider_fam',
+        'value' => $model->getLeadername(false),
+    ],
+//    'doc_lider_fam',
+//    'doc_lider_name',
+//    'doc_lider_otch',
+    'doc_lider_email:email',
+    'doc_lider_phone',
+//    'ekis_id',
+    'doc_lider_org',
+];
+
+// Добавим участников
+if( count($model->members) > 0 ) {
+    $sValue = implode(
+        '<br />',
+        ArrayHelper::map(
+            $model->members,
+            'prs_id',
+            function($ob, $default) {
+                /** @var $ob app\models\Person */
+                return Html::encode($ob->getPersonname(false));
+            }
+        )
+    );
+
+    $attributes = array_merge(
+        $attributes,
+        [
+            [
+                'attribute' => 'members',
+                'format' => 'raw',
+                'value' => $sValue,
+            ],
+        ]
+    );
+}
+
+// Добавим руководителей
+if( count($model->persons) > 0 ) {
+    $sValue = implode(
+        '<br />',
+        ArrayHelper::map(
+            $model->persons,
+            'prs_id',
+            function($ob, $default) {
+                /** @var $ob app\models\Person */
+                return Html::encode($ob->getPersonname(false));
+            }
+        )
+    );
+
+    $attributes = array_merge(
+        $attributes,
+        [
+            [
+                'attribute' => 'consultants',
+                'format' => 'raw',
+                'value' => $sValue,
+            ],
+        ]
+    );
+}
+//'doc_members' => 'Участники',
+//'doc_consultants' => 'Руководители',
+
+if( $model->doc_type == Doclad::DOC_TYPE_PERSONAL ) {
+    $attributes = array_merge(
+        $attributes,
+        [
+            'doc_lider_group',
+            'doc_lider_level',
+        ]
+    );
+}
+else {
+    $attributes = array_merge(
+        $attributes,
+        [
+            'doc_lider_position',
+            'doc_lider_lesson',
+        ]
+    );
+}
+?>
+<div class="doclad-view">
+
+    <h1><?= Html::encode($this->title) ?></h1>
+<?php /*
+    <p>
+<?php Html::a('Update', ['update', 'id' => $model->doc_id], ['class' => 'btn btn-primary']) ?>
+<?php Html::a('Delete', ['delete', 'id' => $model->doc_id], [
+            'class' => 'btn btn-danger',
+            'data' => [
+                'confirm' => 'Are you sure you want to delete this item?',
+                'method' => 'post',
+            ],
+        ]) ?>
+    </p> */
+?>
+    <?= DetailView::widget([
+        'model' => $model,
+        'attributes' => $attributes,
+    ]) ?>
+
+</div>

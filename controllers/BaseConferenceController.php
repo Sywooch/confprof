@@ -77,6 +77,20 @@ class BaseConferenceController extends Controller
     }
 
     /**
+     * Show doclad info
+     * @param $id integer
+     */
+    public function actionView($id)
+    {
+        $model = $this->findModel($id);
+        return $this->render('//doclad/fullview', [
+            'conference' => $this->findConferenceModel(),
+            'model' => $this->findModel($id),
+        ]);
+
+    }
+
+    /**
      * Show conference info
      * @return mixed
      */

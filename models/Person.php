@@ -90,8 +90,6 @@ class Person extends \yii\db\ActiveRecord
         ];
     }
 
-
-
     /**
      * @inheritdoc
      */

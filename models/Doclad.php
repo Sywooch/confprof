@@ -3,9 +3,15 @@
 namespace app\models;
 
 use Yii;
+
+use yii\db\ActiveRecord;
+use yii\db\Expression;
+use yii\behaviors\TimestampBehavior;
+
 use app\models\Person;
 use app\models\Member;
 use app\models\Docmedal;
+use app\models\Section;
 
 /**
  * This is the model class for table "{{%doclad}}".
@@ -35,6 +41,20 @@ class Doclad extends \yii\db\ActiveRecord
     const DOC_TYPE_ORG = 'org';
 
     public $aSectionList = [];
+
+
+    public function behaviors() {
+        return [
+            [
+                'class' => TimestampBehavior::className(),
+                'attributes' => [
+                    ActiveRecord::EVENT_BEFORE_INSERT => ['doc_created'],
+                ],
+                'value' => new Expression('NOW()'),
+            ],
+        ];
+    }
+
     /**
      * @inheritdoc
      */
@@ -131,6 +151,8 @@ class Doclad extends \yii\db\ActiveRecord
             'doc_lider_level' => 'Курс',
             'doc_lider_position' => 'Должность',
             'doc_lider_lesson' => 'Предмет',
+            'members' => 'Участники',
+            'consultants' => 'Руководители',
         ];
     }
 
@@ -192,6 +214,13 @@ class Doclad extends \yii\db\ActiveRecord
      */
     public function getMedals() {
         return $this->hasMany(Docmedal::className(), ['mdl_doc_id' => 'doc_id']);
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getSection() {
+        return $this->hasOne(Section::className(), ['sec_id' => 'doc_sec_id']);
     }
 
     /**
@@ -360,4 +389,17 @@ class Doclad extends \yii\db\ActiveRecord
         }
 
     }
+
+    /**
+     * Получение имени персоны
+     *
+     * @param bool $bShort
+     * @return string
+     */
+    public function getLeadername($bShort = true) {
+        return $bShort ?
+            ($this->doc_lider_name . ' ' . $this->doc_lider_otch) :
+            ($this->doc_lider_fam . ' ' . $this->doc_lider_name . ' ' . $this->doc_lider_otch);
+    }
+
 }
