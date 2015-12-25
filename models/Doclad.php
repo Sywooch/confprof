@@ -184,7 +184,7 @@ class Doclad extends \yii\db\ActiveRecord
      * @return \yii\db\ActiveQuery
      */
     public function getMembers() {
-        return $this->hasMany(Member::className(), ['prs_doc_id' => 'doc_id'])->where(['prs_type' => Person::PERSON_TYPE_PARTNER]);
+        return $this->hasMany(Member::className(), ['prs_doc_id' => 'doc_id'])->where(['prs_type' => [Person::PERSON_TYPE_ORG_MEMBER, Person::PERSON_TYPE_STUD_MEMBER]]);
     }
 
     /**
@@ -197,7 +197,17 @@ class Doclad extends \yii\db\ActiveRecord
     /**
      * @param $data
      */
+    public function saveMembers($data)
+    {
+        return $this->savePersons($data, $this->doc_type == self::DOC_TYPE_ORG ? Person::PERSON_TYPE_ORG_MEMBER : Person::PERSON_TYPE_STUD_MEMBER);
+    }
+
+    /**
+     * @param $data
+     */
     public function saveConsultants($data) {
+        return $this->savePersons($data, Person::PERSON_TYPE_CONSULTANT);
+/*
         $aModels = $this->persons;
         $aNeedDel = [];
         Person::updateAll(
@@ -209,6 +219,7 @@ class Doclad extends \yii\db\ActiveRecord
             ],
             [
                 'prs_doc_id' => $this->doc_id,
+                'prs_type' => Person::PERSON_TYPE_CONSULTANT,
             ]
         );
 
@@ -216,8 +227,9 @@ class Doclad extends \yii\db\ActiveRecord
             $ob['prs_type'] = Person::PERSON_TYPE_CONSULTANT;
             $ob['prs_doc_id'] = $this->doc_id;
             $ob['prs_active'] = Person::PERSON_STATE_ACTIVE;
+            $ob['prs_sec_id'] = $this->doc_sec_id;
 
-            Yii::info('ob = ' . print_r($ob, true));
+//            Yii::info('consultant = ' . print_r($ob, true));
 
             $s = 'Update ' . Person::tableName() . ' Set ';
             $param = [];
@@ -231,17 +243,75 @@ class Doclad extends \yii\db\ActiveRecord
 
             $s .= ' Where prs_active = 0 And prs_type = 0 And prs_sec_id = 0 And prs_doc_id = 0 Limit 1';
 
-            Yii::info($s);
+//            Yii::info($s);
             $n = Yii::$app->db->createCommand($s, $param)->execute();
             if( $n == 0 ) {
                 $oNew = new Person();
                 $oNew->attributes = $ob;
+                $oNew->prs_sec_id = $this->doc_sec_id;
                 if( !$oNew->save() ) {
-                    Yii::info('Error save oNew: ' . print_r($oNew->getErrors(), true));
+                    Yii::info('saveConsultants() Error save oNew: ' . print_r($oNew->getErrors(), true));
+                }
+            }
+        }
+*/
+    }
+
+    /**
+     * Сохраняем участников или консультантов
+     *
+     * @param $data array
+     * @param $nType integer
+     */
+    public function savePersons($data, $nType) {
+        $bOk = true;
+        Person::updateAll(
+            [
+                'prs_active' => 0,
+                'prs_type' => 0,
+                'prs_sec_id' => 0,
+                'prs_doc_id' => 0,
+            ],
+            [
+                'prs_doc_id' => $this->doc_id,
+                'prs_type' => $nType,
+            ]
+        );
+
+        foreach($data as $ob) {
+            $ob['prs_type'] = $nType;
+            $ob['prs_doc_id'] = $this->doc_id;
+            $ob['prs_active'] = Person::PERSON_STATE_ACTIVE;
+            $ob['prs_sec_id'] = $this->doc_sec_id;
+
+//            Yii::info('consultant = ' . print_r($ob, true));
+
+            $s = 'Update ' . Person::tableName() . ' Set ';
+            $param = [];
+            $sDelim = '';
+
+            foreach($ob As $k=>$v) {
+                $s .= $sDelim . $k . ' = ' . ':'.$k;
+                $param[':'.$k] = $v;
+                $sDelim = ', ';
+            }
+
+            $s .= ' Where prs_active = 0 And prs_type = 0 And prs_sec_id = 0 And prs_doc_id = 0 Limit 1';
+
+//            Yii::info($s);
+            $n = Yii::$app->db->createCommand($s, $param)->execute();
+            if( $n == 0 ) {
+                $oNew = new Person();
+                $oNew->attributes = $ob;
+                $oNew->prs_sec_id = $this->doc_sec_id;
+                if( !$oNew->save() ) {
+                    $bOk = false;
+                    Yii::info('savePersons() nType = '.$nType.' Error save oNew: ' . print_r($oNew->getErrors(), true));
                 }
             }
         }
 
+        return $bOk;
     }
 
     /**

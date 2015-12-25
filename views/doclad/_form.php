@@ -249,7 +249,7 @@ $ekis_id = [
                             'form' => $form,
                             'model' => $model,
                             'persons' => $model->isNewRecord ? [] : $model->members,
-                            'persontype' => Person::PERSON_TYPE_PARTNER,
+                            'persontype' => $model->doc_type == Doclad::DOC_TYPE_ORG ? Person::PERSON_TYPE_ORG_MEMBER : Person::PERSON_TYPE_STUD_MEMBER,
                             'modelname' => 'app\models\Member',
                             'parttitle' => 'Участники проекта',
                         ]
@@ -264,7 +264,7 @@ $ekis_id = [
                 </div -->
 
                 <?php
-//                if( $model->doc_type == Doclad::DOC_TYPE_PERSONAL ) {
+                if( $model->doc_type == Doclad::DOC_TYPE_PERSONAL ) {
                     echo $this->render(
                         'part_consultants',
                         [
@@ -276,7 +276,7 @@ $ekis_id = [
                             'parttitle' => 'Научный руководитель',
                         ]
                     );
-//                }
+                }
                 ?>
 
 

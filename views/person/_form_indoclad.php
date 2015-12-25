@@ -75,12 +75,21 @@ if( isset($viewparam) && isset($viewparam['ekis_id']) ) {
     </div>
     <?php } ?>
 
-    <?php if( $model->prs_type == Person::PERSON_TYPE_PARTNER ) { ?>
+    <?php if( $model->prs_type == Person::PERSON_TYPE_STUD_MEMBER ) { ?>
         <div class="col-xs-3">
             <?= $form->field($model, '[' . $index . ']prs_group')->textInput(['maxlength' => true, 'class'=>'lio_input', 'placeholder'=>$model->getAttributeLabel('prs_group'),]) ?>
         </div>
         <div class="col-xs-3">
             <?= $form->field($model, '[' . $index . ']prs_level')->textInput(['maxlength' => true, 'class'=>'lio_input', 'placeholder'=>$model->getAttributeLabel('prs_level'),]) ?>
+        </div>
+    <?php } ?>
+
+    <?php if( $model->prs_type == Person::PERSON_TYPE_ORG_MEMBER ) { ?>
+        <div class="col-xs-3">
+            <?= $form->field($model, '[' . $index . ']prs_position')->textInput(['maxlength' => true, 'class'=>'lio_input', 'placeholder'=>$model->getAttributeLabel('prs_position'),]) ?>
+        </div>
+        <div class="col-xs-3">
+            <?= $form->field($model, '[' . $index . ']prs_lesson')->textInput(['maxlength' => true, 'class'=>'lio_input', 'placeholder'=>$model->getAttributeLabel('prs_lesson'),]) ?>
         </div>
     <?php } ?>
 </div>

@@ -15,6 +15,8 @@ use yii\web\JsExpression;
 /* @var $model app\models\Doclad */
 /* @var $form yii\widgets\ActiveForm */
 
+$sLinkNamePart = (($persontype == Person::PERSON_TYPE_STUD_MEMBER) || ($persontype == Person::PERSON_TYPE_ORG_MEMBER)) ? 'member' : 'consultant';
+
 $ekis_id = [
     'language' => 'ru',
     'pluginOptions' => [
@@ -139,9 +141,10 @@ EOT;
 
 // var paramSelect2EkisId = {$sSelect2Param};
 $sId0Cons = Html::getInputId(count($persons) ? $persons[0] : new $modelname, '[0]ekis_id');
+$sConfigName = 'paramSel2Ekis' . $sLinkNamePart . substr(md5(Yii::$app->security->generateRandomKey(16)), 0, 6);
 
 $sScript = <<<EOT
-var paramSelect2EkisId = {$s1};
+var {$sConfigName} = {$s1};
 jQuery('#{$sId0Cons}').select2("destroy");
 
 EOT;
@@ -152,7 +155,7 @@ EOT;
 <div class="row">
     <div class="col-xs-12">
         <div class="lio_block_header"><?php echo Html::encode($parttitle); ?> <?php
-            if($persontype == Person::PERSON_TYPE_PARTNER) {
+            if( ($persontype == Person::PERSON_TYPE_STUD_MEMBER) || ($persontype == Person::PERSON_TYPE_ORG_MEMBER) ) {
             ?>
                 <a class="lio_add_el add_member">Добавить</a>
             <?php
@@ -163,9 +166,6 @@ EOT;
 
 <?php
 //if( false )
-//'.$s1.'
-$sLinkNamePart = ($persontype == Person::PERSON_TYPE_PARTNER) ? 'member' : 'consultant';
-// echo '<p>persontype = '.$persontype.'</p>';
 echo MultirowsWidget::widget(
     [
         'model' => (new $modelname)->className(),
@@ -183,7 +183,7 @@ echo MultirowsWidget::widget(
                 var obEkis = ob.find(\'[name$="[ekis_id]"]\'),
                     sId = obEkis.attr("id");
 
-                obEkis.select2(paramSelect2EkisId);
+                obEkis.select2('.$sConfigName.');
 
                 obEkis.on("select2:select", function(event) {
                     console.log("select2:select", event);

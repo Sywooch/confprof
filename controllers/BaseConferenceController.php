@@ -245,7 +245,7 @@ class BaseConferenceController extends Controller
 
             $aValidate = ActiveForm::validate($model);
 
-//            if( $model->doc_type == Doclad::DOC_TYPE_PERSONAL ) {
+            if( $model->doc_type == Doclad::DOC_TYPE_PERSONAL ) {
                 // для доклада от персонального участника нужен хотя бы 1 руководитель
                 $resultConsultant = $this->getBehavior('validateConsultant')->validateData();
                 $dataConsultant = $this->getBehavior('validateConsultant')->getData();
@@ -257,10 +257,10 @@ class BaseConferenceController extends Controller
                     }
                     $aValidate[$sId][] = 'Необходимо указать руководителя.';
                 }
-//            }
-//            else {
-//                $resultConsultant = [];
-//            }
+            }
+            else {
+                $resultConsultant = [];
+            }
 
             $resultMembers = $this->getBehavior('validateMembers')->validateData();
 
@@ -276,19 +276,30 @@ class BaseConferenceController extends Controller
         }
 
         if ($model->load(Yii::$app->request->post()) ) {
-            if( $model->save() ) {
+            $bOk = $model->save();
+            if( $bOk ) {
                 $bNew = $model->isNewRecord;
 
-                $dataConsultant = $this->getBehavior('validateConsultant')->getData();
-                $dataMedals = $this->getBehavior('validateMedals')->getData();
-                Yii::info('data = ' . print_r($dataConsultant, true));
+                if( $model->doc_type == Doclad::DOC_TYPE_PERSONAL ) {
+                    $dataConsultant = $this->getBehavior('validateConsultant')->getData();
+//                    Yii::info('dataConsultant = ' . print_r($dataConsultant, true));
+                    $bOk = $bOk && $model->saveConsultants($dataConsultant['data']);
+                }
 
-                $model->saveConsultants($dataConsultant['data']);
+                $dataMember = $this->getBehavior('validateMembers')->getData();
+                $bOk = $bOk && $model->saveMembers($dataMember['data']);
+
+                $dataMedals = $this->getBehavior('validateMedals')->getData();
                 $model->saveMedals($dataMedals['data']);
+
                 return $this->redirect(['list']);
             }
             else {
                 Yii::info('Error save: ' . print_r($model->getErrors(), true));
+            }
+
+            if( !$bOk ) {
+                Yii::info('Error doclad !!!!!!!');
             }
         }
 

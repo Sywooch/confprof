@@ -39,7 +39,8 @@ class Person extends \yii\db\ActiveRecord
 {
     const PERSON_TYPE_GUEST = 1;
     const PERSON_TYPE_CONSULTANT = 2;
-    const PERSON_TYPE_PARTNER = 3;
+    const PERSON_TYPE_STUD_MEMBER = 3;
+    const PERSON_TYPE_ORG_MEMBER = 4;
 
     const PERSON_STATE_ACTIVE = 1;
     const PERSON_STATE_NONACTIVE = 0;
@@ -128,7 +129,7 @@ class Person extends \yii\db\ActiveRecord
 //        $a = [
 //            'createconsultant' => self::PERSON_TYPE_CONSULTANT,
 //            'createguest' => self::PERSON_TYPE_GUEST,
-//            'createpartner' => self::PERSON_TYPE_PARTNER,
+//            'createpartner' => self::PERSON_TYPE_STUD_MEMBER,
 //        ];
 //
 //        if( isset($a[$this->scenario]) ) {
@@ -149,8 +150,11 @@ class Person extends \yii\db\ActiveRecord
         if( $this->prs_type == self::PERSON_TYPE_CONSULTANT ) {
             $this->scenario = 'createconsultant';
         }
-        else if( $this->prs_type == self::PERSON_TYPE_PARTNER ) {
+        else if( $this->prs_type == self::PERSON_TYPE_STUD_MEMBER ) {
             $this->scenario = 'createmember';
+        }
+        else if( $this->prs_type == self::PERSON_TYPE_ORG_MEMBER ) {
+            $this->scenario = 'createorgmember';
         }
         else if( $this->prs_type == self::PERSON_TYPE_GUEST ) {
             $this->scenario = $this->isNewRecord ? 'createguest' : $this->scenario;
@@ -168,16 +172,26 @@ class Person extends \yii\db\ActiveRecord
             'prs_lesson',
         ];
 
-        $aRet['createmember'] = [ // руководитель
+        $aRet['createmember'] = [ // соучастник персональный
             'prs_doc_id',
             'prs_fam',
             'prs_name',
             'prs_otch',
             'ekis_id',
             'prs_org',
-            'prs_email',
             'prs_group',
             'prs_level',
+        ];
+
+        $aRet['createorgmember'] = [ // соучастник от организации
+            'prs_doc_id',
+            'prs_fam',
+            'prs_name',
+            'prs_otch',
+            'ekis_id',
+            'prs_org',
+            'prs_position',
+            'prs_lesson',
         ];
 
         $aRet['createguest'] = [ // гость
@@ -231,7 +245,8 @@ class Person extends \yii\db\ActiveRecord
         return [
             self::PERSON_TYPE_CONSULTANT => 'Руководитель',
             self::PERSON_TYPE_GUEST => 'Гость',
-            self::PERSON_TYPE_PARTNER => 'Соучастник',
+            self::PERSON_TYPE_STUD_MEMBER => 'Соучастник',
+            self::PERSON_TYPE_ORG_MEMBER => 'Соучастник',
         ];
 
     }
