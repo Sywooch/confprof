@@ -19,6 +19,7 @@ use yii\helpers\ArrayHelper;
  * @property string $cnf_created
  * @property string $cnf_pagetitle
  * @property string $cnf_about
+ * @property string $cnf_shorttitle
  */
 class Conference extends \yii\db\ActiveRecord
 {
@@ -52,10 +53,10 @@ class Conference extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['cnf_title', ], 'required'],
+            [['cnf_title', 'cnf_shorttitle', ], 'required'],
             [['cnf_description', 'cnf_about'], 'string'],
             [['cnf_created'], 'safe'],
-            [['cnf_title', 'cnf_controller', 'cnf_pagetitle'], 'string', 'max' => 255],
+            [['cnf_title', 'cnf_controller', 'cnf_pagetitle', 'cnf_shorttitle', ], 'string', 'max' => 255],
             [['cnf_class'], 'string', 'max' => 64]
         ];
     }
@@ -74,6 +75,7 @@ class Conference extends \yii\db\ActiveRecord
             'cnf_created' => 'Создан',
             'cnf_pagetitle' => 'Заголовок страниц',
             'cnf_about' => 'Текст О конференции',
+            'cnf_shorttitle' => 'Короткий заголовок',
         ];
     }
 

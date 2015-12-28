@@ -14,6 +14,8 @@ use yii\widgets\ActiveForm;
 
     <?= $form->field($model, 'cnf_title')->textInput(['maxlength' => true]) ?>
 
+    <?= $form->field($model, 'cnf_shorttitle')->textInput(['maxlength' => true]) ?>
+
     <?= $form->field($model, 'cnf_class')->textInput(['maxlength' => true]) ?>
 
     <?= $form->field($model, 'cnf_controller')->textInput(['maxlength' => true]) ?>

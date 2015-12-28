@@ -2,6 +2,8 @@
 
 use yii\helpers\Html;
 use yii\widgets\DetailView;
+use yii\helpers\ArrayHelper;
+
 use app\models\Conference;
 
 /* @var $this yii\web\View */
@@ -22,11 +24,11 @@ if( !$partial ) {
     echo '<h1>'.Html::encode($this->title).'</h1>';
 }
 
-$aConf = Conference::getList();
+$aConf = ArrayHelper::map(Conference::getAll(), 'cnf_id', 'cnf_shorttitle');
 
 ?>
 
-<div class="form-group"><?php
+<div class="btn-toolbar"><?php
 
 foreach($aConf As $id=>$title) {
     echo Html::a(
