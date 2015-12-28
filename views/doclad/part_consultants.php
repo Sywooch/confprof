@@ -140,7 +140,7 @@ $s1 = <<<EOT
 EOT;
 
 // var paramSelect2EkisId = {$sSelect2Param};
-$sId0Cons = Html::getInputId(count($persons) ? $persons[0] : new $modelname, '[0]ekis_id');
+$sId0Cons = Html::getInputId(count($persons) ? $persons[0] : new $modelname, '['.MultirowsWidget::$rowindex.']ekis_id');
 $sConfigName = 'paramSel2Ekis' . $sLinkNamePart . substr(md5(Yii::$app->security->generateRandomKey(16)), 0, 6);
 
 $sScript = <<<EOT
