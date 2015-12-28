@@ -12,9 +12,6 @@ use app\models\Conference;
 
 UserAsset::register($this);
 
-$activeController = Yii::$app->controller;
-$conference = $activeController->findConferenceModel();
-
 ?>
 <?php $this->beginPage() ?>
 <!DOCTYPE html>
@@ -29,14 +26,13 @@ $conference = $activeController->findConferenceModel();
 <body>
 <?php $this->beginBody() ?>
 
-<div class="main height_100 <?php echo $conference->cnf_class; ?>">
+<div class="main height_100 color_razvod">
     <div class="top">
         <div class="container bg_white">
             <div class="row lio_top">
                 <div class="col-xs-8 top_bg">
                     <!--metka main banner-->
-                    <a href="/" class="main_logo"></a>
-                    <div class="logo_text"><?php echo $conference->cnf_pagetitle ?></div>
+                    <div class="logo_text"><a href="/" style="font-weight: 400; margin-top:30px; color:#545454; display:inline-block; margin-left:100px; font-size:30px;">Научно-практические конференции</a></div>
                 </div>
                 <div class="col-xs-4 lio_login">
                     <a class="lich_kab" href="/cabinet">Личный кабинет</a>
@@ -46,32 +42,24 @@ $conference = $activeController->findConferenceModel();
             <div class="row main_menu">
 <?php
 
-    echo Nav::widget([
-        'options' => ['class' => 'nav menu'],
-        'items' => [
-            ['label' => 'О конференции', 'url' => ['/'.$activeController->id.'/index']],
-            ['label' => 'Подать заявку', 'url' => ['/'.$activeController->id.'/register']],
-            ['label' => 'Календарь', 'url' => ['/'.$activeController->id.'/calendar']],
-            ['label' => 'Пойти гостем', 'url' => ['/'.$activeController->id.'/guest']],
-//            ['label' => 'Contact', 'url' => ['/site/contact']],
-//            Yii::$app->user->isGuest ?
-//                ['label' => 'Login', 'url' => ['/site/login']] :
-//                [
-//                    'label' => 'Logout (' . Yii::$app->user->identity->username . ')',
-//                    'url' => ['/site/logout'],
-//                    'linkOptions' => ['data-method' => 'post']
-//                ],
-        ],
-    ]);
+//    echo Nav::widget([
+//        'options' => ['class' => 'nav menu'],
+//        'items' => [
+//            ['label' => 'О конференции', 'url' => ['/'.$activeController->id.'/index']],
+//            ['label' => 'Подать заявку', 'url' => ['/'.$activeController->id.'/register']],
+//            ['label' => 'Календарь', 'url' => ['/'.$activeController->id.'/calendar']],
+//            ['label' => 'Пойти гостем', 'url' => ['/'.$activeController->id.'/guest']],
+////            ['label' => 'Contact', 'url' => ['/site/contact']],
+////            Yii::$app->user->isGuest ?
+////                ['label' => 'Login', 'url' => ['/site/login']] :
+////                [
+////                    'label' => 'Logout (' . Yii::$app->user->identity->username . ')',
+////                    'url' => ['/site/logout'],
+////                    'linkOptions' => ['data-method' => 'post']
+////                ],
+//        ],
+//    ]);
 
-/*
-                <ul class="nav menu">
-                    <li class="item-106 current active"><a href="/inj/o-konferentsii.html" >О конференции</a></li>
-                    <li class="item-107"><a href="/inj/podat-zayavku.html" >Подать заявку</a></li>
-                    <li class="item-108"><a href="/inj/kalendar.html" >Календарь</a></li>
-                    <li class="item-161"><a href="/inj/pojti-gostem.html" >Пойти гостем</a></li>
-                </ul>
-*/
 ?>
             </div>
         </div>
