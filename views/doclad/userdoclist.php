@@ -7,7 +7,7 @@ use yii\grid\GridView;
 /* @var $searchModel app\models\DocladSearch */
 /* @var $dataProvider yii\data\ActiveDataProvider */
 
-$this->title = 'Doclads';
+$this->title = 'Доклады';
 $this->params['breadcrumbs'][] = $this->title;
 
 /* <h1><?= Html::encode($this->title) ?></h1> */
@@ -68,3 +68,26 @@ $this->params['breadcrumbs'][] = $this->title;
     ]); ?>
 
 </div>
+
+<?php
+
+$oController = Yii::$app->controller;
+
+if( $oController->layout == 'frontend_cabinet' ) {
+    echo $this->render(
+        'select_conference',
+        [
+            'link' => ['cabinet/create', 'id' => 0],
+            'partial' => true,
+        ]
+    );
+}
+else {
+    echo Html::a(
+        'Подать заявку',
+        ['register'],
+        [
+            'class' => 'btn btn-default'
+        ]
+    );
+}

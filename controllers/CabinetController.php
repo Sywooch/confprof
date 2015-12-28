@@ -20,16 +20,17 @@ class CabinetController extends BaseConferenceController
      * @return string
      */
     public function actionIndex() {
-        $aDop = ['doc_us_id' => Yii::$app->user->getId()];
-        $searchModel = new DocladSearch();
-        $dataProvider = $searchModel->search(Yii::$app->request->queryParams, $aDop);
-
-        return $this->render(
-            '//doclad/userdoclist', [
-                'searchModel' => $searchModel,
-                'dataProvider' => $dataProvider,
-            ]
-        );
+        return parent::actionList();
+//        $aDop = ['doc_us_id' => Yii::$app->user->getId()];
+//        $searchModel = new DocladSearch();
+//        $dataProvider = $searchModel->search(Yii::$app->request->queryParams, $aDop);
+//
+//        return $this->render(
+//            '//doclad/userdoclist', [
+//                'searchModel' => $searchModel,
+//                'dataProvider' => $dataProvider,
+//            ]
+//        );
     }
 
     /**
@@ -39,6 +40,11 @@ class CabinetController extends BaseConferenceController
         return $this->redirect(['index']);
     }
 
+    /**
+     * @param int $id
+     * @return \yii\web\Response
+     * @throws NotFoundHttpException
+     */
     public function actionUpdate($id) {
         $model = $this->findModel($id);
         $oConf = $model->section ? $model->section->conference : null;
@@ -47,5 +53,31 @@ class CabinetController extends BaseConferenceController
         }
         $this->conferenceId = $oConf->cnf_id;
         return parent::actionUpdate($id);
+    }
+
+    /**
+     * @param int $id
+     */
+    public function actionCreate($id = 0) {
+        if( $id != 0 ) {
+            $oConf = Conference::findOne($id);
+            if( $oConf === null ) {
+                $id = 0;
+            }
+        }
+
+        if( $id == 0 ) {
+            return $this->render(
+                '//doclad/select_conference',
+                [
+                    'link' => ['cabinet/create', 'id' => 0],
+                    'partial' => false,
+                ]
+            );
+        }
+        else {
+            $this->conferenceId = $oConf->cnf_id;
+            return parent::addDoclad();
+        }
     }
 }

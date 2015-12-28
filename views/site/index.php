@@ -9,8 +9,8 @@ $this->title = Yii::$app->name;
     <div class="container">
         <div class="row">
             <div class="col-xs-12">
-                <a class="lich_kab" href="/login.html">Личный кабинет</a>
-                <a class="lich_kab" href="#">Участвовать</a>
+                <a class="lich_kab" href="/cabinet">Личный кабинет</a>
+                <!-- a class="lich_kab" href="#">Участвовать</a -->
 
             </div>
         </div>
