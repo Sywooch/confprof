@@ -36,7 +36,9 @@ UserAsset::register($this);
                 </div>
                 <div class="col-xs-4 lio_login">
                     <a class="lich_kab" href="/cabinet">Личный кабинет</a>
-                    <?php //<a class="lich_kab" href="#">Участвовать</a> ?>
+                    <?php if( !Yii::$app->user->isGuest ) {
+                        echo Html::a('Выход', ['logout'], ['class' => "lich_kab"]);
+                    }  ?>
                 </div>
             </div>
             <div class="row main_menu">

@@ -4,6 +4,7 @@ namespace app\controllers;
 
 use Yii;
 use yii\web\NotFoundHttpException;
+use yii\filters\AccessControl;
 
 use app\models\Conference;
 use app\controllers\BaseConferenceController;
@@ -14,6 +15,29 @@ class CabinetController extends BaseConferenceController
 {
     public $conferenceId = 0;
     public $layout = 'frontend_cabinet';
+
+    public function behaviors()
+    {
+        return [
+            'access' => [
+                'class' => AccessControl::className(),
+                'rules' => [
+                    [
+                        'allow' => true,
+                        'actions' => ['index', 'list', 'create', 'view', 'update', 'logout', ],
+                        'roles' => ['@'],
+                    ],
+                ],
+            ],
+//            'verbs' => [
+//                'class' => VerbFilter::className(),
+//                'actions' => [
+//                    'delete' => ['post'],
+//                ],
+//            ],
+        ];
+    }
+
 
 
     /**
