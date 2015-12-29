@@ -63,7 +63,10 @@ $this->params['breadcrumbs'][] = $this->title;
             // 'doc_lider_position',
             // 'doc_lider_lesson',
 
-            ['class' => 'yii\grid\ActionColumn'],
+            [
+                'class' => 'yii\grid\ActionColumn',
+                'template' => '{view} {update}', // {delete}
+            ],
         ],
     ]); ?>
 

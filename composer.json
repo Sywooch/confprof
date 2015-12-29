@@ -19,7 +19,8 @@
         "yiisoft/yii2-bootstrap": "*",
         "yiisoft/yii2-swiftmailer": "*",
         "kartik-v/yii2-widget-select2": "@dev",
-        "mosedu/yii2-multirows": "^1.0"
+        "mosedu/yii2-multirows": "^1.0",
+        "kartik-v/yii2-widget-fileinput": "^1.0"
     },
     "require-dev": {
         "yiisoft/yii2-codeception": "*",

@@ -42,6 +42,7 @@ class Doclad extends \yii\db\ActiveRecord
 
     public $aSectionList = [];
 
+    public $file = null;
 
     public function behaviors() {
         return [
@@ -76,7 +77,9 @@ class Doclad extends \yii\db\ActiveRecord
             [['doc_created'], 'safe'],
             [['doc_type'], 'string', 'max' => 16],
             [['doc_type'], 'in', 'range' => array_keys(self::getAllTypes())],
-            [['doc_subject', 'doc_lider_fam', 'doc_lider_name', 'doc_lider_otch', 'doc_lider_email', 'doc_lider_phone', 'doc_lider_org', 'doc_lider_group', 'doc_lider_level', 'doc_lider_position', 'doc_lider_lesson'], 'string', 'max' => 255]
+            [['doc_subject', 'doc_lider_fam', 'doc_lider_name', 'doc_lider_otch', 'doc_lider_email', 'doc_lider_phone', 'doc_lider_org', 'doc_lider_group', 'doc_lider_level', 'doc_lider_position', 'doc_lider_lesson'], 'string', 'max' => 255],
+            [['file'], 'safe'],
+            [['file'], 'file', 'maxFiles' => 1, 'maxSize' => Yii::$app->params['doclad.file.maxsize'], 'extensions' => Yii::$app->params['doclad.file.ext']],
         ];
     }
 
@@ -153,6 +156,7 @@ class Doclad extends \yii\db\ActiveRecord
             'doc_lider_lesson' => 'Предмет',
             'members' => 'Участники',
             'consultants' => 'Руководители',
+            'file' => 'Файл',
         ];
     }
 

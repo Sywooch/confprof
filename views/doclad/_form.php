@@ -127,7 +127,8 @@ $ekis_id = [
     <?php $form = ActiveForm::begin([
         'id' => 'doclad-form',
         'options' => [
-            'class' => 'lio_f_val'
+            'class' => 'lio_f_val',
+            'enctype' => 'multipart/form-data',
         ],
         'fieldConfig' => [
 //            'template' => "{input}\n{error}",
@@ -350,6 +351,16 @@ $ekis_id = [
 //                        'script' => $sScript,
                     ]
                 );
+                ?>
+
+                <?php
+                    echo $this->render(
+                        '_file_upload',
+                        [
+                            'model' => $model,
+                            'form' => $form,
+                        ]
+                    );
                 ?>
 
                 <div class="row">
