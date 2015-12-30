@@ -12,6 +12,7 @@ use app\models\Person;
 use app\models\Member;
 use app\models\Docmedal;
 use app\models\Section;
+use app\components\FilesaveBehavior;
 
 /**
  * This is the model class for table "{{%doclad}}".
@@ -44,6 +45,9 @@ class Doclad extends \yii\db\ActiveRecord
 
     public $file = null;
 
+    /**
+     * @return array
+     */
     public function behaviors() {
         return [
             [
@@ -53,6 +57,20 @@ class Doclad extends \yii\db\ActiveRecord
                 ],
                 'value' => new Expression('NOW()'),
             ],
+            'fileSave' => [
+                'class' => FilesaveBehavior::className(),
+                'filesaveFileModel' => 'app\models\File',
+                'filesaveConvertFields' => [
+                    'file_orig_name' => 'name',
+                    'file_size' => 'size',
+                    'file_type' => 'type',
+                    'file_name' => 'fullpath',
+                    'file_doc_id' => 'parentid',
+                    'file_us_id' => Yii::$app->user->getId(),
+                ],
+                'filesaveBaseDirName' => '@webroot/images/doclad'
+            ],
+
         ];
     }
 

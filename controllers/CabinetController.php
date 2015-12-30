@@ -18,27 +18,19 @@ class CabinetController extends BaseConferenceController
 
     public function behaviors()
     {
-        return [
-            'access' => [
-                'class' => AccessControl::className(),
-                'rules' => [
-                    [
-                        'allow' => true,
-                        'actions' => ['index', 'list', 'create', 'view', 'update', 'logout', 'delete', ],
-                        'roles' => ['@'],
-                    ],
+        $a = parent::behaviors();
+        $a['access'] = [
+            'class' => AccessControl::className(),
+            'rules' => [
+                [
+                    'allow' => true,
+                    'actions' => ['index', 'list', 'create', 'view', 'update', 'logout', 'delete', ],
+                    'roles' => ['@'],
                 ],
             ],
-//            'verbs' => [
-//                'class' => VerbFilter::className(),
-//                'actions' => [
-//                    'delete' => ['post'],
-//                ],
-//            ],
         ];
+        return $a;
     }
-
-
 
     /**
      * @return string

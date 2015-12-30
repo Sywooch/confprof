@@ -47,6 +47,7 @@ class BaseConferenceController extends Controller
                 'class' => MultirowsBehavior::className(),
                 'model' => Member::className(),
             ],
+
 //            'verbs' => [
 //                'class' => VerbFilter::className(),
 //                'actions' => [
@@ -305,6 +306,11 @@ class BaseConferenceController extends Controller
 
                 $dataMedals = $this->getBehavior('validateMedals')->getData();
                 $model->saveMedals($dataMedals['data']);
+
+                if( $id > 0 ) {
+                    $aFileRes = $model->uploadFile($model->doc_id);
+                    Yii::info('$aFileRes = ' . print_r($aFileRes, true));
+                }
 
                 return $this->redirect(['list']);
             }

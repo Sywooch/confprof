@@ -42,9 +42,13 @@ echo $form
         'pluginOptions'=>[
             'language' => 'ru',
             'allowedPreviewTypes' => [],
+            'showUpload' => false,
             'allowedFileExtensions' => Yii::$app->params['doclad.file.ext'],
             'maxFileSize' => Yii::$app->params['doclad.file.maxsize'],
             'maxFileCount' => 1,
+            'layoutTemplates' => [
+                'actions' => '{delete}',
+            ],
         ]
     ]
 );

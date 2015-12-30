@@ -27,3 +27,4 @@ phpunit.phar
 /phpunit.xml
 /composer.lock
 /acc-local.php
+/web/images/doclad
