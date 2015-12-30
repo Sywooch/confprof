@@ -354,13 +354,15 @@ $ekis_id = [
                 ?>
 
                 <?php
-                    echo $this->render(
-                        '_file_upload',
-                        [
-                            'model' => $model,
-                            'form' => $form,
-                        ]
-                    );
+                    if( !$model->isNewRecord ) {
+                        echo $this->render(
+                            '_file_upload',
+                            [
+                                'model' => $model,
+                                'form' => $form,
+                            ]
+                        );
+                    }
                 ?>
 
                 <div class="row">
