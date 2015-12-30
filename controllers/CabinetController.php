@@ -24,7 +24,7 @@ class CabinetController extends BaseConferenceController
             'rules' => [
                 [
                     'allow' => true,
-                    'actions' => ['index', 'list', 'create', 'view', 'update', 'logout', 'delete', ],
+                    'actions' => ['index', 'list', 'create', 'view', 'update', 'logout', 'delete', 'deletefile', ],
                     'roles' => ['@'],
                 ],
             ],

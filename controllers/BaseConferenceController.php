@@ -22,6 +22,7 @@ use app\models\DocladSearch;
 use app\models\Person;
 use app\models\Member;
 use app\models\Docmedal;
+use app\models\File;
 
 /**
  * ConferenceController implements the CRUD actions for Conference model.
@@ -46,6 +47,17 @@ class BaseConferenceController extends Controller
             'validateMembers' => [
                 'class' => MultirowsBehavior::className(),
                 'model' => Member::className(),
+            ],
+
+            'access' => [
+                'class' => AccessControl::className(),
+                'rules' => [
+                    [
+                        'allow' => true,
+                        'actions' => ['index', 'list', 'create', 'view', 'update', 'logout', 'delete', 'deletefile', ],
+                        'roles' => ['@'],
+                    ],
+                ],
             ],
 
 //            'verbs' => [
@@ -329,6 +341,9 @@ class BaseConferenceController extends Controller
         ]);
     }
 
+    /**
+     * @return string
+     */
     public function actionList() {
         $aDop = ['doc_us_id' => Yii::$app->user->getId()];
         $searchModel = new DocladSearch();
@@ -342,6 +357,9 @@ class BaseConferenceController extends Controller
         );
     }
 
+    /**
+     * @return string
+     */
     public function actionRegthankyou() {
         return $this->render(
             '//person/ok_guestregistr', [
@@ -349,8 +367,39 @@ class BaseConferenceController extends Controller
         );
     }
 
+    /**
+     * @return string
+     */
     public function actionDelete() {
         return $this->redirect(['list']);
+    }
+
+    /**
+     * @return string
+     */
+    public function actionDeletefile($id) {
+        Yii::$app->response->format = Response::FORMAT_JSON;
+
+        $model = $this->findModel($id);
+        $fileId = Yii::$app->request->getQueryParam('fileid', -1);
+        $bDel = false;
+        foreach($model->files As $ob) {
+            /** @var File $ob */
+            if( ($ob->file_id == $fileId) && ($ob->file_us_id == Yii::$app->user->getId()) ) {
+                $sRoorDir = str_replace('/', DIRECTORY_SEPARATOR, Yii::getAlias('@webroot'));
+                $sf = $sRoorDir . str_replace('/', DIRECTORY_SEPARATOR, $ob->file_name);
+                if( file_exists($sf) ) {
+                    unlink($sf);
+                    $ob->delete();
+                    Yii::info('actionDeletefile('.$id.') : delete file ' . $sf . ' ('.$ob->file_id.')');
+                    $bDel = true;
+                }
+                else {
+                    Yii::info('actionDeletefile('.$id.') : not exists file ' . $sf . ' ('.$sRoorDir.' + '.$ob->file_name.')');
+                }
+            }
+        }
+        return $bDel ? [] : ['error' => 'Not delete file'];
     }
 
     /**
