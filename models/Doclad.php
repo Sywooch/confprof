@@ -12,6 +12,7 @@ use app\models\Person;
 use app\models\Member;
 use app\models\Docmedal;
 use app\models\Section;
+use app\models\File;
 use app\components\FilesaveBehavior;
 
 /**
@@ -246,6 +247,13 @@ class Doclad extends \yii\db\ActiveRecord
     }
 
     /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getFiles() {
+        return $this->hasMany(File::className(), ['file_doc_id' => 'doc_id']);
+    }
+
+    /**
      * @param $data
      */
     public function saveMembers($data)
@@ -258,54 +266,6 @@ class Doclad extends \yii\db\ActiveRecord
      */
     public function saveConsultants($data) {
         return $this->savePersons($data, Person::PERSON_TYPE_CONSULTANT);
-/*
-        $aModels = $this->persons;
-        $aNeedDel = [];
-        Person::updateAll(
-            [
-                'prs_active' => 0,
-                'prs_type' => 0,
-                'prs_sec_id' => 0,
-                'prs_doc_id' => 0,
-            ],
-            [
-                'prs_doc_id' => $this->doc_id,
-                'prs_type' => Person::PERSON_TYPE_CONSULTANT,
-            ]
-        );
-
-        foreach($data as $ob) {
-            $ob['prs_type'] = Person::PERSON_TYPE_CONSULTANT;
-            $ob['prs_doc_id'] = $this->doc_id;
-            $ob['prs_active'] = Person::PERSON_STATE_ACTIVE;
-            $ob['prs_sec_id'] = $this->doc_sec_id;
-
-//            Yii::info('consultant = ' . print_r($ob, true));
-
-            $s = 'Update ' . Person::tableName() . ' Set ';
-            $param = [];
-            $sDelim = '';
-
-            foreach($ob As $k=>$v) {
-                $s .= $sDelim . $k . ' = ' . ':'.$k;
-                $param[':'.$k] = $v;
-                $sDelim = ', ';
-            }
-
-            $s .= ' Where prs_active = 0 And prs_type = 0 And prs_sec_id = 0 And prs_doc_id = 0 Limit 1';
-
-//            Yii::info($s);
-            $n = Yii::$app->db->createCommand($s, $param)->execute();
-            if( $n == 0 ) {
-                $oNew = new Person();
-                $oNew->attributes = $ob;
-                $oNew->prs_sec_id = $this->doc_sec_id;
-                if( !$oNew->save() ) {
-                    Yii::info('saveConsultants() Error save oNew: ' . print_r($oNew->getErrors(), true));
-                }
-            }
-        }
-*/
     }
 
     /**

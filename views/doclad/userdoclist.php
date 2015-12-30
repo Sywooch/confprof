@@ -2,6 +2,7 @@
 
 use yii\helpers\Html;
 use yii\grid\GridView;
+use app\models\File;
 
 /* @var $this yii\web\View */
 /* @var $searchModel app\models\DocladSearch */
@@ -35,6 +36,18 @@ $this->params['breadcrumbs'][] = $this->title;
                 'attribute' => 'doc_subject',
                 'format' => 'raw',
                 'value' => function ($model, $key, $index, $column) {
+                    $sFiles = '';
+                    $aFiles = $model->files;
+                    if( count($aFiles) > 0 ) {
+                        $sFiles = array_reduce(
+                            $aFiles,
+                            function($sRes, $item){
+                                /** @var File $item */
+                                return '<br />' . Html::a($item->file_orig_name, str_replace(DIRECTORY_SEPARATOR, '/', $item->file_name)) . $sRes;
+                            },
+                            ''
+                        );
+                    }
                     /** @var $model app\models\Doclad */
                     return Html::encode($model->doc_subject)
                         . (
@@ -45,6 +58,7 @@ $this->params['breadcrumbs'][] = $this->title;
                                 . Html::encode($model->section->conference->cnf_title)
                                 ) : ''
                           )
+                        . $sFiles
                         ;
                 },
             ],
