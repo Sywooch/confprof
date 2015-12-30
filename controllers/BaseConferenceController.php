@@ -391,7 +391,7 @@ class BaseConferenceController extends Controller
                 if( file_exists($sf) ) {
                     unlink($sf);
                     $ob->delete();
-                    Yii::info('actionDeletefile('.$id.') : delete file ' . $sf . ' ('.$ob->file_id.')');
+//                    Yii::info('actionDeletefile('.$id.') : delete file ' . $sf . ' ('.$ob->file_id.')');
                     $bDel = true;
                 }
                 else {

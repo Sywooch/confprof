@@ -71,7 +71,7 @@ class FilesaveBehavior extends Behavior {
         $aReturn = [];
 
         $files = UploadedFile::getInstances($this->owner, 'file');
-        Yii::info("uploadFiles() files = " . print_r($files, true));
+//        Yii::info("uploadFiles() files = " . print_r($files, true));
 
         // if no file was uploaded abort the upload
         if( empty($files) ) {
@@ -131,7 +131,7 @@ class FilesaveBehavior extends Behavior {
                     $this->getFullpath($sName) :
                     $this->filesaveCreateFullPath($this->filesaveBaseDirName, $sName, $parentModelId);
                 $upCount++;
-                Yii::info('New file name: ' . $sFullName . ' ('.$upCount.')');
+//                Yii::info('New file name: ' . $sFullName . ' ('.$upCount.')');
             }
 
             $ob->saveAs($sFullName);
@@ -149,16 +149,16 @@ class FilesaveBehavior extends Behavior {
                 foreach($this->filesaveConvertFields As $k=>$v) {
                     if( is_string($v) && property_exists($ob, $v) ) {
                         $oFileModel->{$k} = $ob->{$v};
-                        Yii::info('Set data File->' . $k . ' = ' . $ob->{$v});
+//                        Yii::info('Set data File->' . $k . ' = ' . $ob->{$v});
                     }
                     else {
                         if( isset($aExtra[$v]) ) {
                             $oFileModel->{$k} = $aExtra[$v];
-                            Yii::info('Set extra File->' . $k . ' = ' . $aExtra[$v]);
+//                            Yii::info('Set extra File->' . $k . ' = ' . $aExtra[$v]);
                         }
                         else {
                             $oFileModel->{$k} = $v;
-                            Yii::info('Set val File->' . $k . ' = ' . $v);
+//                            Yii::info('Set val File->' . $k . ' = ' . $v);
                         }
                     }
                 }
