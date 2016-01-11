@@ -146,6 +146,7 @@ class BaseConferenceController extends Controller
     {
         $model = new Person();
         $model->prs_type = Person::PERSON_TYPE_GUEST;
+//        $model->prs_active = 0;
         $oConference = $this->findConferenceModel();
 
         $model->aSectionList = ArrayHelper::map($oConference->sections, 'sec_id', 'sec_title');
