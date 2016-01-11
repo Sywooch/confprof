@@ -155,7 +155,7 @@ class User extends \yii\db\ActiveRecord  implements IdentityInterface
     public static function getAllGroups() {
         return [
             self::USER_GROUP_PERSONAL => 'Обучающийся',
-            self::USER_GROUP_ORGANIZATION => 'Участник от организации',
+            self::USER_GROUP_ORGANIZATION => 'Представитель образовательной организации',
             self::USER_GROUP_MODERATOR => 'Модератор',
         ];
     }
