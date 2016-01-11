@@ -57,6 +57,11 @@ class BaseConferenceController extends Controller
                         'actions' => ['index', 'list', 'create', 'view', 'update', 'logout', 'delete', 'deletefile', ],
                         'roles' => ['@'],
                     ],
+                    [
+                        'allow' => true,
+                        'actions' => ['register', ],
+                        'roles' => ['?', '@'],
+                    ],
                 ],
             ],
 
