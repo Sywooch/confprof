@@ -8,6 +8,7 @@
 
 namespace app\components;
 
+use yii;
 
 class Notificator {
 
@@ -33,6 +34,9 @@ class Notificator {
                 ->setSubject($subject);
         }
         if( count($aMails) > 0 ) {
+            foreach($aMails As $k=>$v) {
+                SwiftHeaders::setAntiSpamHeaders($aMails[$k], ['email' => Yii::$app->params['fromEmail']]);
+            }
             \Yii::$app->mailer->sendMultiple($aMails);
         }
     }

@@ -1,8 +1,8 @@
 <?php
 
 return [
-    'adminEmail' => 'no-reply@educom.ru',
-    'fromEmail' => 'no-reply@educom.ru',
+    'adminEmail' => 'no-reply@profil.mos.ru',
+    'fromEmail' => 'no-reply@profil.mos.ru',
     'doclad.file.ext' => ['ppt', 'pptx', 'zip', ],
     'doclad.file.maxsize' => 1000000,
 ];
