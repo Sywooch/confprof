@@ -14,6 +14,7 @@ use app\models\Docmedal;
 use app\models\Section;
 use app\models\File;
 use app\components\FilesaveBehavior;
+Use app\components\RustextValidator;
 
 /**
  * This is the model class for table "{{%doclad}}".
@@ -92,8 +93,14 @@ class Doclad extends \yii\db\ActiveRecord
             [['doc_sec_id', 'ekis_id', 'doc_us_id', ], 'integer'],
             [['doc_sec_id', ], 'in', 'range' => array_keys($this->aSectionList)],
             [['doc_type', 'doc_sec_id', 'doc_subject', 'doc_description', 'doc_lider_fam', 'doc_lider_name', 'doc_lider_otch', 'doc_lider_email', 'doc_lider_phone', 'ekis_id', 'doc_lider_group', 'doc_lider_level', 'doc_lider_position', 'doc_lider_lesson'], 'required'],
-            [['doc_description'], 'string'],
+            [['doc_lider_fam', 'doc_lider_name', 'doc_lider_otch', 'doc_lider_position', 'doc_lider_lesson', ], 'filter', 'filter' => 'trim', ],
+            [['doc_description'], 'string', 'min' => 32, ],
+            [['doc_lider_email'], 'email', ],
             [['doc_created'], 'safe'],
+//            [['doc_lider_fam', 'doc_lider_name', 'doc_lider_otch', 'doc_lider_position', 'doc_lider_lesson', ], RustextValidator::className(), 'capital' => 0, 'russian' => 0.8, 'other'=>0, ],
+            [['doc_lider_fam', 'doc_lider_name', 'doc_lider_otch', 'doc_lider_position', 'doc_lider_lesson', ], 'match',
+                'pattern' => '|^[А-Яа-яЁё]{2}[-А-Яа-яЁё\\s]*$|u', 'message' => 'Допустимы символы русского алфавита',
+            ],
             [['doc_type'], 'string', 'max' => 16],
             [['doc_type'], 'in', 'range' => array_keys(self::getAllTypes())],
             [['doc_subject', 'doc_lider_fam', 'doc_lider_name', 'doc_lider_otch', 'doc_lider_email', 'doc_lider_phone', 'doc_lider_org', 'doc_lider_group', 'doc_lider_level', 'doc_lider_position', 'doc_lider_lesson'], 'string', 'max' => 255],

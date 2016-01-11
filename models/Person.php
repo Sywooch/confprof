@@ -10,6 +10,7 @@ use yii\db\Expression;
 
 use app\components\Notificator;
 use app\components\ActionBehavior;
+use app\components\RustextValidator;
 use app\models\Section;
 use app\models\Doclad;
 
@@ -108,6 +109,10 @@ class Person extends \yii\db\ActiveRecord
             [['prs_active', 'prs_type', 'prs_sec_id', 'prs_doc_id', 'ekis_id'], 'integer'],
             [['prs_sec_id', ], 'in', 'range' => array_keys($this->aSectionList)],
             [['prs_type', 'prs_fam', 'prs_name', 'prs_otch', 'prs_email', 'prs_position', 'prs_lesson', 'ekis_id', 'prs_group', 'prs_level', 'prs_position', 'prs_lesson', ], 'required'],
+//            [['prs_fam', 'prs_name', 'prs_otch', 'prs_position', 'prs_lesson', ], RustextValidator::className(), 'capital' => 0, 'russian' => 0.8, 'other'=>0, ],
+            [['prs_fam', 'prs_name', 'prs_otch', 'prs_position', 'prs_lesson', ], 'match',
+                'pattern' => '|^[А-Яа-яЁё]{2}[-А-Яа-яЁё\\s]*$|u', 'message' => 'Допустимы символы русского алфавита',
+            ],
 
             [['prs_email', ], 'email', ],
             [['prs_email', ], 'unique',

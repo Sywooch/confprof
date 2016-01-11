@@ -75,7 +75,7 @@ $this->registerJs($sJs, View::POS_READY);
 
     <?= $form->field($model, 'us_email')->textInput(['maxlength' => true]) ?>
 
-    <?= $form->field($model, 'password')->textInput(['maxlength' => true]) ?>
+    <?= $form->field($model, 'password')->passwordInput(['maxlength' => true]) // ) textInput( ?>
 
     <div class="controls">
         <?= Html::submitButton('Регистрация', ['class' => 'btn btn-primary validate']) ?>

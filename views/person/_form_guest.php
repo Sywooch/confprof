@@ -92,6 +92,15 @@ $ekis_id = [
     ],
 ];
 
+$sCss = <<<EOT
+.select2-container--krajee .select2-selection {
+    border-color: #bbbbbb;
+    border-radius: 0px;
+}
+EOT;
+
+$this->registerCss($sCss);
+
 ?>
 
 <div class="col-xs-12 lio_form_block person-form">
@@ -165,7 +174,7 @@ $ekis_id = [
                             <?= $form->field($model, 'prs_email')->textInput(['maxlength' => true, 'class'=>'lio_input', 'placeholder'=>$model->getAttributeLabel('prs_email'), ]) ?>
                         </div>
                         <div class="col-xs-6">
-                            <?= $form->field($model, 'prs_sec_id')->dropDownList($model->aSectionList, ['class' => 'form-control lio_input', 'placeholder'=>$model->getAttributeLabel('prs_sec_id'), ]) // textInput() ?>
+                            <?= $form->field($model, 'prs_sec_id')->dropDownList($model->aSectionList, ['class' => 'lio_input', 'placeholder'=>$model->getAttributeLabel('prs_sec_id'), ]) // textInput() ?>
                         </div>
                     </div>
 
@@ -181,7 +190,7 @@ $ekis_id = [
                             <?= $form->field($model, 'prs_org', ['template' => "{input}"])->hiddenInput() ?>
                         </div>
                         <div class="col-xs-6">
-                            <?= $form->field($model, 'prs_position')->textInput($model->aSectionList, ['class' => 'form-control lio_input', 'placeholder'=>$model->getAttributeLabel('prs_position'), ]) ?>
+                            <?= $form->field($model, 'prs_position')->textInput($model->aSectionList, ['class' => 'lio_input', 'placeholder'=>$model->getAttributeLabel('prs_position'), ]) ?>
                         </div>
                     </div>
 

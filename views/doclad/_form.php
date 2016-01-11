@@ -110,6 +110,16 @@ $ekis_id = [
         'placeholder' => 'Выберите учреждение ...',
     ],
 ];
+
+$sCss = <<<EOT
+.select2-container--krajee .select2-selection {
+    border-color: #bbbbbb;
+    border-radius: 0px;
+}
+EOT;
+
+$this->registerCss($sCss);
+
 // <div class="doclad-form">
 // </div>
 ?>
@@ -295,7 +305,7 @@ $ekis_id = [
 
                 <div class="row">
                     <div class="col-xs-6">
-                        <?= $form->field($model, 'doc_sec_id')->dropDownList($model->aSectionList, ['class' => 'form-control lio_input', 'placeholder'=>$model->getAttributeLabel('doc_sec_id'), ]) // textInput() ?>
+                        <?= $form->field($model, 'doc_sec_id')->dropDownList($model->aSectionList, ['class' => 'lio_input', 'placeholder'=>$model->getAttributeLabel('doc_sec_id'), ]) // textInput() ?>
                     </div>
                 </div>
 

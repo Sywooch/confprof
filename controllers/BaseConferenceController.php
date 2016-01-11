@@ -64,7 +64,7 @@ class BaseConferenceController extends Controller
                     ],
                     [
                         'allow' => true,
-                        'actions' => ['regthankyou', ],
+                        'actions' => ['regthankyou', 'confirm', ],
                         'roles' => ['?', ],
                     ],
                 ],
@@ -107,7 +107,7 @@ class BaseConferenceController extends Controller
     {
         $model = $this->findModel($id);
         return $this->render('//doclad/fullview', [
-            'conference' => $this->findConferenceModel(),
+//            'conference' => $this->findConferenceModel(),
             'model' => $this->findModel($id),
         ]);
 

@@ -105,6 +105,8 @@ class User extends \yii\db\ActiveRecord  implements IdentityInterface
             [['us_created'], 'safe'],
             [['us_group'], 'string', 'max' => 16],
             [['us_email'], 'string', 'max' => 64],
+            [['us_email'], 'unique', ],
+            [['us_email'], 'email', ],
             [['us_pass', 'us_confirmkey', 'us_key'], 'string', 'max' => 255],
             [['password'], 'required'],
             [['password'], 'string', 'max' => 64],
