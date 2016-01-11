@@ -7,12 +7,21 @@ $sfCommonLocal = __DIR__ . DIRECTORY_SEPARATOR . 'common-local.php';
 $sfWebLocal = __DIR__ . DIRECTORY_SEPARATOR . 'web-local.php';
 
 $config = [
-    'id' => 'user',
+    'id' => 'admin',
     'language' => 'ru',
     'name' => 'Конференции: администрирование',
     'components' => [
+        'view' => [
+            'theme' => [
+                'basePath' => '@app/themes/admin',
+                'baseUrl' => '@web/admin',
+                'pathMap' => [
+                    '@app/views' => '@app/themes/admin',
+                ],
+            ],
+        ],
         'user' => [
-            'identityClass' => 'app\models\Adminuser',
+            'identityClass' => 'app\models\_User',
             'enableAutoLogin' => true,
         ],
         'errorHandler' => [

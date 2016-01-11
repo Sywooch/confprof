@@ -26,7 +26,7 @@ $conference = $section->conference;
 
 <p>Вы зарегистрировались в качестве гостя на сайте <?= Yii::$app->name ?>,
     конференция <?php echo Html::encode($conference->cnf_title); ?>,
-    сукция <?php echo Html::encode($section->sec_title); ?>.
+    секция <?php echo Html::encode($section->sec_title); ?>.
 </p>
 
 <p>Для подтверждения email перейдите по ссылке: <?= Html::a(Url::to($aLink, true), Url::to($aLink, true)) ?></p>

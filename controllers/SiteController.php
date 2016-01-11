@@ -51,11 +51,14 @@ class SiteController extends Controller
     {
         if( Yii::$app->id == 'user' ) {
             $this->layout = 'frontend01';
-            return $this->render('index');
         }
         else {
-            return $this->render('admin');
+            if( Yii::$app->user->isGuest ) {
+                return $this->redirect(['site/login']);
+            }
+//            return $this->render('admin');
         }
+        return $this->render('index');
     }
 
     public function actionLogin()

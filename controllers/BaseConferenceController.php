@@ -54,13 +54,18 @@ class BaseConferenceController extends Controller
                 'rules' => [
                     [
                         'allow' => true,
-                        'actions' => ['index', 'list', 'create', 'view', 'update', 'logout', 'delete', 'deletefile', ],
+                        'actions' => ['list', 'create', 'view', 'update', 'logout', 'delete', 'deletefile', ],
                         'roles' => ['@'],
                     ],
                     [
                         'allow' => true,
-                        'actions' => ['register', ],
+                        'actions' => ['index', 'register', 'calendar', 'guest', ],
                         'roles' => ['?', '@'],
+                    ],
+                    [
+                        'allow' => true,
+                        'actions' => ['regthankyou', ],
+                        'roles' => ['?', ],
                     ],
                 ],
             ],
@@ -104,6 +109,17 @@ class BaseConferenceController extends Controller
         return $this->render('//doclad/fullview', [
             'conference' => $this->findConferenceModel(),
             'model' => $this->findModel($id),
+        ]);
+
+    }
+
+    /**
+     * @param $id integer
+     */
+    public function actionCalendar()
+    {
+        return $this->render('//conference/calendar', [
+            'conference' => $this->findConferenceModel(),
         ]);
 
     }

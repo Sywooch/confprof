@@ -29,7 +29,7 @@ class User extends \yii\db\ActiveRecord  implements IdentityInterface
 {
     const USER_GROUP_PERSONAL = 'person';
     const USER_GROUP_ORGANIZATION = 'org';
-    const USER_GROUP_MODERATOR = 'mad';
+    const USER_GROUP_MODERATOR = 'mod';
 
     const STATUS_ACTIVE = 1;
     const STATUS_DELETED = 0;
