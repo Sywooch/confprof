@@ -26,12 +26,12 @@ AppAsset::register($this);
 
 <div class="wrap">
     <?php
-    if( Yii::$app->user->isGuest ) {
-        echo $this->render('//layouts/guest_menu');
-    }
-    else {
+//    if( Yii::$app->user->isGuest ) {
+//        echo $this->render('//layouts/guest_menu');
+//    }
+//    else {
         echo $this->render('//layouts/user_menu');
-    }
+//    }
 //    NavBar::begin([
 //        'brandLabel' => 'My Company',
 //        'brandUrl' => Yii::$app->homeUrl,
@@ -61,6 +61,14 @@ AppAsset::register($this);
         <?= Breadcrumbs::widget([
             'links' => isset($this->params['breadcrumbs']) ? $this->params['breadcrumbs'] : [],
         ]) ?>
+        <?php
+        $aMsg = ['danger', 'success', 'info', 'warning', ];
+        foreach($aMsg As $v) {
+            if( Yii::$app->session->hasFlash($v) ) {
+                echo '<div class="alert alert-'.$v.'" role="alert">'.Html::encode(Yii::$app->session->getFlash($v)).'</div>';
+            }
+        }
+        ?>
         <?= $content ?>
     </div>
 </div>

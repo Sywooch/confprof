@@ -7,6 +7,7 @@ use Yii;
 use yii\db\ActiveRecord;
 use yii\db\Expression;
 use yii\behaviors\TimestampBehavior;
+use yii\behaviors\AttributeBehavior;
 
 use app\models\Person;
 use app\models\Member;
@@ -37,17 +38,26 @@ Use app\components\RustextValidator;
  * @property string $doc_lider_level
  * @property string $doc_lider_position
  * @property string $doc_lider_lesson
+ * @property integer $doc_state
+ * @property string $doc_comment
  */
 class Doclad extends \yii\db\ActiveRecord
 {
     const DOC_TYPE_PERSONAL = 'person';
     const DOC_TYPE_ORG = 'org';
 
+    const DOC_STATUS_NEW = 0;
+    const DOC_STATUS_APPROVE = 1;
+    const DOC_STATUS_NOT_APPROVE = 2;
+    const DOC_STATUS_REVISION = 3;
+
     public $aSectionList = [];
 
     public $file = null;
 
     public $conferenceid = null;
+
+    public $_oldAttributesValues = null;
 
     /**
      * @return array
@@ -92,9 +102,9 @@ class Doclad extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['doc_sec_id', 'ekis_id', 'doc_us_id', 'conferenceid', ], 'integer'],
+            [['doc_sec_id', 'ekis_id', 'doc_us_id', 'conferenceid', 'doc_state', ], 'integer'],
             [['doc_sec_id', ], 'in', 'range' => array_keys($this->aSectionList)],
-            [['doc_type', 'doc_sec_id', 'doc_subject', 'doc_description', 'doc_lider_fam', 'doc_lider_name', 'doc_lider_otch', 'doc_lider_email', 'doc_lider_phone', 'ekis_id', 'doc_lider_group', 'doc_lider_level', 'doc_lider_position', 'doc_lider_lesson'], 'required'],
+            [['doc_type', 'doc_sec_id', 'doc_subject', 'doc_description', 'doc_lider_fam', 'doc_lider_name', 'doc_lider_otch', 'doc_lider_email', 'doc_lider_phone', 'ekis_id', 'doc_lider_group', 'doc_lider_level', 'doc_lider_position', 'doc_lider_lesson', 'doc_state', ], 'required'],
             [['doc_lider_fam', 'doc_lider_name', 'doc_lider_otch', 'doc_lider_position', 'doc_lider_lesson', ], 'filter', 'filter' => 'trim', ],
             [['doc_description'], 'string', 'min' => 32, ],
             [['doc_lider_email'], 'email', ],
@@ -104,6 +114,8 @@ class Doclad extends \yii\db\ActiveRecord
                 'pattern' => '|^[А-Яа-яЁё]{2}[-А-Яа-яЁё\\s]*$|u', 'message' => 'Допустимы символы русского алфавита',
             ],
             [['doc_type'], 'string', 'max' => 16],
+            [['doc_comment'], 'string', ],
+            [['doc_comment'], 'required', 'when' => function($model){ return in_array($model->doc_state, [self::DOC_STATUS_NOT_APPROVE, self::DOC_STATUS_REVISION, ]); }, ],
             [['doc_type'], 'in', 'range' => array_keys(self::getAllTypes())],
             [['doc_subject', 'doc_lider_fam', 'doc_lider_name', 'doc_lider_otch', 'doc_lider_email', 'doc_lider_phone', 'doc_lider_org', 'doc_lider_group', 'doc_lider_level', 'doc_lider_position', 'doc_lider_lesson'], 'string', 'max' => 255],
             [['file'], 'safe'],
@@ -152,8 +164,9 @@ class Doclad extends \yii\db\ActiveRecord
             );
         }
 
-        $aRet['confirmregister'] = [ // подтвкрждение регистрации
-            'us_active',
+        $aRet['changestatus'] = [ // меняем статус
+            'doc_comment',
+            'doc_state',
         ];
         return $aRet;
     }
@@ -186,7 +199,32 @@ class Doclad extends \yii\db\ActiveRecord
             'consultants' => 'Руководители',
             'file' => 'Файл',
             'conferenceid' => 'Конференция',
+            'doc_state' => 'Статус',
+            'status' => 'Статус',
+            'doc_comment' => 'Комментарий',
         ];
+    }
+
+    /**
+     * Получаем список статусов
+     * @return array
+     */
+    public static function getAllStatuses() {
+        return [
+            self::DOC_STATUS_NEW => 'Новый',
+            self::DOC_STATUS_APPROVE => 'Согласован',
+            self::DOC_STATUS_NOT_APPROVE => 'Несогласован',
+            self::DOC_STATUS_REVISION => 'На доработку',
+        ];
+    }
+
+    /**
+     * Текущий статус
+     * @return array
+     */
+    public function getStatus() {
+        $a = self::getAllStatuses();
+        return isset($a[$this->doc_state]) ? $a[$this->doc_state] : '???';
     }
 
     /**

@@ -10,19 +10,14 @@ use yii\filters\VerbFilter;
 use yii\web\Response;
 use yii\widgets\ActiveForm;
 use yii\filters\AccessControl;
+use yii\db\ActiveRecord;
 
-use mosedu\multirows\MultirowsBehavior;
-
-use app\models\Conference;
-use app\models\ConferenceSearch;
+use app\components\Notificator;
 use app\models\User;
-use app\models\LoginForm;
 use app\models\Doclad;
 use app\models\DocladSearch;
 use app\models\Person;
-use app\models\Member;
-use app\models\Docmedal;
-use app\models\File;
+
 
 /**
  * ConferenceController implements the CRUD actions for Conference model.
@@ -32,19 +27,6 @@ class ReportController extends Controller
     public function behaviors()
     {
         return [
-//            'validateConsultant' => [
-//                'class' => MultirowsBehavior::className(),
-//                'model' => Person::className(),
-//            ],
-//            'validateMedals' => [
-//                'class' => MultirowsBehavior::className(),
-//                'model' => Docmedal::className(),
-//            ],
-//            'validateMembers' => [
-//                'class' => MultirowsBehavior::className(),
-//                'model' => Member::className(),
-//            ],
-
             'access' => [
                 'class' => AccessControl::className(),
                 'rules' => [
@@ -91,19 +73,42 @@ class ReportController extends Controller
     public function actionView($id)
     {
         $model = $this->findDoclad($id);
+        $model->_oldAttributesValues = $model->attributes;
+        $model->on(ActiveRecord::EVENT_AFTER_UPDATE, function ($event) {
+            /** @var Doclad $model */
+            $model = $event->sender;
+            if( $model->_oldAttributesValues['doc_state'] != $model->doc_state ) {
+                $oNotify = new Notificator([User::findOne($model->doc_us_id)], $model, 'change_doclad_state');
+                $oNotify->notifyMail('Можератор изменил статус Вашего доклада на сайте "' . Yii::$app->name . '"');
+            }
+        });
+
+
+        $model->scenario = 'changestatus';
+
+        if( Yii::$app->request->isAjax && $model->load(Yii::$app->request->post()) ) {
+            Yii::$app->response->format = Response::FORMAT_JSON;
+            $aValidate = ActiveForm::validate($model);
+
+//            Yii::info('addDoclad(): return json ' . print_r($aRes, true));
+            return $aValidate;
+        }
+
+        if( $model->load(Yii::$app->request->post()) ) {
+            if( $model->save() ) {
+                Yii::$app->session->setFlash('success', 'Данные успешно сохранены');
+                return $this->redirect(['index']);
+            }
+            else {
+                Yii::info('Error save: ' . print_r($model->getErrors(), true));
+            }
+        }
+
         return $this->render('fullview', [
-//            'conference' => $this->findConferenceModel(),
             'model' => $model,
         ]);
 
     }
-
-    /**
-     * @return string
-     */
-    public function actionList() {
-    }
-
 
     /**
      * Finds the Doclad model based on its primary key value.

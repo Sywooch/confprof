@@ -81,6 +81,22 @@ $this->params['breadcrumbs'][] = $this->title;
             ],
             [
                 'class' => 'yii\grid\DataColumn',
+                'attribute' => 'doc_state',
+                'filter' => Doclad::getAllStatuses(),
+                'format' => 'raw',
+                'value' => function ($model, $key, $index, $column) {
+                    /** @var $model app\models\Doclad */
+                    $a = [
+                        Doclad::DOC_STATUS_NEW => '',
+                        Doclad::DOC_STATUS_APPROVE => 'ok',
+                        Doclad::DOC_STATUS_NOT_APPROVE => 'remove',
+                        Doclad::DOC_STATUS_REVISION => 'refresh',
+                    ];
+                    return ($a[$model->doc_state] != '') ? '<span class="glyphicon glyphicon-'.$a[$model->doc_state].'"></span>' : '';
+                },
+            ],
+            [
+                'class' => 'yii\grid\DataColumn',
                 'attribute' => 'doc_lider_fam',
 //                'filter' => Conference::getList(),
                 'format' => 'raw',
@@ -89,8 +105,8 @@ $this->params['breadcrumbs'][] = $this->title;
                     return Html::encode($model->getLeadername(false))
                         . '<br />'
                         . Yii::$app->formatter->asEmail($model->doc_lider_email)
-                        . ' '
-                        . Html::encode($model->doc_lider_phone);
+                        . ', '
+                        . Html::a(str_replace(['(', ')'], [' (', ') '], $model->doc_lider_phone), 'tel:+' . preg_replace('|[^\\d]|', '', $model->doc_lider_phone));
                 },
             ],
 //            'doc_subject',
@@ -111,6 +127,13 @@ $this->params['breadcrumbs'][] = $this->title;
             [
                 'class' => 'yii\grid\ActionColumn',
                 'template' => '{view}', // {delete}  {update}
+                'buttons' => [
+                    'view' => function ($url, $model, $key) {
+                        /** @var Doclad $model */
+                        $options = [];
+                        return Html::a('<span class="glyphicon glyphicon-'.($model->doc_state != Doclad::DOC_STATUS_APPROVE ? 'pencil' : 'eye-open').'"></span>', $url, $options);
+                    },
+                ],
             ],
         ],
     ]); ?>

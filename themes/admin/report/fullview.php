@@ -26,6 +26,11 @@ $attributes = [
         'value' => $model->section ? (Html::encode($model->section->sec_title) . '<br />' . Html::encode($model->section->conference->cnf_title)) : '',
         'format' => 'raw',
     ],
+    [
+        'attribute' => 'status',
+        'value' => Html::encode($model->status),
+        'format' => 'raw',
+    ],
     'doc_subject',
     'doc_description:ntext',
     [
@@ -41,7 +46,11 @@ $attributes = [
 //    'doc_lider_name',
 //    'doc_lider_otch',
     'doc_lider_email:email',
-    'doc_lider_phone',
+    [
+        'attribute' => 'doc_lider_fam',
+        'value' => Html::a(str_replace(['(', ')'], [' (', ') '], $model->doc_lider_phone), 'tel:+' . preg_replace('|[^\\d]|', '', $model->doc_lider_phone)),
+        'format' => 'raw',
+    ],
 //    'ekis_id',
     'doc_lider_org',
 ];
@@ -168,5 +177,16 @@ if( count($aFiles) > 0 ) {
         'model' => $model,
         'attributes' => $attributes,
     ]) ?>
+
+    <?=
+        ($model->doc_state != Doclad::DOC_STATUS_APPROVE) ?
+            $this->render(
+                '_formstatus',
+                [
+                    'model' => $model,
+                ]
+            ) :
+            ''
+    ?>
 
 </div>
