@@ -94,7 +94,11 @@ class ReportController extends Controller
             return $aValidate;
         }
 
-        if( $model->load(Yii::$app->request->post()) ) {
+        if( $model->load(Yii::$app->request->post()) && $model->validate() ) {
+            if( $model->doc_state == Doclad::DOC_STATUS_APPROVE ) {
+                $model->doc_comment = '';
+            }
+
             if( $model->save() ) {
                 Yii::$app->session->setFlash('success', 'Данные успешно сохранены');
                 return $this->redirect(['index']);

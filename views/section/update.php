@@ -8,7 +8,7 @@ use yii\helpers\Html;
 $this->title = 'Изменение секции: ' . ' ' . $model->sec_title;
 $this->params['breadcrumbs'][] = ['label' => 'Секции', 'url' => ['index']];
 //$this->params['breadcrumbs'][] = ['label' => $model->sec_id, 'url' => ['view', 'id' => $model->sec_id]];
-$this->params['breadcrumbs'][] = 'Update';
+$this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="section-update">
 

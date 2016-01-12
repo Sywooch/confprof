@@ -17,7 +17,7 @@ $this->params['breadcrumbs'][] = $this->title;
     <?php // echo $this->render('_search', ['model' => $searchModel]); ?>
 
     <p>
-        <?= Html::a('Create Section', ['create'], ['class' => 'btn btn-success']) ?>
+        <?= Html::a('Добавить секцию', ['create'], ['class' => 'btn btn-success']) ?>
     </p>
 
     <?= GridView::widget([
@@ -39,7 +39,10 @@ $this->params['breadcrumbs'][] = $this->title;
 //            'sec_cnf_id',
 //            'sec_created',
 
-            ['class' => 'yii\grid\ActionColumn'],
+            [
+                'class' => 'yii\grid\ActionColumn',
+                'template' => '{update}', // {view}
+            ],
         ],
     ]); ?>
 

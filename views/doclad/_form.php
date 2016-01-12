@@ -364,7 +364,7 @@ $this->registerCss($sCss);
                 ?>
 
                 <?php
-                    if( !$model->isNewRecord ) {
+                    if( $model->doc_state == Doclad::DOC_STATUS_APPROVE ) {
                         echo $this->render(
                             '_file_upload',
                             [
@@ -380,6 +380,33 @@ $this->registerCss($sCss);
                         <div class="lio_form_line"></div>
                     </div>
                 </div>
+
+                <?php
+                if( !empty($model->doc_comment) ) {
+                ?>
+                    <div class="row">
+                        <div class="col-xs-12">
+                            <div class="lio_form_name">Замечания модератора</div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-xs-12">
+                            <div style="padding: 0 10px;">
+                                <?= nl2br(Html::encode($model->doc_comment)) ?>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-xs-12">
+                            <div class="lio_form_line"></div>
+                        </div>
+                    </div>
+
+                <?php
+                }
+                ?>
 
                 <div class="row">
                     <div class="col-xs-3 col-xs-offset-9">

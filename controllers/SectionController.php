@@ -3,11 +3,14 @@
 namespace app\controllers;
 
 use Yii;
-use app\models\Section;
-use app\models\SectionSearch;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
+use yii\filters\AccessControl;
+
+use app\models\Section;
+use app\models\SectionSearch;
+use app\models\User;
 
 /**
  * SectionController implements the CRUD actions for Section model.
@@ -17,6 +20,16 @@ class SectionController extends Controller
     public function behaviors()
     {
         return [
+            'access' => [
+                'class' => AccessControl::className(),
+                'rules' => [
+                    [
+                        'allow' => true,
+                        'actions' => ['index', 'view', 'create', 'update'],
+                        'roles' => [User::USER_GROUP_MODERATOR, ],
+                    ],
+                ],
+            ],
             'verbs' => [
                 'class' => VerbFilter::className(),
                 'actions' => [
@@ -100,7 +113,7 @@ class SectionController extends Controller
      */
     public function actionDelete($id)
     {
-        $this->findModel($id)->delete();
+//        $this->findModel($id)->delete();
 
         return $this->redirect(['index']);
     }
@@ -117,7 +130,7 @@ class SectionController extends Controller
         if (($model = Section::findOne($id)) !== null) {
             return $model;
         } else {
-            throw new NotFoundHttpException('The requested page does not exist.');
+            throw new NotFoundHttpException('Запрашиваемая страница не существует.');
         }
     }
 }

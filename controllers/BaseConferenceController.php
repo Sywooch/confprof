@@ -5,6 +5,7 @@ namespace app\controllers;
 use Yii;
 use yii\helpers\ArrayHelper;
 use yii\web\Controller;
+use yii\web\ForbiddenHttpException;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 use yii\web\Response;
@@ -286,6 +287,9 @@ class BaseConferenceController extends Controller
         }
         else {
             $model = $this->findModel($id);
+            if( $model->doc_us_id != Yii::$app->user->getId() ) {
+                throw new ForbiddenHttpException('Вам запрещено просматривать данную страницу');
+            }
         }
 
         $model->aSectionList = ArrayHelper::map($oConference->sections, 'sec_id', 'sec_title');
@@ -329,6 +333,7 @@ class BaseConferenceController extends Controller
         }
 
         if ($model->load(Yii::$app->request->post()) ) {
+            $model->doc_state = Doclad::DOC_STATUS_NEW;
             $bOk = $model->save();
             if( $bOk ) {
                 $bNew = $model->isNewRecord;

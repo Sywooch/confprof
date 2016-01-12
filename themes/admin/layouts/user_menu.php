@@ -6,7 +6,7 @@ use app\models\User;
 
 NavBar::begin([
     'brandLabel' => 'Конференции',
-    'brandUrl' => Yii::$app->homeUrl,
+    'brandUrl' => '/',
     'options' => [
         'class' => 'navbar-inverse navbar-fixed-top',
     ],
@@ -22,6 +22,7 @@ if( Yii::$app->user->can(User::USER_GROUP_MODERATOR) ) {
         [
             ['label' => 'Доклады', 'url' => ['report/index']],
             ['label' => 'Гости', 'url' => ['guest/index']],
+            ['label' => 'Секции', 'url' => ['section/index']],
         ]
     );
 }
