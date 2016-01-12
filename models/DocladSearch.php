@@ -18,7 +18,7 @@ class DocladSearch extends Doclad
     public function rules()
     {
         return [
-            [['doc_id', 'doc_sec_id', 'ekis_id'], 'integer'],
+            [['doc_id', 'doc_sec_id', 'ekis_id', 'conferenceid', ], 'integer'],
             [['doc_type', 'doc_subject', 'doc_description', 'doc_created', 'doc_lider_fam', 'doc_lider_name', 'doc_lider_otch', 'doc_lider_email', 'doc_lider_phone', 'doc_lider_org', 'doc_lider_group', 'doc_lider_level', 'doc_lider_position', 'doc_lider_lesson'], 'safe'],
         ];
     }
@@ -42,16 +42,22 @@ class DocladSearch extends Doclad
     public function search($params, $aDop = [])
     {
         $query = Doclad::find();
-        $query->with(['section', 'section.conference',]);
+        $query->with(
+            Yii::$app->user->can(User::USER_GROUP_MODERATOR) ?
+                ['section', 'section.conference', 'files', ] : // 'persons', 'members',
+                ['section', 'section.conference', 'files', ]
+        );
+        $query->joinWith(['section', 'section.conference', ]);
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
         ]);
 
-        if( !isset($params['DocladSearch']) ) {
-            $params['DocladSearch'] = [];
+        $sFormname = $this->formName();
+        if( !isset($params[$sFormname]) ) {
+            $params[$sFormname] = [];
         }
-        $params['DocladSearch'] = array_merge($params['DocladSearch'], $aDop);
+        $params[$sFormname] = array_merge($params[$sFormname], $aDop);
 
         $this->load($params);
 
@@ -61,13 +67,22 @@ class DocladSearch extends Doclad
             return $dataProvider;
         }
 
-        $query->andFilterWhere([
+        $aFilters = [
             'doc_id' => $this->doc_id,
             'doc_sec_id' => $this->doc_sec_id,
             'doc_created' => $this->doc_created,
             'ekis_id' => $this->ekis_id,
-            'doc_us_id' => Yii::$app->user->getId(), // TODO: добавил пока в черновую сюда, потом посмотрим, что поменять для модератора
-        ]);
+
+        ];
+
+        if( !Yii::$app->user->can(User::USER_GROUP_MODERATOR) ) {
+            $aFilters['doc_us_id'] = Yii::$app->user->getId();
+        }
+
+        if( $this->conferenceid ) {
+            $query->andFilterWhere([ Conference::tableName() . '.cnf_id' => $this->conferenceid, ]);
+        }
+        $query->andFilterWhere($aFilters);
 
         $query->andFilterWhere(['like', 'doc_type', $this->doc_type])
             ->andFilterWhere(['like', 'doc_subject', $this->doc_subject])

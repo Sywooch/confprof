@@ -2,6 +2,7 @@
 
 namespace app\controllers;
 
+use app\models\User;
 use Yii;
 use yii\filters\AccessControl;
 use yii\web\Controller;
@@ -69,6 +70,9 @@ class SiteController extends Controller
 
         $model = new LoginForm();
         if ($model->load(Yii::$app->request->post()) && $model->login()) {
+            if( Yii::$app->user->can(User::USER_GROUP_MODERATOR) ) {
+                return $this->redirect('/admin');
+            }
             return $this->goBack();
         }
         return $this->render('login', [

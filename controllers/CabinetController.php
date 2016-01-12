@@ -2,6 +2,7 @@
 
 namespace app\controllers;
 
+use app\models\User;
 use Yii;
 use yii\web\NotFoundHttpException;
 use yii\filters\AccessControl;
@@ -36,6 +37,9 @@ class CabinetController extends BaseConferenceController
      * @return string
      */
     public function actionIndex() {
+        if( Yii::$app->user->can(User::USER_GROUP_MODERATOR) ) {
+            return $this->redirect(['admin/report']);
+        }
         return parent::actionList();
 //        $aDop = ['doc_us_id' => Yii::$app->user->getId()];
 //        $searchModel = new DocladSearch();

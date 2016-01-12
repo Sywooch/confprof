@@ -47,6 +47,8 @@ class Doclad extends \yii\db\ActiveRecord
 
     public $file = null;
 
+    public $conferenceid = null;
+
     /**
      * @return array
      */
@@ -90,7 +92,7 @@ class Doclad extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['doc_sec_id', 'ekis_id', 'doc_us_id', ], 'integer'],
+            [['doc_sec_id', 'ekis_id', 'doc_us_id', 'conferenceid', ], 'integer'],
             [['doc_sec_id', ], 'in', 'range' => array_keys($this->aSectionList)],
             [['doc_type', 'doc_sec_id', 'doc_subject', 'doc_description', 'doc_lider_fam', 'doc_lider_name', 'doc_lider_otch', 'doc_lider_email', 'doc_lider_phone', 'ekis_id', 'doc_lider_group', 'doc_lider_level', 'doc_lider_position', 'doc_lider_lesson'], 'required'],
             [['doc_lider_fam', 'doc_lider_name', 'doc_lider_otch', 'doc_lider_position', 'doc_lider_lesson', ], 'filter', 'filter' => 'trim', ],
@@ -183,6 +185,7 @@ class Doclad extends \yii\db\ActiveRecord
             'members' => 'Участники',
             'consultants' => 'Руководители',
             'file' => 'Файл',
+            'conferenceid' => 'Конференция',
         ];
     }
 

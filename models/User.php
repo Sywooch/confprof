@@ -31,6 +31,8 @@ class User extends \yii\db\ActiveRecord  implements IdentityInterface
     const USER_GROUP_ORGANIZATION = 'org';
     const USER_GROUP_MODERATOR = 'mod';
 
+    const USER_GROUP_MEMBER = 'modregister';
+
     const STATUS_ACTIVE = 1;
     const STATUS_DELETED = 0;
 
@@ -100,7 +102,7 @@ class User extends \yii\db\ActiveRecord  implements IdentityInterface
     {
         return [
             [['us_email', 'us_group', ], 'required'],
-            [['us_group'], 'in', 'range' => array_keys(self::getRegGroups()), ],
+            [['us_group'], 'in', 'range' => array_keys($this->scenario == 'register' ? self::getRegGroups() : self::getAllGroups()), ],
             [['us_active', 'us_conference_id', ], 'integer'],
             [['us_created'], 'safe'],
             [['us_group'], 'string', 'max' => 16],
@@ -143,6 +145,8 @@ class User extends \yii\db\ActiveRecord  implements IdentityInterface
             'password',
             'us_group',
         ];
+
+        $aRet['modregister'] = $aRet['register'];
 
         $aRet['confirmregister'] = [ // подтвкрждение регистрации
             'us_active',

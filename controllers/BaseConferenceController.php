@@ -59,13 +59,13 @@ class BaseConferenceController extends Controller
                     ],
                     [
                         'allow' => true,
-                        'actions' => ['index', 'register', 'calendar', 'guest', ],
+                        'actions' => ['index', 'register', 'calendar', 'guest', 'login', ],
                         'roles' => ['?', '@'],
                     ],
                     [
                         'allow' => true,
                         'actions' => ['regthankyou', 'confirm', ],
-                        'roles' => ['?', ],
+                        'roles' => ['?', '@'],
                     ],
                 ],
             ],
@@ -223,6 +223,10 @@ class BaseConferenceController extends Controller
      */
     public function actionConfirm($id)
     {
+        if( !Yii::$app->user->isGuest ) {
+            return $this->goHome();
+        }
+
         $oConference = $this->findConferenceModel();
         return $this->render(
             '//user/confirm_register',
@@ -383,6 +387,9 @@ class BaseConferenceController extends Controller
      * @return string
      */
     public function actionRegthankyou() {
+        if( !Yii::$app->user->isGuest ) {
+            return $this->goHome();
+        }
         return $this->render(
             '//person/ok_guestregistr', [
             ]
