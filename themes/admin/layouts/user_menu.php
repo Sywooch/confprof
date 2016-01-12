@@ -21,6 +21,7 @@ if( Yii::$app->user->can(User::USER_GROUP_MODERATOR) ) {
         $items,
         [
             ['label' => 'Доклады', 'url' => ['report/index']],
+            ['label' => 'Гости', 'url' => ['guest/index']],
         ]
     );
 }

@@ -245,6 +245,7 @@ class Person extends \yii\db\ActiveRecord
             'prs_lesson' => 'Предмет',
             'prs_created' => 'Дата регистрации',
             'prs_confirmkey' => 'Ключик проверки email',
+            'conferenceid' => 'Конференция',
         ];
     }
 

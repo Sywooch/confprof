@@ -28,3 +28,4 @@ phpunit.phar
 /composer.lock
 /acc-local.php
 /web/images/doclad
+/rbac
