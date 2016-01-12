@@ -49,7 +49,7 @@ $this->params['breadcrumbs'][] = $this->title;
                     /** @var $model app\models\Person */
                     return Html::encode($model->getPersonname(false) )
                     . ' '
-                    . Html::encode($model->prs_email)
+                    . Yii::$app->formatter->asEmail($model->prs_email)
                     . '<br />'
                     . Html::encode($model->prs_org);
                 },

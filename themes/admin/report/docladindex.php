@@ -88,7 +88,7 @@ $this->params['breadcrumbs'][] = $this->title;
                     /** @var $model app\models\Doclad */
                     return Html::encode($model->getLeadername(false))
                         . '<br />'
-                        . Html::encode($model->doc_lider_email)
+                        . Yii::$app->formatter->asEmail($model->doc_lider_email)
                         . ' '
                         . Html::encode($model->doc_lider_phone);
                 },
