@@ -114,7 +114,7 @@ class ExcelexportBehavior extends Behavior {
                 count($this->columnWidth),
                 count($this->columnTitles),
                 count($this->columnValues)
-            )+1
+            )
         );
 
         $n = $nRow;
