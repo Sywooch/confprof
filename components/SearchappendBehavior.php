@@ -44,10 +44,12 @@ class SearchappendBehavior extends Behavior {
      */
     public function getFormAttributeData($sForm, $sName, $sVal, $bArray = false) {
         if( $sForm == '' ) {
-            return [rawurlencode($sName).($bArray ? '[]' : ''), rawurlencode($sVal)];
+//            Yii::info('getFormAttributeData(): ' . print_r([rawurlencode($sName).($bArray ? '[]' : ''), rawurlencode($sVal)], true));
+            return [$sName.($bArray ? '[]' : ''), $sVal];
         }
         else {
-            return [$sForm . '['.rawurlencode($sName).']'.($bArray ? '[]' : ''), rawurlencode($sVal)];
+//            Yii::info('getFormAttributeData(): ' . print_r([$sForm . '['.rawurlencode($sName).']'.($bArray ? '[]' : ''), rawurlencode($sVal)], true));
+            return [$sForm . '['.$sName.']'.($bArray ? '[]' : ''), $sVal];
         }
     }
 
@@ -56,14 +58,15 @@ class SearchappendBehavior extends Behavior {
      * @return array
      */
     public function getSearchAttributes() {
-        $aAttr = $this->owner->safeAttributes();
+        $model = $this->owner;
+        $aAttr = $model->safeAttributes();
         $aRet = [];
         foreach($aAttr As $v) {
-            if( empty($this->$v) ) {
+            if( empty($model->$v) ) {
                 continue;
             }
             // $aRet[$sForm . '['.$v.']'] = $this->$v;
-            $aRet[$v] = $this->$v;
+            $aRet[$v] = $model->$v;
         }
         return $aRet;
     }
@@ -79,12 +82,12 @@ class SearchappendBehavior extends Behavior {
         foreach($aAttr As $k=>$v) {
             if( is_array($v) ) {
                 foreach($v As $v1) {
-                    $aRet[] = implode('=', $this->getFormAttributeData($sForm, $k, $v1, true));
+                    $aRet[] = implode('=', $this->getFormAttributeData($sForm, $k, rawurlencode($v1), true));
 //                    $aRet[] = $sForm . '['.rawurlencode($k).'][]=' . rawurlencode($v1);
                 }
             }
             else {
-                $aRet[] = implode('=', $this->getFormAttributeData($sForm, $k, $v, false));
+                $aRet[] = implode('=', $this->getFormAttributeData($sForm, $k, rawurlencode($v), false));
 //                $aRet[] = $sForm . '['.rawurlencode($k).']=' . rawurlencode($v);
             }
         }
@@ -97,6 +100,7 @@ class SearchappendBehavior extends Behavior {
      */
     public function getSearchArray() {
         $aAttr = $this->getSearchAttributes();
+        Yii::info('getSearchArray(): ' . print_r($aAttr, true));
         $sForm = $this->getOwnerFormName();
         $aRet = [];
         foreach($aAttr As $k=>$v) {
@@ -115,6 +119,7 @@ class SearchappendBehavior extends Behavior {
             else {
                 list($sn, $sv) = $this->getFormAttributeData($sForm, $k, $v, false);
                 $aRet[$sn] = $sv;
+                Yii::info('getSearchArray(): $k = '.$k.', $v = ' . $v . ', $sn = ' . $sn . ', $sv = ' . $sv);
 //                if( $sForm == '' ) {
 //                    $aRet[$k] = rawurlencode($v);
 //                }

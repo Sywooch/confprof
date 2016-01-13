@@ -11,12 +11,14 @@ use yii\web\Response;
 use yii\widgets\ActiveForm;
 use yii\filters\AccessControl;
 use yii\db\ActiveRecord;
+use yii\helpers\Html;
 
 use app\components\Notificator;
 use app\models\User;
 use app\models\Doclad;
 use app\models\DocladSearch;
 use app\models\Person;
+use app\components\ExcelexportBehavior;
 
 
 /**
@@ -32,11 +34,77 @@ class ReportController extends Controller
                 'rules' => [
                     [
                         'allow' => true,
-                        'actions' => ['index', 'view', 'changestatus', 'changeformat', ],
+                        'actions' => ['index', 'view', 'changestatus', 'changeformat', 'export', ],
                         'roles' => [User::USER_GROUP_MODERATOR, ],
                     ],
                 ],
             ],
+
+            /*
+             * Экспорт в Excel
+             */
+            'excelExport' => [
+                'class' => ExcelexportBehavior::className(),
+                'dataTitle' => 'Доклады',
+                'nStartRow' => 1,
+                'columnTitles' => [
+                    'Тема',
+                    'Тип',
+                    'Конференция',
+                    'Секция',
+                    'Лидер',
+                    'Email',
+                    'Телефон',
+                    'Организация',
+                    'Класс / должность',
+                    'Согласование',
+                    'Формат',
+                ],
+                'columnWidth' => [
+                    30,
+                    20,
+                    30,
+                    30,
+                    30,
+                    20,
+                    20,
+                    40,
+                    20,
+                    20,
+                    20,
+                ],
+                'columnValues' => [
+                    'doc_subject',
+                    function($model, $index) {
+                        /** @var Doclad $model */
+                        Yii::info('Raw: ' . $index . ' + ' . $model->doc_subject);
+                        return $model->typeTitle();
+                    },
+                    function($model, $index) {
+                        /** @var Doclad $model */
+                        return $model->section->conference->cnf_title;
+                    },
+                    function($model, $index) {
+                        /** @var Doclad $model */
+                        return $model->section->sec_title;
+                    },
+                    function($model, $index) {
+                        /** @var Doclad $model */
+                        return $model->getLeadername(false);
+                    },
+                    'doc_lider_email',
+                    'doc_lider_phone',
+                    'doc_lider_org',
+                    function($model, $index) {
+                        /** @var Doclad $model */
+                        return $model->doc_type == Doclad::DOC_TYPE_PERSONAL ?
+                            ($model->doc_lider_group . ' / ' . $model->doc_lider_level) :
+                            ($model->doc_lider_position . ' / ' . $model->doc_lider_lesson) ;
+                    },
+                    'status',
+                    'format',
+                ],
+            ]
 
 //            'verbs' => [
 //                'class' => VerbFilter::className(),
@@ -64,6 +132,30 @@ class ReportController extends Controller
                 'dataProvider' => $dataProvider,
             ]
         );
+    }
+
+    /**
+     * Export data
+     * @return mixed
+     */
+    public function actionExport()
+    {
+        $searchModel = new DocladSearch();
+        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+
+        $sDir = Yii::getAlias('@webroot/assets');
+        $sFileName = $sDir . DIRECTORY_SEPARATOR . 'doclad-'.date('Y-m-d-H-i-s').'.xls';
+        $this->clearDestinationDir($sDir, 'xls', time() - 300);
+        $this->exportToFile($dataProvider, $sFileName);
+
+        Yii::$app->response->sendFile($sFileName);
+
+//        return $this->renderContent(
+//            Html::a(
+//                'Загрузить',
+//                substr($sFileName, str_replace(DIRECTORY_SEPARATOR, '/', strlen($_SERVER['DOCUMENT_ROOT'])))
+//            )
+//        );
     }
 
     /**

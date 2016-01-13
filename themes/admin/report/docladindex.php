@@ -161,10 +161,10 @@ $this->params['breadcrumbs'][] = $this->title;
 
 <div class="row">
     <div class="col-xs-12">
-        <?= '' /*Html::a(
+        <?= Html::a(
             'Экспорт в xls',
             array_merge(['export',], $searchModel->getSearchArray()),
             ['class' => 'btn btn-default', ]
-        )*/ ?>
+        ) ?>
     </div>
 </div>
