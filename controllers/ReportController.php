@@ -32,7 +32,7 @@ class ReportController extends Controller
                 'rules' => [
                     [
                         'allow' => true,
-                        'actions' => ['index', 'view', ],
+                        'actions' => ['index', 'view', 'changestatus', 'changeformat', ],
                         'roles' => [User::USER_GROUP_MODERATOR, ],
                     ],
                 ],
@@ -73,23 +73,65 @@ class ReportController extends Controller
     public function actionView($id)
     {
         $model = $this->findDoclad($id);
+        if( $model->doc_state != Doclad::DOC_STATUS_APPROVE ) {
+            $model->scenario = 'changestatus';
+        }
+        else {
+            if( (count($model->files) > 0) && ($model->doc_format == Doclad::DOC_FORMAT_NOFORMAT) ) {
+                $model->scenario = 'changeformat';
+            }
+        }
+
+        return $this->changeDoclad($model);
+    }
+
+    /**
+     * Change doclad status
+     * @param $id integer
+     */
+    public function actionChangestatus($id)
+    {
+        $model = $this->findDoclad($id);
+        $model->scenario = 'changestatus';
+
+        return $this->changeDoclad($model);
+    }
+
+    /**
+     * Change doclad status
+     * @param $id integer
+     */
+    public function actionChangeformat($id)
+    {
+        $model = $this->findDoclad($id);
+        $model->scenario = 'changeformat';
+
+        return $this->changeDoclad($model);
+    }
+
+    /**
+     * @param Doclad $model
+     * @return array|string|Response
+     */
+    public function changeDoclad($model) {
         $model->_oldAttributesValues = $model->attributes;
         $model->on(ActiveRecord::EVENT_AFTER_UPDATE, function ($event) {
             /** @var Doclad $model */
             $model = $event->sender;
             if( $model->_oldAttributesValues['doc_state'] != $model->doc_state ) {
                 $oNotify = new Notificator([User::findOne($model->doc_us_id)], $model, 'change_doclad_state');
-                $oNotify->notifyMail('Можератор изменил статус Вашего доклада на сайте "' . Yii::$app->name . '"');
+                $oNotify->notifyMail('Модератор изменил статус Вашего доклада на сайте "' . Yii::$app->name . '"');
+            }
+
+            if( $model->_oldAttributesValues['doc_format'] != $model->doc_format ) {
+                $oNotify = new Notificator([User::findOne($model->doc_us_id)], $model, 'change_doclad_format');
+                $oNotify->notifyMail('Модератор изменил формат представления Вашего доклада на сайте "' . Yii::$app->name . '"');
             }
         });
-
-
-        $model->scenario = 'changestatus';
 
         if( Yii::$app->request->isAjax && $model->load(Yii::$app->request->post()) ) {
             Yii::$app->response->format = Response::FORMAT_JSON;
             $aValidate = ActiveForm::validate($model);
-
 //            Yii::info('addDoclad(): return json ' . print_r($aRes, true));
             return $aValidate;
         }
@@ -111,7 +153,6 @@ class ReportController extends Controller
         return $this->render('fullview', [
             'model' => $model,
         ]);
-
     }
 
     /**

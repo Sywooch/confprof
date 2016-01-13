@@ -333,7 +333,9 @@ class BaseConferenceController extends Controller
         }
 
         if ($model->load(Yii::$app->request->post()) ) {
-            $model->doc_state = Doclad::DOC_STATUS_NEW;
+            if( $model->doc_state != Doclad::DOC_STATUS_APPROVE ) {
+                $model->doc_state = Doclad::DOC_STATUS_NEW;
+            }
             $bOk = $model->save();
             if( $bOk ) {
                 $bNew = $model->isNewRecord;

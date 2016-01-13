@@ -31,6 +31,11 @@ $attributes = [
         'value' => Html::encode($model->status),
         'format' => 'raw',
     ],
+    [
+        'attribute' => 'format',
+        'value' => ($model->doc_format != Doclad::DOC_FORMAT_NOFORMAT) ? Html::encode($model->format) : '',
+        'format' => 'raw',
+    ],
     'doc_subject',
     'doc_description:ntext',
     [
@@ -157,6 +162,19 @@ if( count($aFiles) > 0 ) {
 }
 
 // ***************************************************************************************************
+
+$aScenarios = [
+    'changestatus' => [
+        'form' => '_formstatus',
+        'button' => 'Согласовать',
+        'action' => 'changestatus',
+    ],
+    'changeformat' => [
+        'form' => '_formformat',
+        'button' => 'Формат представления',
+        'action' => 'changeformat',
+    ],
+];
 ?>
 <div class="doclad-view">
 
@@ -178,15 +196,41 @@ if( count($aFiles) > 0 ) {
         'attributes' => $attributes,
     ]) ?>
 
-    <?=
-        ($model->doc_state != Doclad::DOC_STATUS_APPROVE) ?
+    <?php
+    if( !in_array($model->scenario, array_keys($aScenarios)) ) {
+        foreach($aScenarios As $k=>$v) {
+            echo Html::a($v['button'], [$v['action'], 'id'=>$model->doc_id], ['class' => 'btn btn-success']) . ' ';
+        }
+    }
+    else {
+        echo $this->render(
+            $aScenarios[$model->scenario]['form'],
+            [
+                'model' => $model,
+            ]
+        );
+    }
+    ?>
+    <?= '' /*
+        ($model->scenario == 'changestatus') ?
             $this->render(
                 '_formstatus',
                 [
                     'model' => $model,
                 ]
             ) :
-            ''
+            '' */
+    ?>
+
+    <?= '' /*
+        ($model->scenario == 'changeformat') ?
+            $this->render(
+                '_formformat',
+                [
+                    'model' => $model,
+                ]
+            ) :
+            '' */
     ?>
 
 </div>

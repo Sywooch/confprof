@@ -3,6 +3,7 @@
 use yii\helpers\Html;
 use yii\grid\GridView;
 use app\models\File;
+use app\models\Doclad;
 
 /* @var $this yii\web\View */
 /* @var $searchModel app\models\DocladSearch */
@@ -79,7 +80,32 @@ $this->params['breadcrumbs'][] = $this->title;
 
             [
                 'class' => 'yii\grid\ActionColumn',
-                'template' => '{view} {update}', // {delete}
+                'template' => '{update}', // {view} {delete}
+                'buttons' =>[
+                    'update' => function ($url, $model, $key) {
+                        /** @var Doclad $model */
+                        $sIcon = 'pencil';
+                        $sDopUrl = '';
+                        if( !in_array($model->doc_state, [Doclad::DOC_STATUS_NEW, Doclad::DOC_STATUS_APPROVE]) ) {
+                            // if( !empty($model->doc_comment) ) {}
+                            $sIcon = 'question-sign';
+                            $sDopUrl = '#commentpart';
+                        }
+                        else {
+                            if( ($model->doc_state == Doclad::DOC_STATUS_APPROVE) && ( count($model->files) == 0 ) ) {
+                                $sIcon = 'open-file';
+                                $sDopUrl = '#fileuploadpart';
+                            }
+
+                        }
+                        $options = [
+                            'title' => 'Изменить',
+                            'aria-label' => 'Изменить',
+                            'data-pjax' => '0',
+                        ];
+                        return Html::a('<span class="glyphicon glyphicon-'.$sIcon.'"></span>', $url . $sDopUrl, $options);
+                    }
+                ],
             ],
         ],
     ]); ?>

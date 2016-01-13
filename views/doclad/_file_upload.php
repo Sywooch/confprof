@@ -122,6 +122,7 @@ EOT;
 //    $pluginOptions['initialPreviewConfig '] = $aConf;
 }
 
+echo '<div class="alert-success" style="padding: 15px 15px 0; margin-bottom: 20px; border: 2px solid #3c763d;"><p>Загрузите файл работы</p></div>';
 echo $form
 ->field(
     $model,

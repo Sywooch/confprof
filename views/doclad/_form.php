@@ -363,6 +363,8 @@ $this->registerCss($sCss);
                 );
                 ?>
 
+                <a name="fileuploadpart" id="fileuploadpart"></a>
+
                 <?php
                     if( $model->doc_state == Doclad::DOC_STATUS_APPROVE ) {
                         echo $this->render(
@@ -384,9 +386,10 @@ $this->registerCss($sCss);
                 <?php
                 if( !empty($model->doc_comment) ) {
                 ?>
+                    <div class="alert-danger" style="padding-bottom: 24px; border: 2px solid #a94442;">
                     <div class="row">
                         <div class="col-xs-12">
-                            <div class="lio_form_name">Замечания модератора</div>
+                            <div class="lio_form_name">Замечания модератора <a name="commentpart" id="commentpart"></a> </div>
                         </div>
                     </div>
 
@@ -396,6 +399,7 @@ $this->registerCss($sCss);
                                 <?= nl2br(Html::encode($model->doc_comment)) ?>
                             </div>
                         </div>
+                    </div>
                     </div>
 
                     <div class="row">

@@ -23,6 +23,8 @@ $sLink = str_replace('/admin/', '/', Url::to($aLink, true));
 
 <p>Модератор изменил статус Вашего доклада на сайте <?= Yii::$app->name ?>.</p>
 
+<p>Доклад <?= Html::encode($data->doc_subject) ?>.</p>
+
 <?php
 if( $data->doc_state == Doclad::DOC_STATUS_APPROVE ) {
 ?>

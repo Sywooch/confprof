@@ -40,6 +40,7 @@ Use app\components\RustextValidator;
  * @property string $doc_lider_lesson
  * @property integer $doc_state
  * @property string $doc_comment
+ * @property integer $doc_format
  */
 class Doclad extends \yii\db\ActiveRecord
 {
@@ -50,6 +51,11 @@ class Doclad extends \yii\db\ActiveRecord
     const DOC_STATUS_APPROVE = 1;
     const DOC_STATUS_NOT_APPROVE = 2;
     const DOC_STATUS_REVISION = 3;
+
+    const DOC_FORMAT_NOFORMAT = 0;
+    const DOC_FORMAT_STAND = 1;
+    const DOC_FORMAT_TALK = 2;
+    const DOC_FORMAT_PUBLICATION = 3;
 
     public $aSectionList = [];
 
@@ -102,8 +108,9 @@ class Doclad extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['doc_sec_id', 'ekis_id', 'doc_us_id', 'conferenceid', 'doc_state', ], 'integer'],
-            [['doc_sec_id', ], 'in', 'range' => array_keys($this->aSectionList)],
+            [['doc_sec_id', 'ekis_id', 'doc_us_id', 'conferenceid', 'doc_state', 'doc_format', ], 'integer'],
+            [['doc_sec_id', ], 'in', 'range' => array_keys($this->aSectionList), ],
+            [['doc_format', ], 'in', 'range' => array_keys($this->getAllFormats()), ],
             [['doc_type', 'doc_sec_id', 'doc_subject', 'doc_description', 'doc_lider_fam', 'doc_lider_name', 'doc_lider_otch', 'doc_lider_email', 'doc_lider_phone', 'ekis_id', 'doc_lider_group', 'doc_lider_level', 'doc_lider_position', 'doc_lider_lesson', 'doc_state', ], 'required'],
             [['doc_lider_fam', 'doc_lider_name', 'doc_lider_otch', 'doc_lider_position', 'doc_lider_lesson', ], 'filter', 'filter' => 'trim', ],
             [['doc_description'], 'string', 'min' => 32, ],
@@ -168,6 +175,10 @@ class Doclad extends \yii\db\ActiveRecord
             'doc_comment',
             'doc_state',
         ];
+
+        $aRet['changeformat'] = [ // меняем формат вытупления
+            'doc_format',
+        ];
         return $aRet;
     }
 
@@ -202,7 +213,31 @@ class Doclad extends \yii\db\ActiveRecord
             'doc_state' => 'Статус',
             'status' => 'Статус',
             'doc_comment' => 'Комментарий',
+            'doc_format' => 'Формат',
+            'format' => 'Формат выступления',
         ];
+    }
+
+    /**
+     * Получаем список форматов выступления
+     * @return array
+     */
+    public static function getAllFormats() {
+        return [
+            self::DOC_FORMAT_NOFORMAT => '',
+            self::DOC_FORMAT_PUBLICATION => 'Публикация',
+            self::DOC_FORMAT_TALK => 'Выступление',
+            self::DOC_FORMAT_STAND => 'Стендовый доклад',
+        ];
+    }
+
+    /**
+     * Текущий формат
+     * @return array
+     */
+    public function getFormat() {
+        $a = self::getAllFormats();
+        return isset($a[$this->doc_format]) ? $a[$this->doc_format] : '???';
     }
 
     /**

@@ -76,7 +76,8 @@ $this->params['breadcrumbs'][] = $this->title;
                 'format' => 'raw',
                 'value' => function ($model, $key, $index, $column) {
                     /** @var $model app\models\Doclad */
-                    return Html::encode($model->typeTitle());
+                    return Html::encode($model->typeTitle())
+                        . ($model->doc_format != Doclad::DOC_FORMAT_NOFORMAT ? ('<br />' . Html::encode($model->getFormat())) : '');
                 },
             ],
             [
@@ -126,12 +127,30 @@ $this->params['breadcrumbs'][] = $this->title;
 
             [
                 'class' => 'yii\grid\ActionColumn',
-                'template' => '{view}', // {delete}  {update}
+                'template' => '{view} {filedownload}', // {delete}  {update}
                 'buttons' => [
                     'view' => function ($url, $model, $key) {
                         /** @var Doclad $model */
                         $options = [];
-                        return Html::a('<span class="glyphicon glyphicon-'.($model->doc_state != Doclad::DOC_STATUS_APPROVE ? 'pencil' : 'eye-open').'"></span>', $url, $options);
+                        $sIcon = 'pencil';
+                        if( $model->doc_state == Doclad::DOC_STATUS_APPROVE ) {
+                            $sIcon = 'eye-open';
+                            if( (count($model->files) > 0) && ($model->doc_format == Doclad::DOC_FORMAT_NOFORMAT) ) {
+                                $sIcon = 'info-sign';
+                            }
+                        }
+                        return Html::a('<span class="glyphicon glyphicon-'.$sIcon.'"></span>', $url, $options);
+                    },
+                    'filedownload' => function ($url, $model, $key) {
+                        /** @var Doclad $model */
+                        $options = [];
+                        if( count($model->files) == 0 ) {
+                            return '';
+                        }
+                        $sUrl = str_replace(DIRECTORY_SEPARATOR, '/', $model->files[0]->file_name);
+                        $options['title'] = $model->files[0]->file_orig_name;
+
+                        return Html::a('<span class="glyphicon glyphicon-save-file"></span>', $sUrl, $options);
                     },
                 ],
             ],
