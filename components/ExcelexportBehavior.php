@@ -148,10 +148,8 @@ class ExcelexportBehavior extends Behavior {
             foreach ($dataProvider->getModels() As $model) {
                 $aData = [];
                 foreach($this->columnValues As $v) {
-//                    Yii::info('Raw: ' . $cou . ' ' . $model->doc_subject . (($v instanceof Closure) ? 'closure' : $v));
                     $aData[] = ($v instanceof Closure) ? call_user_func($v, $model, $cou) : $model->$v;
                 }
-//                Yii::info('Raw: ' . $cou . ' aData = ' . print_r($aData, true));
 
                 $oSheet->fromArray(
                     $aData,

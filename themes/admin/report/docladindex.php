@@ -166,5 +166,6 @@ $this->params['breadcrumbs'][] = $this->title;
             array_merge(['export',], $searchModel->getSearchArray()),
             ['class' => 'btn btn-default', ]
         ) ?>
+        Вывод в Excel всех записей, из таблицы выше (все страницы, если страниц несколько)
     </div>
 </div>
