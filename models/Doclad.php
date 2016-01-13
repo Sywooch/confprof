@@ -224,7 +224,7 @@ class Doclad extends \yii\db\ActiveRecord
      */
     public static function getAllFormats() {
         return [
-            self::DOC_FORMAT_NOFORMAT => '',
+            self::DOC_FORMAT_NOFORMAT => 'Не определен',
             self::DOC_FORMAT_PUBLICATION => 'Публикация',
             self::DOC_FORMAT_TALK => 'Выступление',
             self::DOC_FORMAT_STAND => 'Стендовый доклад',

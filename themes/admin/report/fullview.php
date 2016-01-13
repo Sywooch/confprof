@@ -52,7 +52,7 @@ $attributes = [
 //    'doc_lider_otch',
     'doc_lider_email:email',
     [
-        'attribute' => 'doc_lider_fam',
+        'attribute' => 'doc_lider_phone',
         'value' => Html::a(str_replace(['(', ')'], [' (', ') '], $model->doc_lider_phone), 'tel:+' . preg_replace('|[^\\d]|', '', $model->doc_lider_phone)),
         'format' => 'raw',
     ],
