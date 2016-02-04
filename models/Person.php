@@ -35,6 +35,7 @@ use app\models\Doclad;
  * @property string $prs_lesson
  * @property string $prs_created
  * @property string $prs_confirmkey
+ * @property integer $prs_agree_pers
  */
 class Person extends \yii\db\ActiveRecord
 {
@@ -106,9 +107,10 @@ class Person extends \yii\db\ActiveRecord
     {
         return [
 //            [['prs_type', ], 'filter', 'filter'=>[$this, 'setPersonType'], ],
-            [['prs_active', 'prs_type', 'prs_sec_id', 'prs_doc_id', 'ekis_id'], 'integer'],
+            [['prs_active', 'prs_type', 'prs_sec_id', 'prs_doc_id', 'ekis_id', 'prs_agree_pers', ], 'integer'],
+            [['prs_agree_pers', ], 'in', 'range' => [1], 'message' => 'необходимо дать разрешение на обработку персональных данных'],
             [['prs_sec_id', ], 'in', 'range' => array_keys($this->aSectionList)],
-            [['prs_type', 'prs_fam', 'prs_name', 'prs_otch', 'prs_email', 'prs_position', 'prs_lesson', 'ekis_id', 'prs_group', 'prs_level', 'prs_position', 'prs_lesson', ], 'required'],
+            [['prs_type', 'prs_fam', 'prs_name', 'prs_otch', 'prs_email', 'prs_position', 'prs_lesson', 'ekis_id', 'prs_group', 'prs_level', 'prs_position', 'prs_lesson', 'prs_agree_pers', ], 'required'],
 //            [['prs_fam', 'prs_name', 'prs_otch', 'prs_position', 'prs_lesson', ], RustextValidator::className(), 'capital' => 0, 'russian' => 0.8, 'other'=>0, ],
             [['prs_fam', 'prs_name', 'prs_otch', 'prs_position', 'prs_lesson', ], 'match',
                 'pattern' => '|^[А-Яа-яЁё]{2}[-А-Яа-яЁё\\s]*$|u', 'message' => 'Допустимы символы русского алфавита',
@@ -178,6 +180,7 @@ class Person extends \yii\db\ActiveRecord
             'prs_email',
             'prs_position',
             'prs_lesson',
+            'prs_agree_pers',
         ];
 
         $aRet['createmember'] = [ // соучастник персональный
@@ -189,6 +192,7 @@ class Person extends \yii\db\ActiveRecord
             'prs_org',
             'prs_group',
             'prs_level',
+            'prs_agree_pers',
         ];
 
         $aRet['createorgmember'] = [ // соучастник от организации
@@ -200,6 +204,7 @@ class Person extends \yii\db\ActiveRecord
             'prs_org',
             'prs_position',
             'prs_lesson',
+            'prs_agree_pers',
         ];
 
         $aRet['createguest'] = [ // гость
@@ -246,6 +251,7 @@ class Person extends \yii\db\ActiveRecord
             'prs_created' => 'Дата регистрации',
             'prs_confirmkey' => 'Ключик проверки email',
             'conferenceid' => 'Конференция',
+            'prs_agree_pers' => 'Подтверждаю согласие на обработку персональных данных',
         ];
     }
 

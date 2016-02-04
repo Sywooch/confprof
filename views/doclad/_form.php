@@ -168,15 +168,15 @@ $this->registerCss($sCss);
 
                 <div class="row">
                     <div class="col-xs-4">
-                        <?= $form->field($model, 'doc_lider_fam')->textInput(['maxlength' => true, 'class'=>'lio_input', 'placeholder'=>$model->getAttributeLabel('doc_lider_fam'), ]) ?>
+                        <?= $form->field($model, 'doc_lider_fam')->textInput(['maxlength' => true, 'class'=>'form-control lio_input', 'placeholder'=>$model->getAttributeLabel('doc_lider_fam'), ]) ?>
                     </div>
 
                     <div class="col-xs-4">
-                        <?= $form->field($model, 'doc_lider_name')->textInput(['maxlength' => true, 'class'=>'lio_input', 'placeholder'=>$model->getAttributeLabel('doc_lider_name'), ]) ?>
+                        <?= $form->field($model, 'doc_lider_name')->textInput(['maxlength' => true, 'class'=>'form-control lio_input', 'placeholder'=>$model->getAttributeLabel('doc_lider_name'), ]) ?>
                     </div>
 
                     <div class="col-xs-4">
-                        <?= $form->field($model, 'doc_lider_otch')->textInput(['maxlength' => true, 'class'=>'lio_input', 'placeholder'=>$model->getAttributeLabel('doc_lider_otch'), ]) ?>
+                        <?= $form->field($model, 'doc_lider_otch')->textInput(['maxlength' => true, 'class'=>'form-control lio_input', 'placeholder'=>$model->getAttributeLabel('doc_lider_otch'), ]) ?>
                     </div>
                 </div>
 
@@ -190,10 +190,10 @@ $this->registerCss($sCss);
                     <div class="col-xs-6">
                         <?= $form
                             ->field($model, 'doc_lider_phone')
-                            ->widget(\yii\widgets\MaskedInput::className(), ['mask' => '+7(999)999-99-99', 'options' => ['class'=>'lio_input', 'placeholder'=>$model->getAttributeLabel('doc_lider_phone'),] ]) // ->textInput(['maxlength' => true, 'class'=>'lio_input', 'placeholder'=>$model->getAttributeLabel('doc_lider_phone'), ]) ?>
+                            ->widget(\yii\widgets\MaskedInput::className(), ['mask' => '+7(999)999-99-99', 'options' => ['class'=>'form-control lio_input', 'placeholder'=>$model->getAttributeLabel('doc_lider_phone'),] ]) // ->textInput(['maxlength' => true, 'class'=>'lio_input', 'placeholder'=>$model->getAttributeLabel('doc_lider_phone'), ]) ?>
                     </div>
                     <div class="col-xs-6">
-                        <?= $form->field($model, 'doc_lider_email')->textInput(['maxlength' => true, 'class'=>'lio_input', 'placeholder'=>$model->getAttributeLabel('doc_lider_email'), ]) ?>
+                        <?= $form->field($model, 'doc_lider_email')->textInput(['maxlength' => true, 'class'=>'form-control lio_input', 'placeholder'=>$model->getAttributeLabel('doc_lider_email'), ]) ?>
                     </div>
                 </div>
 
@@ -235,6 +235,20 @@ $this->registerCss($sCss);
                         <?php
                         }
                         ?>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-xs-12 mg-t-20">
+                        <?= $form->field(
+                                $model,
+                                'doc_agree_pers'
+                            )
+                            ->checkbox([
+                                'placeholder'=>$model->getAttributeLabel('doc_agree_pers'),
+                                'labelOptions' => ['class' => 'control-label'],
+                                'style' => 'margin-right: 15px;',
+                            ]) ?>
                     </div>
                 </div>
 
@@ -305,13 +319,13 @@ $this->registerCss($sCss);
 
                 <div class="row">
                     <div class="col-xs-6">
-                        <?= $form->field($model, 'doc_sec_id')->dropDownList($model->aSectionList, ['class' => 'lio_input', 'placeholder'=>$model->getAttributeLabel('doc_sec_id'), ]) // textInput() ?>
+                        <?= $form->field($model, 'doc_sec_id')->dropDownList($model->aSectionList, ['class' => 'form-control lio_input', 'placeholder'=>$model->getAttributeLabel('doc_sec_id'), ]) // textInput() ?>
                     </div>
                 </div>
 
                 <div class="row">
                     <div class="col-xs-12">
-                        <?= $form->field($model, 'doc_subject')->textInput(['maxlength' => true, 'class' => 'lio_input', 'placeholder'=>$model->getAttributeLabel('doc_subject'), ]) ?>
+                        <?= $form->field($model, 'doc_subject')->textInput(['maxlength' => true, 'class' => 'form-control lio_input', 'placeholder'=>$model->getAttributeLabel('doc_subject'), ]) ?>
                     </div>
                 </div>
 
