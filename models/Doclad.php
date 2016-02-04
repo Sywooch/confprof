@@ -109,11 +109,12 @@ class Doclad extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['doc_sec_id', 'ekis_id', 'doc_us_id', 'conferenceid', 'doc_state', 'doc_format', 'doc_agree_pers', ], 'integer'],
-            [['doc_agree_pers', ], 'in', 'range' => [1], 'message' => 'необходимо дать разрешение на обработку персональных данных'],
+            [['doc_sec_id', 'ekis_id', 'doc_us_id', 'conferenceid', 'doc_state', 'doc_format', 'doc_agree_pers', 'doc_work_original', ], 'integer'],
+            [['doc_agree_pers', ], 'in', 'range' => [1], 'message' => 'Необходимо дать разрешение на обработку персональных данных'],
+            [['doc_work_original', ], 'in', 'range' => [1], 'message' => 'Необходимо подтвердить соответствие требованиям оригинальности'],
             [['doc_sec_id', ], 'in', 'range' => array_keys($this->aSectionList), ],
             [['doc_format', ], 'in', 'range' => array_keys($this->getAllFormats()), ],
-            [['doc_type', 'doc_sec_id', 'doc_subject', 'doc_description', 'doc_lider_fam', 'doc_lider_name', 'doc_lider_otch', 'doc_lider_email', 'doc_lider_phone', 'ekis_id', 'doc_lider_group', 'doc_lider_level', 'doc_lider_position', 'doc_lider_lesson', 'doc_state', 'doc_agree_pers', ], 'required'],
+            [['doc_type', 'doc_sec_id', 'doc_subject', 'doc_description', 'doc_lider_fam', 'doc_lider_name', 'doc_lider_otch', 'doc_lider_email', 'doc_lider_phone', 'ekis_id', 'doc_lider_group', 'doc_lider_level', 'doc_lider_position', 'doc_lider_lesson', 'doc_state', 'doc_agree_pers', 'doc_work_original', ], 'required'],
             [['doc_lider_fam', 'doc_lider_name', 'doc_lider_otch', 'doc_lider_position', 'doc_lider_lesson', ], 'filter', 'filter' => 'trim', ],
             [['doc_description'], 'string', 'min' => 32, ],
             [['doc_lider_email'], 'email', ],
@@ -153,6 +154,7 @@ class Doclad extends \yii\db\ActiveRecord
             'ekis_id',
             'doc_lider_org',
             'doc_agree_pers',
+            'doc_work_original',
         ];
 
         if($this->doc_type == self::DOC_TYPE_ORG) {
@@ -219,6 +221,7 @@ class Doclad extends \yii\db\ActiveRecord
             'doc_format' => 'Формат',
             'format' => 'Формат выступления',
             'doc_agree_pers' => 'Подтверждаю согласие на обработку персональных данных',
+            'doc_work_original' => 'Предоставляемая работа соответствует требованиям оригинальности',
         ];
     }
 

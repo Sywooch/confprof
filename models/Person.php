@@ -108,7 +108,7 @@ class Person extends \yii\db\ActiveRecord
         return [
 //            [['prs_type', ], 'filter', 'filter'=>[$this, 'setPersonType'], ],
             [['prs_active', 'prs_type', 'prs_sec_id', 'prs_doc_id', 'ekis_id', 'prs_agree_pers', ], 'integer'],
-            [['prs_agree_pers', ], 'in', 'range' => [1], 'message' => 'необходимо дать разрешение на обработку персональных данных'],
+            [['prs_agree_pers', ], 'in', 'range' => [1], 'message' => 'Необходимо дать разрешение на обработку персональных данных'],
             [['prs_sec_id', ], 'in', 'range' => array_keys($this->aSectionList)],
             [['prs_type', 'prs_fam', 'prs_name', 'prs_otch', 'prs_email', 'prs_position', 'prs_lesson', 'ekis_id', 'prs_group', 'prs_level', 'prs_position', 'prs_lesson', 'prs_agree_pers', ], 'required'],
 //            [['prs_fam', 'prs_name', 'prs_otch', 'prs_position', 'prs_lesson', ], RustextValidator::className(), 'capital' => 0, 'russian' => 0.8, 'other'=>0, ],

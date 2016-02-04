@@ -336,6 +336,20 @@ $this->registerCss($sCss);
                 </div>
 
                 <div class="row">
+                    <div class="col-xs-12 mg-t-20">
+                        <?= $form->field(
+                            $model,
+                            'doc_work_original'
+                        )
+                            ->checkbox([
+                                'placeholder'=>$model->getAttributeLabel('doc_work_original'),
+                                'labelOptions' => ['class' => 'control-label'],
+                                'style' => 'margin-right: 15px;',
+                            ]) ?>
+                    </div>
+                </div>
+
+                <div class="row">
                     <div class="col-xs-12">
                         <div class="lio_form_WLine"></div>
                     </div>
