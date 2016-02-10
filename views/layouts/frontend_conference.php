@@ -51,7 +51,7 @@ $conference = $activeController->findConferenceModel();
         'items' => [
             ['label' => 'О конференции', 'url' => ['/'.$activeController->id.'/index']],
             ['label' => 'Подать заявку', 'url' => ['/'.$activeController->id.'/register']],
-            ['label' => 'Календарь', 'url' => ['/'.$activeController->id.'/calendar']],
+//            ['label' => 'Календарь', 'url' => ['/'.$activeController->id.'/calendar']],
             ['label' => 'Пойти гостем', 'url' => ['/'.$activeController->id.'/guest']],
 //            ['label' => 'Contact', 'url' => ['/site/contact']],
 //            Yii::$app->user->isGuest ?
