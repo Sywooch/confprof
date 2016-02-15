@@ -35,7 +35,6 @@ Use app\components\RustextValidator;
  * @property integer $ekis_id
  * @property string $doc_lider_org
  * @property string $doc_lider_group
- * @property string $doc_lider_level
  * @property string $doc_lider_position
  * @property string $doc_lider_lesson
  * @property integer $doc_state
@@ -114,9 +113,9 @@ class Doclad extends \yii\db\ActiveRecord
             [['doc_work_original', ], 'in', 'range' => [1], 'message' => 'Необходимо подтвердить соответствие требованиям оригинальности'],
             [['doc_sec_id', ], 'in', 'range' => array_keys($this->aSectionList), ],
             [['doc_format', ], 'in', 'range' => array_keys($this->getAllFormats()), ],
-            [['doc_type', 'doc_sec_id', 'doc_subject', 'doc_description', 'doc_lider_fam', 'doc_lider_name', 'doc_lider_otch', 'doc_lider_email', 'doc_lider_phone', 'ekis_id', 'doc_lider_group', 'doc_lider_level', 'doc_lider_position', 'doc_lider_lesson', 'doc_state', 'doc_agree_pers', 'doc_work_original', ], 'required'],
+            [['doc_type', 'doc_sec_id', 'doc_subject', 'doc_description', 'doc_lider_fam', 'doc_lider_name', 'doc_lider_otch', 'doc_lider_email', 'doc_lider_phone', 'ekis_id', 'doc_lider_group', 'doc_lider_position', 'doc_lider_lesson', 'doc_state', 'doc_agree_pers', 'doc_work_original', ], 'required'],
             [['doc_lider_fam', 'doc_lider_name', 'doc_lider_otch', 'doc_lider_position', 'doc_lider_lesson', ], 'filter', 'filter' => 'trim', ],
-            [['doc_description'], 'string', 'min' => 32, ],
+            [['doc_description'], 'string', 'min' => 32, 'max' => 2000, ],
             [['doc_lider_email'], 'email', ],
             [['doc_created'], 'safe'],
 //            [['doc_lider_fam', 'doc_lider_name', 'doc_lider_otch', 'doc_lider_position', 'doc_lider_lesson', ], RustextValidator::className(), 'capital' => 0, 'russian' => 0.8, 'other'=>0, ],
@@ -127,7 +126,7 @@ class Doclad extends \yii\db\ActiveRecord
             [['doc_comment'], 'string', ],
             [['doc_comment'], 'required', 'when' => function($model){ return in_array($model->doc_state, [self::DOC_STATUS_NOT_APPROVE, self::DOC_STATUS_REVISION, ]); }, ],
             [['doc_type'], 'in', 'range' => array_keys(self::getAllTypes())],
-            [['doc_subject', 'doc_lider_fam', 'doc_lider_name', 'doc_lider_otch', 'doc_lider_email', 'doc_lider_phone', 'doc_lider_org', 'doc_lider_group', 'doc_lider_level', 'doc_lider_position', 'doc_lider_lesson'], 'string', 'max' => 255],
+            [['doc_subject', 'doc_lider_fam', 'doc_lider_name', 'doc_lider_otch', 'doc_lider_email', 'doc_lider_phone', 'doc_lider_org', 'doc_lider_group', 'doc_lider_position', 'doc_lider_lesson'], 'string', 'max' => 255],
             [['file'], 'safe'],
             [['file'], 'file', 'maxFiles' => 1, 'maxSize' => Yii::$app->params['doclad.file.maxsize'], 'extensions' => Yii::$app->params['doclad.file.ext']],
         ];
@@ -171,7 +170,7 @@ class Doclad extends \yii\db\ActiveRecord
                 $aRet['create'],
                 [
                     'doc_lider_group',
-                    'doc_lider_level',
+//                    'doc_lider_level',
                 ]
             );
         }
@@ -208,7 +207,7 @@ class Doclad extends \yii\db\ActiveRecord
             'ekis_id' => 'Организация',
             'doc_lider_org' => 'Организация',
             'doc_lider_group' => 'Класс',
-            'doc_lider_level' => 'Курс',
+//            'doc_lider_level' => 'Курс',
             'doc_lider_position' => 'Должность',
             'doc_lider_lesson' => 'Предмет',
             'members' => 'Участники',

@@ -33,7 +33,7 @@ class DocladSearch extends Doclad
     {
         return [
             [['doc_id', 'doc_sec_id', 'ekis_id', 'conferenceid', 'doc_state', 'doc_format', ], 'integer'],
-            [['doc_type', 'doc_subject', 'doc_description', 'doc_created', 'doc_lider_fam', 'doc_lider_name', 'doc_lider_otch', 'doc_lider_email', 'doc_lider_phone', 'doc_lider_org', 'doc_lider_group', 'doc_lider_level', 'doc_lider_position', 'doc_lider_lesson', 'doc_comment', ], 'safe'],
+            [['doc_type', 'doc_subject', 'doc_description', 'doc_created', 'doc_lider_fam', 'doc_lider_name', 'doc_lider_otch', 'doc_lider_email', 'doc_lider_phone', 'doc_lider_org', 'doc_lider_group', 'doc_lider_position', 'doc_lider_lesson', 'doc_comment', ], 'safe'],
         ];
     }
 
@@ -118,7 +118,7 @@ class DocladSearch extends Doclad
 //            ->andFilterWhere(['like', 'doc_lider_phone', $this->doc_lider_phone])
             ->andFilterWhere(['like', 'doc_lider_org', $this->doc_lider_org])
             ->andFilterWhere(['like', 'doc_lider_group', $this->doc_lider_group])
-            ->andFilterWhere(['like', 'doc_lider_level', $this->doc_lider_level])
+//            ->andFilterWhere(['like', 'doc_lider_level', $this->doc_lider_level])
             ->andFilterWhere(['like', 'doc_lider_position', $this->doc_lider_position])
             ->andFilterWhere(['like', 'doc_lider_lesson', $this->doc_lider_lesson]);
 

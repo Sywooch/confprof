@@ -15,6 +15,8 @@ use app\models\Person;
 use app\models\Member;
 use app\models\Docmedal;
 
+use app\assets\CharcounterAsset;
+
 use mosedu\multirows\MultirowsWidget;
 
 $sCss = <<<EOT
@@ -26,6 +28,8 @@ div.required label:after {
     white-space: nowrap;
 }
 EOT;
+
+CharcounterAsset::register($this);
 
 $this->registerCss($sCss);
 $emptyConsultant = new Person();
@@ -227,7 +231,7 @@ $this->registerCss($sCss);
                         <?php
                         if( $model->doc_type == Doclad::DOC_TYPE_PERSONAL ) {
                             ?>
-                            <?= $form->field($model, 'doc_lider_level')->textInput(['maxlength' => true, 'placeholder'=>$model->getAttributeLabel('doc_lider_level'), ]) ?>
+                            <?= '' // $form->field($model, 'doc_lider_level')->textInput(['maxlength' => true, 'placeholder'=>$model->getAttributeLabel('doc_lider_level'), ]) ?>
                         <?php
                         } else {
                             ?>
@@ -332,6 +336,7 @@ $this->registerCss($sCss);
                 <div class="row">
                     <div class="col-xs-12">
                         <?= $form->field($model, 'doc_description')->textarea(['rows' => 5, 'class'=>'form-control', 'placeholder'=>$model->getAttributeLabel('doc_description'), ]) ?>
+                        <div>Символов в описании работы: <span id="descriptioncharcount"></span></div>
                     </div>
                 </div>
 
@@ -454,6 +459,16 @@ $this->registerCss($sCss);
 <?= '' // nl2br(str_replace(' ', '&nbsp;', print_r($form->attributes, true)))  ?>
 
 <?php
+
+// $this->registerJsFile('/js/charcounter.js');
+$sDescrId = Html::getInputId($model, 'doc_description');
+$sJs = <<<EOT
+jQuery("#{$sDescrId}").charcounter({countselector: "#descriptioncharcount"});
+EOT;
+
+$this->registerJs($sJs, \yii\web\View::POS_READY);
+
+
 /*
 <div class="row">
     <div class="col-xs-12">
