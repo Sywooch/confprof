@@ -206,7 +206,7 @@ class Doclad extends \yii\db\ActiveRecord
             'doc_lider_phone' => 'Телефон',
             'ekis_id' => 'Организация',
             'doc_lider_org' => 'Организация',
-            'doc_lider_group' => 'Класс',
+            'doc_lider_group' => 'Класс / Курс',
 //            'doc_lider_level' => 'Курс',
             'doc_lider_position' => 'Должность',
             'doc_lider_lesson' => 'Предмет',
