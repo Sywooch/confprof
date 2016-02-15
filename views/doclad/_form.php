@@ -146,7 +146,7 @@ $this->registerCss($sCss);
         ],
         'fieldConfig' => [
 //            'template' => "{input}\n{error}",
-            'template' => '{label}{input}{error}',
+            'template' => '{label}{input}{error}{hint}',
             'options' => ['class' => 'form-group'],
 //            'labelOptions'=>['class'=>'control-label col-md-6'],
         ],
@@ -335,7 +335,11 @@ $this->registerCss($sCss);
 
                 <div class="row">
                     <div class="col-xs-12">
-                        <?= $form->field($model, 'doc_description')->textarea(['rows' => 5, 'class'=>'form-control', 'placeholder'=>$model->getAttributeLabel('doc_description'), ]) ?>
+                        <?= $form
+                            ->field($model, 'doc_description')
+                            ->textarea(['rows' => 5, 'class'=>'form-control', 'placeholder'=>$model->getAttributeLabel('doc_description'), ])
+                            ->hint('Максимальная длина описания: ' . Yii::$app->params['doclad.description.maxlength'] . ' символов')
+                        ?>
                         <div>Символов в описании работы: <span id="descriptioncharcount"></span></div>
                     </div>
                 </div>

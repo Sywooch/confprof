@@ -115,7 +115,7 @@ class Doclad extends \yii\db\ActiveRecord
             [['doc_format', ], 'in', 'range' => array_keys($this->getAllFormats()), ],
             [['doc_type', 'doc_sec_id', 'doc_subject', 'doc_description', 'doc_lider_fam', 'doc_lider_name', 'doc_lider_otch', 'doc_lider_email', 'doc_lider_phone', 'ekis_id', 'doc_lider_group', 'doc_lider_position', 'doc_lider_lesson', 'doc_state', 'doc_agree_pers', 'doc_work_original', ], 'required'],
             [['doc_lider_fam', 'doc_lider_name', 'doc_lider_otch', 'doc_lider_position', 'doc_lider_lesson', ], 'filter', 'filter' => 'trim', ],
-            [['doc_description'], 'string', 'min' => 32, 'max' => 2000, ],
+            [['doc_description'], 'string', 'min' => 32, 'max' => Yii::$app->params['doclad.description.maxlength'], ],
             [['doc_lider_email'], 'email', ],
             [['doc_created'], 'safe'],
 //            [['doc_lider_fam', 'doc_lider_name', 'doc_lider_otch', 'doc_lider_position', 'doc_lider_lesson', ], RustextValidator::className(), 'capital' => 0, 'russian' => 0.8, 'other'=>0, ],
