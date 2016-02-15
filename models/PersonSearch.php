@@ -31,7 +31,7 @@ class PersonSearch extends Person
     {
         return [
             [['prs_id', 'prs_active', 'prs_type', 'prs_sec_id', 'prs_doc_id', 'ekis_id', 'conferenceid', ], 'integer'],
-            [['prs_fam', 'prs_name', 'prs_otch', 'prs_email', 'prs_phone', 'prs_org', 'prs_group', 'prs_level', 'prs_position', 'prs_lesson'], 'safe'],
+            [['prs_fam', 'prs_name', 'prs_otch', 'prs_email', 'prs_phone', 'prs_org', 'prs_group', 'prs_position', 'prs_lesson'], 'safe'],
         ];
     }
 
@@ -116,7 +116,7 @@ class PersonSearch extends Person
             ->andFilterWhere(['like', 'prs_phone', $this->prs_phone])
             ->andFilterWhere(['like', 'prs_org', $this->prs_org])
             ->andFilterWhere(['like', 'prs_group', $this->prs_group])
-            ->andFilterWhere(['like', 'prs_level', $this->prs_level])
+//            ->andFilterWhere(['like', 'prs_level', $this->prs_level])
             ->andFilterWhere(['like', 'prs_position', $this->prs_position])
             ->andFilterWhere(['like', 'prs_lesson', $this->prs_lesson]);
 

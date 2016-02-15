@@ -36,7 +36,7 @@ use yii\widgets\ActiveForm;
 
     <?= $form->field($model, 'prs_group')->textInput(['maxlength' => true]) ?>
 
-    <?= $form->field($model, 'prs_level')->textInput(['maxlength' => true]) ?>
+    <?= '' // $form->field($model, 'prs_level')->textInput(['maxlength' => true]) ?>
 
     <?= $form->field($model, 'prs_position')->textInput(['maxlength' => true]) ?>
 

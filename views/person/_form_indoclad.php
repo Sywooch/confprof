@@ -80,7 +80,7 @@ if( isset($viewparam) && isset($viewparam['ekis_id']) ) {
             <?= $form->field($model, '[' . $index . ']prs_group')->textInput(['maxlength' => true, 'class'=>'form-control lio_input', 'placeholder'=>$model->getAttributeLabel('prs_group'),]) ?>
         </div>
         <div class="col-xs-3">
-            <?= $form->field($model, '[' . $index . ']prs_level')->textInput(['maxlength' => true, 'class'=>'form-control lio_input', 'placeholder'=>$model->getAttributeLabel('prs_level'),]) ?>
+            <?= '' // $form->field($model, '[' . $index . ']prs_level')->textInput(['maxlength' => true, 'class'=>'form-control lio_input', 'placeholder'=>$model->getAttributeLabel('prs_level'),]) ?>
         </div>
     <?php } ?>
 

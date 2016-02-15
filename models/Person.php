@@ -30,7 +30,6 @@ use app\models\Doclad;
  * @property integer $ekis_id
  * @property string $prs_org
  * @property string $prs_group
- * @property string $prs_level
  * @property string $prs_position
  * @property string $prs_lesson
  * @property string $prs_created
@@ -110,7 +109,7 @@ class Person extends \yii\db\ActiveRecord
             [['prs_active', 'prs_type', 'prs_sec_id', 'prs_doc_id', 'ekis_id', 'prs_agree_pers', ], 'integer'],
             [['prs_agree_pers', ], 'in', 'range' => [1], 'message' => 'Необходимо дать разрешение на обработку персональных данных'],
             [['prs_sec_id', ], 'in', 'range' => array_keys($this->aSectionList)],
-            [['prs_type', 'prs_fam', 'prs_name', 'prs_otch', 'prs_email', 'prs_position', 'prs_lesson', 'ekis_id', 'prs_group', 'prs_level', 'prs_position', 'prs_lesson', 'prs_agree_pers', ], 'required'],
+            [['prs_type', 'prs_fam', 'prs_name', 'prs_otch', 'prs_email', 'prs_position', 'prs_lesson', 'ekis_id', 'prs_group', 'prs_position', 'prs_lesson', 'prs_agree_pers', ], 'required'],
 //            [['prs_fam', 'prs_name', 'prs_otch', 'prs_position', 'prs_lesson', ], RustextValidator::className(), 'capital' => 0, 'russian' => 0.8, 'other'=>0, ],
             [['prs_fam', 'prs_name', 'prs_otch', 'prs_position', 'prs_lesson', ], 'match',
                 'pattern' => '|^[А-Яа-яЁё]{2}[-А-Яа-яЁё\\s]*$|u', 'message' => 'Допустимы символы русского алфавита',
@@ -127,7 +126,7 @@ class Person extends \yii\db\ActiveRecord
             [['prs_fam', 'prs_name', 'prs_otch', 'prs_org', 'prs_confirmkey', ], 'string', 'max' => 255],
             [['prs_email'], 'string', 'max' => 128],
             [['prs_phone'], 'string', 'max' => 24],
-            [['prs_group', 'prs_level', 'prs_position', 'prs_lesson'], 'string', 'max' => 64]
+            [['prs_group', 'prs_position', 'prs_lesson'], 'string', 'max' => 64]
         ];
     }
 
@@ -191,7 +190,7 @@ class Person extends \yii\db\ActiveRecord
             'ekis_id',
             'prs_org',
             'prs_group',
-            'prs_level',
+//            'prs_level',
             'prs_agree_pers',
         ];
 
@@ -244,8 +243,8 @@ class Person extends \yii\db\ActiveRecord
             'prs_doc_id' => 'Доклад',
             'ekis_id' => 'Организация',
             'prs_org' => 'Организация',
-            'prs_group' => 'Класс',
-            'prs_level' => 'Курс',
+            'prs_group' => 'Класс / Курс',
+//            'prs_level' => 'Курс',
             'prs_position' => 'Должность',
             'prs_lesson' => 'Предмет',
             'prs_created' => 'Дата регистрации',
