@@ -3,6 +3,7 @@
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
 use app\models\Conference;
+use app\models\Doclad;
 
 /* @var $this yii\web\View */
 /* @var $model app\models\Section */
@@ -16,6 +17,8 @@ use app\models\Conference;
     <?= $form->field($model, 'sec_title')->textInput(['maxlength' => true]) ?>
 
     <?= $form->field($model, 'sec_cnf_id')->dropDownList(Conference::getList()) // textInput(['maxlength' => true]) ?>
+
+    <?= $form->field($model, 'sec_doclad_type')->dropDownList(array_merge(['' => '', ], Doclad::getAllTypes())) // textInput(['maxlength' => true]) ?>
 
     <?= '' // $form->field($model, 'sec_created')->textInput() ?>
 

@@ -288,12 +288,6 @@ $this->registerCss($sCss);
 //                }
                 ?>
 
-                <!-- div class="row">
-                    <div class="col-xs-12">
-                        <div class="lio_form_WLine"></div>
-                    </div>
-                </div -->
-
                 <?php
                 if( $model->doc_type == Doclad::DOC_TYPE_PERSONAL ) {
                     echo $this->render(

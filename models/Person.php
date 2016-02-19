@@ -114,7 +114,7 @@ class Person extends \yii\db\ActiveRecord
 //            [['prs_fam', 'prs_name', 'prs_otch', 'prs_position', 'prs_lesson', ], RustextValidator::className(), 'capital' => 0, 'russian' => 0.8, 'other'=>0, ],
             [['prs_fam', 'prs_name', 'prs_otch', ], 'match',
                 'pattern' => '|^[А-Яа-яЁё]{2}[-А-Яа-яЁё\\s]*$|u', 'message' => 'Допустимы символы русского алфавита',
-            ], // 'prs_position', 'prs_lesson', 
+            ], // 'prs_position', 'prs_lesson',
 
             [['prs_email', ], 'email', ],
             [['prs_email', ], 'unique',

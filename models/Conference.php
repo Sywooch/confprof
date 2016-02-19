@@ -8,6 +8,9 @@ use yii\db\ActiveRecord;
 use yii\db\Expression;
 use yii\helpers\ArrayHelper;
 
+use app\models\Doclad;
+use app\models\Section;
+
 /**
  * This is the model class for table "{{%conference}}".
  *
@@ -58,6 +61,7 @@ class Conference extends \yii\db\ActiveRecord
             [['cnf_description', 'cnf_about'], 'string'],
             [['cnf_created'], 'safe'],
             [['cnf_isconshicshool'], 'integer'],
+            [['cnf_isconshicshool'], 'in', 'range' => Doclad::getAllTypes(), ],
             [['cnf_title', 'cnf_controller', 'cnf_pagetitle', 'cnf_shorttitle', ], 'string', 'max' => 255],
             [['cnf_class'], 'string', 'max' => 64]
         ];
@@ -125,7 +129,23 @@ class Conference extends \yii\db\ActiveRecord
         return self::$_alllist;
     }
 
-    public function getSections() {
-        return $this->hasMany(Section::className(), ['sec_cnf_id' => 'cnf_id']);
+    /**
+     * @param string|null $docType
+     * @return \yii\db\ActiveQuery
+     */
+    public function getSections($docType = null) {
+        $query = $this->hasMany(Section::className(), ['sec_cnf_id' => 'cnf_id']);
+
+        // тут мы делаем выборку секций по типу доклада, если нужно не просто все связанные записи
+        if( $docType !== null ) {
+            $query->andOnCondition([
+                'or',
+                [Section::tableName() . '.sec_doclad_type' => $docType, ],
+                [Section::tableName() . '.sec_doclad_type' => ''],
+                ['is', Section::tableName() . '.sec_doclad_type', (new Expression('Null'))],
+            ]);
+        }
+
+        return $query;
     }
 }

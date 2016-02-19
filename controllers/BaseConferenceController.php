@@ -293,7 +293,7 @@ class BaseConferenceController extends Controller
             }
         }
 
-        $model->aSectionList = ArrayHelper::map($oConference->sections, 'sec_id', 'sec_title');
+        $model->aSectionList = ArrayHelper::map($oConference->getSections($model->doc_type)->all(), 'sec_id', 'sec_title');
 
         $model->scenario = 'create';
 

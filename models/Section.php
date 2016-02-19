@@ -16,6 +16,7 @@ use app\models\Conference;
  * @property string $sec_title
  * @property string $sec_cnf_id
  * @property string $sec_created
+ * @property string $sec_doclad_type
  */
 class Section extends \yii\db\ActiveRecord
 {
@@ -47,10 +48,11 @@ class Section extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['sec_title', ], 'required'],
-            [['sec_created'], 'safe'],
-            [['sec_title'], 'string', 'max' => 255],
-            [['sec_cnf_id'], 'string', 'max' => 64]
+            [['sec_title', ], 'required', ],
+            [['sec_created'], 'safe', ],
+            [['sec_title'], 'string', 'max' => 255, ],
+            [['sec_cnf_id'], 'string', 'max' => 64, ],
+            [['sec_doclad_type'], 'string', 'max' => 16, ],
         ];
     }
 
@@ -64,6 +66,7 @@ class Section extends \yii\db\ActiveRecord
             'sec_title' => 'Название',
             'sec_cnf_id' => 'Конференция',
             'sec_created' => 'Создан',
+            'sec_doclad_type' => 'Тип доклада',
         ];
     }
 
