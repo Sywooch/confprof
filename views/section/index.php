@@ -3,6 +3,7 @@
 use yii\helpers\Html;
 use yii\grid\GridView;
 use app\models\Conference;
+use app\models\Doclad;
 
 /* @var $this yii\web\View */
 /* @var $searchModel app\models\SectionSearch */
@@ -10,6 +11,9 @@ use app\models\Conference;
 
 $this->title = 'Секции';
 $this->params['breadcrumbs'][] = $this->title;
+
+$aDocldTypes = Doclad::getAllTypes();
+
 ?>
 <div class="section-index">
 
@@ -34,6 +38,15 @@ $this->params['breadcrumbs'][] = $this->title;
                 'filter' => Conference::getList(),
                 'value' => function ($model, $key, $index, $column) {
                     return Conference::getById($model->sec_cnf_id);
+                }
+            ],
+            [
+                'attribute' => 'sec_doclad_type',
+//                'header' => 'Доклад',
+                'class' => 'yii\grid\DataColumn',
+                'filter' => $aDocldTypes,
+                'value' => function ($model, $key, $index, $column) use ($aDocldTypes) {
+                    return isset($aDocldTypes[$model->sec_doclad_type]) ? $aDocldTypes[$model->sec_doclad_type] : '';
                 }
             ],
 //            'sec_cnf_id',
