@@ -38,6 +38,7 @@ $emptyConsultant->prs_type = Person::PERSON_TYPE_CONSULTANT;
 /* @var $this yii\web\View */
 /* @var $model app\models\Doclad */
 /* @var $form yii\widgets\ActiveForm */
+/* @var $conference app\models\Conference */
 
 $ekis_id = [
     'language' => 'ru',
@@ -277,6 +278,7 @@ $this->registerCss($sCss);
                         [
                             'form' => $form,
                             'model' => $model,
+                            'conference' => $conference,
                             'persons' => $model->isNewRecord ? [] : $model->members,
                             'persontype' => $model->doc_type == Doclad::DOC_TYPE_ORG ? Person::PERSON_TYPE_ORG_MEMBER : Person::PERSON_TYPE_STUD_MEMBER,
                             'modelname' => 'app\models\Member',
@@ -299,6 +301,7 @@ $this->registerCss($sCss);
                         [
                             'form' => $form,
                             'model' => $model,
+                            'conference' => $conference,
                             'persons' => $model->isNewRecord ? [$emptyConsultant] : $model->persons,
                             'persontype' => Person::PERSON_TYPE_CONSULTANT,
                             'modelname' => 'app\models\Person',

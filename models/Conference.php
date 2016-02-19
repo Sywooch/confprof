@@ -20,6 +20,7 @@ use yii\helpers\ArrayHelper;
  * @property string $cnf_pagetitle
  * @property string $cnf_about
  * @property string $cnf_shorttitle
+ * @property string $cnf_isconshicshool
  */
 class Conference extends \yii\db\ActiveRecord
 {
@@ -56,6 +57,7 @@ class Conference extends \yii\db\ActiveRecord
             [['cnf_title', 'cnf_shorttitle', ], 'required'],
             [['cnf_description', 'cnf_about'], 'string'],
             [['cnf_created'], 'safe'],
+            [['cnf_isconshicshool'], 'integer'],
             [['cnf_title', 'cnf_controller', 'cnf_pagetitle', 'cnf_shorttitle', ], 'string', 'max' => 255],
             [['cnf_class'], 'string', 'max' => 64]
         ];
@@ -76,6 +78,7 @@ class Conference extends \yii\db\ActiveRecord
             'cnf_pagetitle' => 'Заголовок страниц',
             'cnf_about' => 'Текст О конференции',
             'cnf_shorttitle' => 'Короткий заголовок',
+            'cnf_isconshicshool' => 'Вводить ВУЗ для руководителя',
         ];
     }
 

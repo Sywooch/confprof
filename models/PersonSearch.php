@@ -30,7 +30,7 @@ class PersonSearch extends Person
     public function rules()
     {
         return [
-            [['prs_id', 'prs_active', 'prs_type', 'prs_sec_id', 'prs_doc_id', 'ekis_id', 'conferenceid', ], 'integer'],
+            [['prs_id', 'prs_active', 'prs_type', 'prs_sec_id', 'prs_doc_id', 'ekis_id', 'conferenceid', 'prs_hischool', ], 'integer'],
             [['prs_fam', 'prs_name', 'prs_otch', 'prs_email', 'prs_phone', 'prs_org', 'prs_group', 'prs_position', 'prs_lesson'], 'safe'],
         ];
     }
@@ -107,6 +107,7 @@ class PersonSearch extends Person
             'prs_sec_id' => $this->prs_sec_id,
             'prs_doc_id' => $this->prs_doc_id,
             'ekis_id' => $this->ekis_id,
+            'prs_hischool' => $this->prs_hischool,
         ]);
 
         $query->andFilterWhere(['like', 'prs_fam', $this->prs_fam])

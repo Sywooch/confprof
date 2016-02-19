@@ -56,6 +56,13 @@ if( isset($viewparam) && isset($viewparam['ekis_id']) ) {
         <?= $form->field($model, '[' . $index . ']prs_email')->textInput(['maxlength' => true, 'class'=>'form-control lio_input', 'placeholder'=>$model->getAttributeLabel('prs_email'),]) ?>
     </div>
 </div>
+    <?php if( isset($viewparam['conference']) && $viewparam['conference']->cnf_isconshicshool ) { ?>
+        <div class="row">
+            <div class="col-xs-12">
+                <?= $form->field($model, '[' . $index . ']prs_hischool')->textInput(['maxlength' => true, 'class'=>'form-control lio_input', 'placeholder'=>$model->getAttributeLabel('prs_hischool'),]) ?>
+            </div>
+        </div>
+    <?php } ?>
 
 <div class="row">
     <div class="col-xs-12">

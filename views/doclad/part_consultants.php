@@ -14,6 +14,7 @@ use yii\web\JsExpression;
 /* @var $this yii\web\View */
 /* @var $model app\models\Doclad */
 /* @var $form yii\widgets\ActiveForm */
+/* @var $conference app\models\Conference */
 
 $sLinkNamePart = (($persontype == Person::PERSON_TYPE_STUD_MEMBER) || ($persontype == Person::PERSON_TYPE_ORG_MEMBER)) ? 'member' : 'consultant';
 
@@ -170,7 +171,11 @@ echo MultirowsWidget::widget(
     [
         'model' => (new $modelname)->className(),
         'form' => $form,
-        'viewparam' => ['ekis_id' => $ekis_id, 'linkname' => $sLinkNamePart, ],
+        'viewparam' => [
+            'ekis_id' => $ekis_id,
+            'linkname' => $sLinkNamePart,
+            'conference' => $conference,
+        ],
         'records' => $persons,
         'scenario' => 'create' . $sLinkNamePart,
         'rowview' => '@app/views/person/_form_indoclad.php',

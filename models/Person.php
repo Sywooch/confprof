@@ -35,6 +35,7 @@ use app\models\Doclad;
  * @property string $prs_created
  * @property string $prs_confirmkey
  * @property integer $prs_agree_pers
+ * @property string $prs_hischool
  */
 class Person extends \yii\db\ActiveRecord
 {
@@ -111,9 +112,9 @@ class Person extends \yii\db\ActiveRecord
             [['prs_sec_id', ], 'in', 'range' => array_keys($this->aSectionList)],
             [['prs_type', 'prs_fam', 'prs_name', 'prs_otch', 'prs_email', 'prs_position', 'prs_lesson', 'ekis_id', 'prs_group', 'prs_position', 'prs_lesson', 'prs_agree_pers', ], 'required'],
 //            [['prs_fam', 'prs_name', 'prs_otch', 'prs_position', 'prs_lesson', ], RustextValidator::className(), 'capital' => 0, 'russian' => 0.8, 'other'=>0, ],
-            [['prs_fam', 'prs_name', 'prs_otch', 'prs_position', 'prs_lesson', ], 'match',
+            [['prs_fam', 'prs_name', 'prs_otch', ], 'match',
                 'pattern' => '|^[А-Яа-яЁё]{2}[-А-Яа-яЁё\\s]*$|u', 'message' => 'Допустимы символы русского алфавита',
-            ],
+            ], // 'prs_position', 'prs_lesson', 
 
             [['prs_email', ], 'email', ],
             [['prs_email', ], 'unique',
@@ -124,6 +125,7 @@ class Person extends \yii\db\ActiveRecord
             [['prs_created', ], 'save', ],
 
             [['prs_fam', 'prs_name', 'prs_otch', 'prs_org', 'prs_confirmkey', ], 'string', 'max' => 255],
+            [['prs_hischool'], 'string', 'max' => 255],
             [['prs_email'], 'string', 'max' => 128],
             [['prs_phone'], 'string', 'max' => 24],
             [['prs_group', 'prs_position', 'prs_lesson'], 'string', 'max' => 64]
@@ -180,6 +182,7 @@ class Person extends \yii\db\ActiveRecord
             'prs_position',
             'prs_lesson',
             'prs_agree_pers',
+            'prs_hischool',
         ];
 
         $aRet['createmember'] = [ // соучастник персональный
@@ -247,6 +250,7 @@ class Person extends \yii\db\ActiveRecord
 //            'prs_level' => 'Курс',
             'prs_position' => 'Должность',
             'prs_lesson' => 'Предмет',
+            'prs_hischool' => 'ВУЗ',
             'prs_created' => 'Дата регистрации',
             'prs_confirmkey' => 'Ключик проверки email',
             'conferenceid' => 'Конференция',
