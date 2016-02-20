@@ -12,7 +12,7 @@ use app\models\Doclad;
 $this->title = 'Секции';
 $this->params['breadcrumbs'][] = $this->title;
 
-$aDocldTypes = Doclad::getAllTypes();
+$aDocladTypes = Doclad::getAllTypes();
 
 ?>
 <div class="section-index">
@@ -44,9 +44,9 @@ $aDocldTypes = Doclad::getAllTypes();
                 'attribute' => 'sec_doclad_type',
 //                'header' => 'Доклад',
                 'class' => 'yii\grid\DataColumn',
-                'filter' => $aDocldTypes,
-                'value' => function ($model, $key, $index, $column) use ($aDocldTypes) {
-                    return isset($aDocldTypes[$model->sec_doclad_type]) ? $aDocldTypes[$model->sec_doclad_type] : '';
+                'filter' => $aDocladTypes,
+                'value' => function ($model, $key, $index, $column) use ($aDocladTypes) {
+                    return isset($aDocladTypes[$model->sec_doclad_type]) ? $aDocladTypes[$model->sec_doclad_type] : '';
                 }
             ],
 //            'sec_cnf_id',

@@ -3,11 +3,14 @@
 namespace app\controllers;
 
 use Yii;
-use app\models\Conference;
-use app\models\ConferenceSearch;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
+use yii\filters\AccessControl;
+
+use app\models\Conference;
+use app\models\ConferenceSearch;
+use app\models\User;
 
 /**
  * ConferenceController implements the CRUD actions for Conference model.
@@ -17,6 +20,18 @@ class ConferenceController extends Controller
     public function behaviors()
     {
         return [
+            'access' => [
+                'class' => AccessControl::className(),
+                'only' => ['index', 'update', 'create',  'view', 'export', ],
+                'rules' => [
+                    [
+                        'allow' => true,
+                        'actions' => ['index', 'update', 'create',  'view', 'export', ],
+                        'roles' => ['User::USER_GROUP_MODERATOR'],
+                    ],
+                ],
+            ],
+
             'verbs' => [
                 'class' => VerbFilter::className(),
                 'actions' => [
@@ -100,7 +115,7 @@ class ConferenceController extends Controller
      */
     public function actionDelete($id)
     {
-        $this->findModel($id)->delete();
+        // $this->findModel($id)->delete();
 
         return $this->redirect(['index']);
     }

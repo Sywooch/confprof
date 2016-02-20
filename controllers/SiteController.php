@@ -73,7 +73,8 @@ class SiteController extends Controller
             if( Yii::$app->user->can(User::USER_GROUP_MODERATOR) ) {
                 return $this->redirect('/admin');
             }
-            return $this->goBack();
+            return $this->redirect('/cabinet');
+//            return $this->goBack();
         }
         return $this->render('login', [
             'model' => $model,
@@ -84,7 +85,8 @@ class SiteController extends Controller
     {
         Yii::$app->user->logout();
 
-        return $this->goHome();
+        return $this->redirect('/');
+//        return $this->goHome();
     }
 
     public function actionContact()
