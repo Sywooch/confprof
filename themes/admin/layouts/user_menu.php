@@ -27,6 +27,16 @@ if( Yii::$app->user->can(User::USER_GROUP_MODERATOR) ) {
     );
 }
 
+Yii::info('Menu test: ' . User::USER_GROUP_ADMIN);
+if( Yii::$app->user->can(User::USER_GROUP_ADMIN) ) {
+    $items = array_merge(
+        $items,
+        [
+            ['label' => 'Пользователи', 'url' => ['user/index']],
+        ]
+    );
+}
+
 if( Yii::$app->user->isGuest ) {
     $items[] = ['label' => 'Вход', 'url' => ['/site/login']];
 }

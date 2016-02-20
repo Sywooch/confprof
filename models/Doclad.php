@@ -389,6 +389,9 @@ class Doclad extends \yii\db\ActiveRecord
             $s = 'Update ' . Person::tableName() . ' Set ';
             $param = [];
             $sDelim = '';
+            if( empty($ob['prs_org']) && !empty($ob['prs_hischool']) ) {
+                $ob['prs_org'] = $ob['prs_hischool'];
+            }
 
             foreach($ob As $k=>$v) {
                 $s .= $sDelim . $k . ' = ' . ':'.$k;
@@ -402,10 +405,15 @@ class Doclad extends \yii\db\ActiveRecord
             $n = Yii::$app->db->createCommand($s, $param)->execute();
             if( $n == 0 ) {
                 $oNew = new Person();
+                $oNew->prs_type = $nType;
+                $aTmp = $oNew->scenarios();
                 $oNew->attributes = $ob;
+                $oNew->prs_doc_id = $this->doc_id;
+                $oNew->prs_active = Person::PERSON_STATE_ACTIVE;
                 $oNew->prs_sec_id = $this->doc_sec_id;
                 if( !$oNew->save() ) {
                     $bOk = false;
+                    Yii::info('savePersons() nType = '.$nType.' attributes: ' . print_r($oNew->attributes, true));
                     Yii::info('savePersons() nType = '.$nType.' Error save oNew: ' . print_r($oNew->getErrors(), true));
                 }
             }

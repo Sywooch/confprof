@@ -34,6 +34,7 @@ CharcounterAsset::register($this);
 $this->registerCss($sCss);
 $emptyConsultant = new Person();
 $emptyConsultant->prs_type = Person::PERSON_TYPE_CONSULTANT;
+$aTmp = $emptyConsultant->scenarios();
 
 /* @var $this yii\web\View */
 /* @var $model app\models\Doclad */

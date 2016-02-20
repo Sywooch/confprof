@@ -41,6 +41,10 @@ class BaseConferenceController extends Controller
             'validateConsultant' => [
                 'class' => MultirowsBehavior::className(),
                 'model' => Person::className(),
+                'defaultattributes' => [
+                    'prs_type' => Person::PERSON_TYPE_CONSULTANT,
+                ],
+                'scenario' => 'createconsultant',
             ],
             'validateMedals' => [
                 'class' => MultirowsBehavior::className(),
@@ -305,6 +309,7 @@ class BaseConferenceController extends Controller
 
             if( $model->doc_type == Doclad::DOC_TYPE_PERSONAL ) {
                 // для доклада от персонального участника нужен хотя бы 1 руководитель
+//                Yii::info(str_repeat('-', 30) . ' validate consultant '.str_repeat('-', 30));
                 $resultConsultant = $this->getBehavior('validateConsultant')->validateData();
                 $dataConsultant = $this->getBehavior('validateConsultant')->getData();
                 if( count($dataConsultant['data']) == 0 ) {
@@ -326,7 +331,7 @@ class BaseConferenceController extends Controller
 
             $aRes = array_merge($aValidate, $resultConsultant, $resultMedals, $resultMembers);
 
-            Yii::info('addDoclad(): return json ' . print_r($aRes, true));
+            Yii::trace('addDoclad(): return json ' . print_r($aRes, true));
             return $aRes;
 
 //            Yii::$app->response->format = Response::FORMAT_JSON;
@@ -343,7 +348,7 @@ class BaseConferenceController extends Controller
 
                 if( $model->doc_type == Doclad::DOC_TYPE_PERSONAL ) {
                     $dataConsultant = $this->getBehavior('validateConsultant')->getData();
-//                    Yii::info('dataConsultant = ' . print_r($dataConsultant, true));
+//                    Yii::trace('dataConsultant = ' . print_r($dataConsultant, true));
                     $bOk = $bOk && $model->saveConsultants($dataConsultant['data']);
                 }
 
@@ -355,7 +360,7 @@ class BaseConferenceController extends Controller
 
                 if( $id > 0 ) {
                     $aFileRes = $model->uploadFile($model->doc_id);
-                    Yii::info('$aFileRes = ' . print_r($aFileRes, true));
+                    Yii::trace('$aFileRes = ' . print_r($aFileRes, true));
                 }
 
                 return $this->redirect(['list']);
@@ -428,7 +433,7 @@ class BaseConferenceController extends Controller
                 if( file_exists($sf) ) {
                     unlink($sf);
                     $ob->delete();
-//                    Yii::info('actionDeletefile('.$id.') : delete file ' . $sf . ' ('.$ob->file_id.')');
+//                    Yii::trace('actionDeletefile('.$id.') : delete file ' . $sf . ' ('.$ob->file_id.')');
                     $bDel = true;
                 }
                 else {

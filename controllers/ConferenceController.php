@@ -27,7 +27,7 @@ class ConferenceController extends Controller
                     [
                         'allow' => true,
                         'actions' => ['index', 'update', 'create',  'view', 'export', ],
-                        'roles' => ['User::USER_GROUP_MODERATOR'],
+                        'roles' => [User::USER_GROUP_MODERATOR],
                     ],
                 ],
             ],

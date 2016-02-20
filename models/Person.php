@@ -105,16 +105,18 @@ class Person extends \yii\db\ActiveRecord
      */
     public function rules()
     {
-        return [
+        $a = [
 //            [['prs_type', ], 'filter', 'filter'=>[$this, 'setPersonType'], ],
             [['prs_active', 'prs_type', 'prs_sec_id', 'prs_doc_id', 'ekis_id', 'prs_agree_pers', ], 'integer'],
             [['prs_agree_pers', ], 'in', 'range' => [1], 'message' => 'Необходимо дать разрешение на обработку персональных данных'],
             [['prs_sec_id', ], 'in', 'range' => array_keys($this->aSectionList)],
-            [['prs_type', 'prs_fam', 'prs_name', 'prs_otch', 'prs_email', 'prs_position', 'prs_lesson', 'ekis_id', 'prs_group', 'prs_position', 'prs_lesson', 'prs_agree_pers', ], 'required'],
+            [['prs_type', 'prs_fam', 'prs_name', 'prs_otch', 'prs_email', 'prs_position', 'prs_lesson', 'prs_group', 'prs_position', 'prs_lesson', 'prs_agree_pers', ], 'required'],
 //            [['prs_fam', 'prs_name', 'prs_otch', 'prs_position', 'prs_lesson', ], RustextValidator::className(), 'capital' => 0, 'russian' => 0.8, 'other'=>0, ],
             [['prs_fam', 'prs_name', 'prs_otch', ], 'match',
                 'pattern' => '|^[А-Яа-яЁё]{2}[-А-Яа-яЁё\\s]*$|u', 'message' => 'Допустимы символы русского алфавита',
             ], // 'prs_position', 'prs_lesson',
+
+//            [['ekis_id', ], 'integer'],
 
             [['prs_email', ], 'email', ],
             [['prs_email', ], 'unique',
@@ -130,34 +132,39 @@ class Person extends \yii\db\ActiveRecord
             [['prs_phone'], 'string', 'max' => 24],
             [['prs_group', 'prs_position', 'prs_lesson'], 'string', 'max' => 64]
         ];
-    }
 
-    /**
-     * фильтр для установки типа по сценарию
-     * @param $val string
-     */
-//    public function setPersonType($val) {
-//        $a = [
-//            'createconsultant' => self::PERSON_TYPE_CONSULTANT,
-//            'createguest' => self::PERSON_TYPE_GUEST,
-//            'createpartner' => self::PERSON_TYPE_STUD_MEMBER,
-//        ];
-//
-//        if( isset($a[$this->scenario]) ) {
-//            return $a[$this->scenario];
-//        }
-//        else {
-//            if( $this->prs_type ==  )
-//        }
-//        return $this->prs_type;
-//    }
+        if( $this->scenario != 'createconsultant' ) {
+            $a[] = [['ekis_id', ], 'required'];
+        }
+        else {
+            $a[] = [
+                ['ekis_id', ],
+                'required',
+                'when' => function ($model) {
+                    $bEmpty = empty($model->prs_hischool);
+                    // todo
+                    // тут очень плохая вещь - чтобы не менять вывод потом - присваиваем названию организации
+                    if( !$bEmpty ) {
+                        if( empty($model->ekis_id) ) {
+                            $model->prs_org = $model->prs_hischool;
+                        }
+                    }
+                    return $bEmpty;
+                },
+                'message' => 'Нужно указать или организацию, или ВУЗ руководителя',
+            ];
+
+        }
+//        Yii::info(self::className() . '::validators a = ' . print_r($a, true));
+
+        return $a;
+    }
 
     /**
      * Сценарии
      * @return array
      */
     public function scenarios() {
-        $aRet = parent::scenarios();
         if( $this->prs_type == self::PERSON_TYPE_CONSULTANT ) {
             $this->scenario = 'createconsultant';
         }
@@ -170,7 +177,9 @@ class Person extends \yii\db\ActiveRecord
         else if( $this->prs_type == self::PERSON_TYPE_GUEST ) {
             $this->scenario = $this->isNewRecord ? 'createguest' : $this->scenario;
         }
+        $aRet = parent::scenarios();
 
+//        Yii::trace(self::className() . ': scenarios(): ' . $this->scenario);
         $aRet['createconsultant'] = [ // руководитель
             'prs_doc_id',
             'prs_fam',
