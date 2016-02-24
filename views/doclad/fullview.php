@@ -105,7 +105,7 @@ if( $model->doc_type == Doclad::DOC_TYPE_PERSONAL ) {
         $attributes,
         [
             'doc_lider_group',
-            'doc_lider_level',
+//            'doc_lider_level',
         ]
     );
 }
