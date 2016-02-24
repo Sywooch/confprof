@@ -35,7 +35,7 @@ class ReportController extends Controller
                     [
                         'allow' => true,
                         'actions' => ['index', 'view', 'changestatus', 'changeformat', 'export', ],
-                        'roles' => [User::USER_GROUP_MODERATOR, ],
+                        'roles' => [User::USER_GROUP_MODERATOR, User::USER_GROUP_ADMIN, ],
                     ],
                 ],
             ],

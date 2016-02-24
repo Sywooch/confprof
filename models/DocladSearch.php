@@ -93,6 +93,15 @@ class DocladSearch extends Doclad
         if( !Yii::$app->user->can(User::USER_GROUP_MODERATOR) ) {
             $aFilters['doc_us_id'] = Yii::$app->user->getId();
         }
+        else {
+            /** @var User $obUser */
+            $obUser = Yii::$app->user->identity;
+            if( !empty($obUser->sectionids) ) {
+                $aFilters = [
+                    'doc_sec_id' => $obUser->sectionids,
+                ];
+            }
+        }
 
         if( $this->conferenceid ) {
             $query->andFilterWhere([ Conference::tableName() . '.cnf_id' => $this->conferenceid, ]);
