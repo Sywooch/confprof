@@ -30,7 +30,23 @@ $this->params['breadcrumbs'][] = $this->title;
 
             // 'us_id',
             'us_email:email',
-            'us_group',
+//            'us_group',
+            [
+                'class' => 'yii\grid\DataColumn',
+                'attribute' => 'us_group',
+                'filter' => User::getAllGroups(),
+//                'content' => function ($model, $key, $index, $column) {
+//                    /** @var User $model */
+//                    return implode('<br />', ArrayHelper::map(
+//                        $model->sectionsdata,
+//                        'sec_id',
+//                        'sec_title'
+//                    ));
+//                },
+//                'contentOptions' => [
+//                    'class' => 'griddate commandcell',
+//                ],
+            ],
             [
                 'class' => 'yii\grid\DataColumn',
                 'attribute' => 'sectionids',
