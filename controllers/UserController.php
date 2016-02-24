@@ -8,6 +8,8 @@ use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 use yii\base\InvalidCallException;
 use yii\filters\AccessControl;
+use yii\web\Response;
+use yii\widgets\ActiveForm;
 
 use app\models\User;
 use app\models\UserSearch;
@@ -96,6 +98,15 @@ class UserController extends Controller
     public function actionUpdate($id)
     {
         $model = $this->findModel($id);
+
+        if (Yii::$app->request->isAjax && $model->load(Yii::$app->request->post())) {
+            Yii::$app->response->format = Response::FORMAT_JSON;
+
+            $aValidate = ActiveForm::validate($model);
+
+            Yii::trace(self::className() . 'actionUpdate(): return json ' . print_r($aValidate, true));
+            return $aValidate;
+        }
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
             return $this->redirect(['view', 'id' => $model->us_id]);

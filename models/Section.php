@@ -7,6 +7,7 @@ use yii\behaviors\TimestampBehavior;
 use yii\db\ActiveRecord;
 use yii\db\Expression;
 use app\models\Conference;
+use yii\helpers\ArrayHelper;
 
 
 /**
@@ -20,6 +21,7 @@ use app\models\Conference;
  */
 class Section extends \yii\db\ActiveRecord
 {
+    public static $_cache = [];
 
     public function behaviors()
     {
@@ -77,4 +79,26 @@ class Section extends \yii\db\ActiveRecord
     public function getConference() {
         return $this->hasOne(Conference::className(), ['cnf_id' => 'sec_cnf_id']);
     }
+
+    /**
+     * @param array $aWhere
+     * @return mixed
+     */
+    public static function getSectionList($aWhere = []) {
+        $sKey = md5(print_r($aWhere, true));
+        if( !isset(self::$_cache[$sKey]) ) {
+            $query = self::find();
+            if( !empty($aWhere) ) {
+                $query->where($aWhere);
+            }
+            self::$_cache[$sKey] = ArrayHelper::map(
+                $query->all(),
+                'sec_id',
+                'sec_title'
+            );
+        }
+        return self::$_cache[$sKey];
+    }
+
+
 }

@@ -7,10 +7,13 @@ use yii\behaviors\TimestampBehavior;
 use yii\behaviors\AttributeBehavior;
 use yii\db\ActiveRecord;
 use yii\db\Expression;
+use yii\helpers\ArrayHelper;
 use yii\web\IdentityInterface;
 
 use app\components\Notificator;
 use app\components\ActionBehavior;
+use app\models\Usersection;
+use app\models\Section;
 
 /**
  * This is the model class for table "{{%user}}".
@@ -38,6 +41,8 @@ class User extends \yii\db\ActiveRecord  implements IdentityInterface
     const STATUS_DELETED = 0;
 
     public $password = '';
+
+    public $_sectionids = null;
 
     public function behaviors() {
         return [
@@ -85,6 +90,20 @@ class User extends \yii\db\ActiveRecord  implements IdentityInterface
                     }
                 }
             ],
+            [
+                'class' => ActionBehavior::className(),
+                'allevents' => [ActiveRecord::EVENT_AFTER_INSERT, ActiveRecord::EVENT_AFTER_UPDATE, ],
+                'action' => function($event) {
+                    /** @var \yii\base\Event $event */
+                    /** @var User $model */
+                    $model = $event->sender;
+                    if( $model->us_group == $model::USER_GROUP_MODERATOR ) {
+                        Yii::trace('Save moderator sections: ' . print_r($model->sectionids, true));
+                        $model->saveAllSections($event);
+                    }
+
+                }
+            ],
         ];
     }
 
@@ -111,8 +130,9 @@ class User extends \yii\db\ActiveRecord  implements IdentityInterface
             [['us_email'], 'unique', ],
             [['us_email'], 'email', ],
             [['us_pass', 'us_confirmkey', 'us_key'], 'string', 'max' => 255],
-            [['password'], 'required'],
+            [['password'], 'required', 'when' => function($model) { return $model->isNewRecord; }, ],
             [['password'], 'string', 'max' => 64],
+            [['sectionids'], 'in', 'range' => array_keys(Section::getSectionList()), 'allowArray' => true, ]
         ];
     }
 
@@ -132,6 +152,7 @@ class User extends \yii\db\ActiveRecord  implements IdentityInterface
             'us_confirmkey' => 'Confirm key',
             'us_key' => 'API key',
             'us_conference_id' => 'Конференция регистрации',
+            'sectionids' => 'Секции модератора',
         ];
     }
 
@@ -164,6 +185,7 @@ class User extends \yii\db\ActiveRecord  implements IdentityInterface
             self::USER_GROUP_PERSONAL => 'Обучающийся',
             self::USER_GROUP_ORGANIZATION => 'Представитель образовательной организации',
             self::USER_GROUP_MODERATOR => 'Модератор',
+            self::USER_GROUP_ADMIN => 'Администратор',
         ];
     }
 
@@ -175,6 +197,7 @@ class User extends \yii\db\ActiveRecord  implements IdentityInterface
         $a = self::getAllGroups();
 
         unset($a[self::USER_GROUP_MODERATOR]);
+        unset($a[self::USER_GROUP_ADMIN]);
 
         return $a;
     }
@@ -274,5 +297,102 @@ class User extends \yii\db\ActiveRecord  implements IdentityInterface
     {
         $this->us_key = Yii::$app->security->generateRandomString();
     }// ********************************************************************************************
+
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getSections() {
+        return $this->hasMany(
+            Usersection::className(),
+            [
+                'usec_user_id' => 'us_id'
+            ]
+        );
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getSectionsdata() {
+        return $this
+            ->hasMany(
+                Section::className(),
+                ['sec_id' => 'usec_section_id'])
+            ->via('sections');
+    }
+
+    /**
+     * @param $Sections
+     */
+    public function setSectionids($Sections)
+    {
+        $this->_sectionids = [];
+        if( !empty($Sections) ) {
+            if( !is_array($Sections) ) {
+                $Sections = [$Sections];
+            }
+            $this->_sectionids = $Sections;
+        }
+        Yii::trace('setSectionids(): ' . print_r($Sections, true));
+    }
+
+    /**
+     *
+     */
+    public function getSectionids()
+    {
+        if( $this->_sectionids === null ) {
+            $this->_sectionids = ArrayHelper::map(
+                $this->sections,
+                'usec_section_id',
+                'usec_section_id'
+            );
+        }
+        Yii::trace('setSectionids(): ' . print_r($this->_sectionids, true));
+        return $this->_sectionids;
+    }
+
+    /**
+     *  Сохраняем секции
+     * @param Event $event
+     */
+    public function saveAllSections($event) {
+        /** @var User $model */
+        $model = $event->sender;
+        if( $event->name === ActiveRecord::EVENT_AFTER_UPDATE ) {
+            $nCou = Usersection::updateAll(
+                [
+                    'usec_user_id' => 0,
+                    'usec_section_id' => 0,
+                ],
+                [
+                    'usec_user_id' => $model->us_id,
+                ]
+            );
+        }
+        if( is_array($model->sectionids) && ( count($model->sectionids) > 0 ) ) {
+            foreach($model->sectionids As $id) {
+                Yii::trace('saveAllSections(): ' . $id);
+                $nUpd = Yii::$app
+                    ->db
+                    ->createCommand(
+                        'Update ' . Usersection::tableName() . ' Set usec_user_id = :us_id, usec_section_id = :section_id Where usec_user_id = 0 Limit 1',
+                        [':section_id' => $id, ':us_id' => $model->us_id, ]
+                    )
+                    ->execute();
+                if( $nUpd == 0 ) {
+                    Yii::$app
+                        ->db
+                        ->createCommand(
+                            'Insert Into ' . Usersection::tableName() . ' (usec_user_id, usec_section_id) Values (:us_id, :section_id)',
+                            [':section_id' => $id, ':us_id' => $model->us_id, ]
+                        )
+                        ->execute();
+//                    Yii::info('Insert relate records : ['.$this->msg_id.', '.$id.']');
+                }
+            }
+        }
+    }
 
 }

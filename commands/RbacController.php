@@ -68,6 +68,10 @@ class RbacController extends Controller
         $auth->addChild($participant, $organiszate);
         $auth->addChild($participant, $personal);
 
+        $admin = $auth->createRole(User::USER_GROUP_ADMIN);
+        $auth->add($admin);
+        $auth->addChild($admin, $moderator);
+
         $Admin = User::find()->where(['us_group' => User::USER_GROUP_MODERATOR])->one();
         if( $Admin === null ) {
             $Admin = new User();

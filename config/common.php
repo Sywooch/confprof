@@ -24,7 +24,7 @@ $configComm = [
 
         'authManager' => [
             'class' => 'yii\rbac\PhpManager',
-            'defaultRoles' => [ 'person', 'org', 'mod', ],
+            'defaultRoles' => [ 'person', 'org', 'mod', 'admin', ],
         ],
 
 

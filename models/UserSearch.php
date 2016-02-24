@@ -5,7 +5,10 @@ namespace app\models;
 use Yii;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
+use yii\db\Query;
+
 use app\models\User;
+use app\models\Usersection;
 
 /**
  * UserSearch represents the model behind the search form about `app\models\User`.
@@ -19,7 +22,7 @@ class UserSearch extends User
     {
         return [
             [['us_id', 'us_active'], 'integer'],
-            [['us_group', 'us_email', 'us_pass', 'us_created', 'us_confirmkey', 'us_key'], 'safe'],
+            [['us_group', 'us_email', 'us_pass', 'us_created', 'us_confirmkey', 'us_key', 'sectionids'], 'safe'],
         ];
     }
 
@@ -60,6 +63,17 @@ class UserSearch extends User
             'us_active' => $this->us_active,
             'us_created' => $this->us_created,
         ]);
+
+
+        if( !empty($this->sectionids) ) {
+            $ansQuery = (new Query)
+                ->select('usec_user_id')
+                ->from(Usersection::tableName())
+                ->where(['usec_section_id' => $this->sectionids])
+                ->distinct();
+            $query->andFilterWhere(['us_id' => $ansQuery]);
+        }
+
 
         $query->andFilterWhere(['like', 'us_group', $this->us_group])
             ->andFilterWhere(['like', 'us_email', $this->us_email])
