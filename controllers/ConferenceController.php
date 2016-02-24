@@ -7,6 +7,8 @@ use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 use yii\filters\AccessControl;
+use yii\web\Response;
+use yii\widgets\ActiveForm;
 
 use app\models\Conference;
 use app\models\ConferenceSearch;
@@ -77,6 +79,13 @@ class ConferenceController extends Controller
     {
         $model = new Conference();
 
+        if (Yii::$app->request->isAjax && $model->load(Yii::$app->request->post())) {
+            Yii::$app->response->format = Response::FORMAT_JSON;
+            $aValidate = ActiveForm::validate($model);
+
+//            Yii::trace('addDoclad(): return json ' . print_r($aValidate, true));
+            return $aValidate;
+        }
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
             return $this->redirect(['index', ]);
 //            return $this->redirect(['view', 'id' => $model->cnf_id]);
@@ -96,6 +105,13 @@ class ConferenceController extends Controller
     public function actionUpdate($id)
     {
         $model = $this->findModel($id);
+        if (Yii::$app->request->isAjax && $model->load(Yii::$app->request->post())) {
+            Yii::$app->response->format = Response::FORMAT_JSON;
+            $aValidate = ActiveForm::validate($model);
+
+//            Yii::trace('addDoclad(): return json ' . print_r($aValidate, true));
+            return $aValidate;
+        }
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
             return $this->redirect(['index', ]);

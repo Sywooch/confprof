@@ -10,7 +10,20 @@ use yii\widgets\ActiveForm;
 
 <div class="conference-form">
 
-    <?php $form = ActiveForm::begin(); ?>
+    <?php $form = ActiveForm::begin([
+        'id' => 'conference-form',
+//        'fieldConfig' => [
+//            'template' => '{label}{input}{error}{hint}',
+//            'options' => ['class' => 'form-group'],
+////            'labelOptions'=>['class'=>'control-label col-md-6'],
+//        ],
+        'enableAjaxValidation' => true,
+        'enableClientValidation' => false,
+        'validateOnBlur' => false,
+        'validateOnChange' => false,
+        'validateOnType' => false,
+        'validateOnSubmit' => true,
+    ]); ?>
 
     <?= $form->field($model, 'cnf_title')->textInput(['maxlength' => true]) ?>
 
