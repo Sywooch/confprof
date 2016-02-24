@@ -72,13 +72,13 @@ class RbacController extends Controller
         $auth->add($admin);
         $auth->addChild($admin, $moderator);
 
-        $Admin = User::find()->where(['us_group' => User::USER_GROUP_MODERATOR])->one();
+        $Admin = User::find()->where(['us_group' => [User::USER_GROUP_MODERATOR, User::USER_GROUP_ADMIN, ]])->one();
         if( $Admin === null ) {
             $Admin = new User();
             $Admin->scenario = 'modregister';
             $Admin->us_active = 1;
             $Admin->us_email = '456@mail.ru';
-            $Admin->us_group = User::USER_GROUP_MODERATOR;
+            $Admin->us_group = User::USER_GROUP_ADMIN;
             $Admin->password = '111111';
             if( !$Admin->save() ) {
                 $sErr = print_r($Admin->getErrors(), true);
