@@ -73,6 +73,7 @@ class RbacController extends Controller
         $auth->addChild($participant, $personal);
 
         $admin = $auth->createRole(User::USER_GROUP_ADMIN);
+        $admin->ruleName = $rule->name;
         $auth->add($admin);
         $auth->addChild($admin, $moderator);
 
@@ -96,7 +97,6 @@ class RbacController extends Controller
 
     /**
      * Импорт модераторов
-     * yii rbac/importmoderate "d:\Книга2.csv" 1
      * Взят вордовский файл с секциями для инжененрных классов
      * Таблица скопирована в эксель и сохранена как csv
      * Ручками подправлено так, чтобы в строке были полностью данные по людям:

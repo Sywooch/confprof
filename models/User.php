@@ -340,7 +340,7 @@ class User extends \yii\db\ActiveRecord  implements IdentityInterface
             }
             $this->_sectionids = $Sections;
         }
-        Yii::trace('setSectionids(): ' . print_r($Sections, true));
+//        Yii::trace('setSectionids(): ' . print_r($Sections, true));
     }
 
     /**
@@ -355,7 +355,6 @@ class User extends \yii\db\ActiveRecord  implements IdentityInterface
                 'usec_section_id'
             );
         }
-        Yii::trace('setSectionids(): ' . print_r($this->_sectionids, true));
         return $this->_sectionids;
     }
 
