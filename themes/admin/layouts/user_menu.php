@@ -22,7 +22,6 @@ if( Yii::$app->user->can(User::USER_GROUP_MODERATOR) ) {
         [
             ['label' => 'Доклады', 'url' => ['report/index']],
             ['label' => 'Гости', 'url' => ['guest/index']],
-            ['label' => 'Секции', 'url' => ['section/index']],
         ]
     );
 }
@@ -32,6 +31,7 @@ if( Yii::$app->user->can(User::USER_GROUP_ADMIN) ) {
     $items = array_merge(
         $items,
         [
+            ['label' => 'Секции', 'url' => ['section/index']],
             ['label' => 'Пользователи', 'url' => ['user/index']],
         ]
     );
