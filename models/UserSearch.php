@@ -22,6 +22,7 @@ class UserSearch extends User
     {
         return [
             [['us_id', 'us_active'], 'integer'],
+            [['us_description'], 'string', ],
             [['us_group', 'us_email', 'us_pass', 'us_created', 'us_confirmkey', 'us_key', 'sectionids'], 'safe'],
         ];
     }

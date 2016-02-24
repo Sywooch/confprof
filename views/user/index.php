@@ -12,6 +12,9 @@ use app\models\Section;
 
 $this->title = 'Пользователи';
 $this->params['breadcrumbs'][] = $this->title;
+
+$aGroups = User::getAllGroups();
+
 ?>
 <div class="user-index">
 
@@ -34,15 +37,11 @@ $this->params['breadcrumbs'][] = $this->title;
             [
                 'class' => 'yii\grid\DataColumn',
                 'attribute' => 'us_group',
-                'filter' => User::getAllGroups(),
-//                'content' => function ($model, $key, $index, $column) {
-//                    /** @var User $model */
-//                    return implode('<br />', ArrayHelper::map(
-//                        $model->sectionsdata,
-//                        'sec_id',
-//                        'sec_title'
-//                    ));
-//                },
+                'filter' => $aGroups,
+                'content' => function ($model, $key, $index, $column) use ($aGroups) {
+                    /** @var User $model */
+                    return Html::encode(isset($aGroups[$model->us_group]) ? $aGroups[$model->us_group] : '??');
+                },
 //                'contentOptions' => [
 //                    'class' => 'griddate commandcell',
 //                ],

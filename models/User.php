@@ -27,6 +27,8 @@ use app\models\Section;
  * @property string $us_confirmkey
  * @property string $us_key
  * @property string $us_conference_id
+ * @property string $us_description
+ * @property string $us_name
  */
 class User extends \yii\db\ActiveRecord  implements IdentityInterface
 {
@@ -125,14 +127,16 @@ class User extends \yii\db\ActiveRecord  implements IdentityInterface
             [['us_group'], 'in', 'range' => array_keys($this->scenario == 'register' ? self::getRegGroups() : self::getAllGroups()), ],
             [['us_active', 'us_conference_id', ], 'integer'],
             [['us_created'], 'safe'],
-            [['us_group'], 'string', 'max' => 16],
-            [['us_email'], 'string', 'max' => 64],
+            [['us_group'], 'string', 'max' => 16, ],
+            [['us_email'], 'string', 'max' => 64, ],
             [['us_email'], 'unique', ],
             [['us_email'], 'email', ],
-            [['us_pass', 'us_confirmkey', 'us_key'], 'string', 'max' => 255],
+            [['us_pass', 'us_confirmkey', 'us_key'], 'string', 'max' => 255, ],
             [['password'], 'required', 'when' => function($model) { return $model->isNewRecord; }, ],
-            [['password'], 'string', 'max' => 64],
-            [['sectionids'], 'in', 'range' => array_keys(Section::getSectionList()), 'allowArray' => true, ]
+            [['password'], 'string', 'max' => 64, ],
+            [['sectionids'], 'in', 'range' => array_keys(Section::getSectionList()), 'allowArray' => true, ],
+            [['us_description'], 'string', ],
+            [['us_name'], 'string', 'max' => 128, ],
         ];
     }
 
@@ -153,6 +157,8 @@ class User extends \yii\db\ActiveRecord  implements IdentityInterface
             'us_key' => 'API key',
             'us_conference_id' => 'Конференция регистрации',
             'sectionids' => 'Секции модератора',
+            'us_description' => 'Описание',
+            'us_name' => 'ФИО',
         ];
     }
 
@@ -168,7 +174,7 @@ class User extends \yii\db\ActiveRecord  implements IdentityInterface
             'us_group',
         ];
 
-        $aRet['modregister'] = $aRet['register'];
+        $aRet['modregister'] = array_merge($aRet['register'], ['us_description', 'us_name']);
 
         $aRet['confirmregister'] = [ // подтвкрждение регистрации
             'us_active',
