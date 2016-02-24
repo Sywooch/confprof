@@ -61,7 +61,7 @@ class Conference extends \yii\db\ActiveRecord
             [['cnf_description', 'cnf_about'], 'string'],
             [['cnf_created'], 'safe'],
             [['cnf_isconshicshool'], 'integer'],
-            [['cnf_isconshicshool'], 'in', 'range' => Doclad::getAllTypes(), ],
+            [['cnf_isconshicshool'], 'in', 'range' => [0, 1], ],
             [['cnf_title', 'cnf_controller', 'cnf_pagetitle', 'cnf_shorttitle', ], 'string', 'max' => 255],
             [['cnf_class'], 'string', 'max' => 64]
         ];
