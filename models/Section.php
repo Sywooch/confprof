@@ -6,8 +6,10 @@ use Yii;
 use yii\behaviors\TimestampBehavior;
 use yii\db\ActiveRecord;
 use yii\db\Expression;
-use app\models\Conference;
 use yii\helpers\ArrayHelper;
+
+use app\models\Conference;
+use app\models\Doclad;
 
 
 /**
@@ -78,6 +80,13 @@ class Section extends \yii\db\ActiveRecord
      */
     public function getConference() {
         return $this->hasOne(Conference::className(), ['cnf_id' => 'sec_cnf_id']);
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getDoclads() {
+        return $this->hasMany(Doclad::className(), ['doc_sec_id' => 'sec_id']);
     }
 
     /**

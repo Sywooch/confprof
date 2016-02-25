@@ -19,6 +19,7 @@ use app\models\Doclad;
 use app\models\DocladSearch;
 use app\models\Person;
 use app\components\ExcelexportBehavior;
+use app\components\Statistics;
 
 
 /**
@@ -34,7 +35,7 @@ class ReportController extends Controller
                 'rules' => [
                     [
                         'allow' => true,
-                        'actions' => ['index', 'view', 'changestatus', 'changeformat', 'export', ],
+                        'actions' => ['index', 'view', 'changestatus', 'changeformat', 'export', 'statistics', ],
                         'roles' => [User::USER_GROUP_MODERATOR, User::USER_GROUP_ADMIN, ],
                     ],
                 ],
@@ -245,6 +246,20 @@ class ReportController extends Controller
         return $this->render('fullview', [
             'model' => $model,
         ]);
+    }
+
+    /**
+     * Get statistics
+     */
+    public function actionStatistics()
+    {
+        return $this->render(
+            'statistics',
+            [
+                'data' => Statistics::getConferenceStat(),
+            ]
+        );
+//        return $this->renderContent(nl2br(str_replace(' ', '&nbsp;', print_r($a, true))));
     }
 
     /**
