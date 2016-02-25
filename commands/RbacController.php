@@ -284,6 +284,189 @@ class RbacController extends Controller
     }
 
     /**
+     * Импорт модераторов
+     * Взят вордовский файл с секциями для инжененрных классов
+     * Таблица скопирована в эксель и сохранена как csv
+     * Ручками подправлено так, чтобы в строке были полностью данные по людям:
+     * 1 столбец: номер
+     * 2 столбец: Образовательная  организация
+     * 3 столбец: Фамилия
+     * 4 столбец: Имя
+     * 5 столбец: Отчество
+     * 6 столбец: Должность
+     * 7 столбец: Электронный адрес
+     * могут быть пустые строки
+     */
+    public function actionImportmed($filename, $idConference = 2)
+    {
+        $aConfFields = [
+            2 => [
+                '',
+                'us_description',
+                'us_name',
+                'us_name',
+                'us_name',
+                'us_description',
+                'us_email'
+            ],
+            3 => [
+                'us_name',
+                'us_description',
+                'us_email'
+            ],
+        ];
+        if( ($hd = fopen($filename, "r")) !== false ) {
+            $aFields = $aConfFields[$idConference];
+            $nFields = count($aFields);
+
+            $aResultData = [];
+
+            $aSectionId = Yii::$app
+                ->db
+                ->createCommand('Select sec_id From ' . Section::tableName() . ' Where sec_cnf_id = ' . $idConference)
+                ->queryColumn();
+
+            $this->printStr(
+                "aSectionId: " . implode(', ', $aSectionId) . "\n\n"
+            );
+
+            $nRow = 0;
+            while( ($data = fgetcsv($hd, 2000, ";")) !== false ) {
+                $nRow++;
+                if( $nRow == 1 ) {
+                    continue;
+                }
+                $num = count($data);
+                if( $num < $nFields ) {
+                    $this->printStr(
+                        "Error fields: " . implode(', ', $data) . " num = ".$num." [{$nRow}]\n\n"
+                    );
+                    continue;
+                }
+
+                // *************************************************************************************************
+                // конвертируем в UTF-8
+                $data = array_map(function($s){ return iconv('CP1251', 'UTF-8', $s); }, $data);
+
+                // *************************************************************************************************
+                // тут пропускаем строку с заголовками колонок
+                if( (strpos($data[1], 'Фамилия') !== false) && (strpos($data[2], 'ВУЗ') !== false) ) {
+//                    $this->printStr(
+//                        "Col titles: " . implode(', ', $data) . " num = ".$num." [{$nRow}]\n\n"
+//                    );
+                    continue;
+                }
+
+                // *************************************************************************************************
+                // тут получаем данные по полям строки
+                $bEmpty = true; // это останется true в полностью пустой строке
+                $aAttr = [];
+
+                for ($i=0; $i < $num; $i++) {
+                    if( !empty($data[$i]) ) {
+                        $bEmpty = false;
+//                        $this->printStr(
+//                            "row [{$nRow}]: $i = " . $data[$i] . " -> {$aFields[$i]}\n\n"
+//                        );
+                        if( !empty($aFields[$i]) ) {
+                            $aAttr[$aFields[$i]] = (isset($aAttr[$aFields[$i]]) ? ($aAttr[$aFields[$i]] . ' ') : '' ) . trim($data[$i]);
+                        }
+                    }
+                }
+
+                // *************************************************************************************************
+                // тут пропускаем полностью пустую строку
+                if( $bEmpty ) {
+//                    $this->printStr(
+//                        "Empty row: " . implode(', ', $data) . " num = ".$num." [{$nRow}]\n\n"
+//                    );
+                    continue;
+                }
+
+                // *************************************************************************************************
+                // тут пропускаем без почты
+                if( !isset($aAttr['us_email']) ) {
+                    $this->printStr(
+                        "No email: " . implode(', ', $data) . " [{$nRow}]\n\n"
+                    );
+                    continue;
+                }
+
+//                $this->printStr(
+//                    "aAttr: " . print_r($aAttr, true) . " [{$nRow}]\n\n"
+//                );
+
+//                continue;
+
+                $oUser = User::find()
+                    ->where(['us_email' => $aAttr['us_email']])
+                    ->one();
+
+//                $this->printStr(
+//                    "Data row: " . print_r($aAttr, true) . " [{$nRow}]\n\n"
+//                );
+
+                if( $oUser === null ) {
+                    //нового заводим
+                    $oUser = new User();
+                    $oUser->scenario = 'modregister';
+                    $aAttr['password'] = Yii::$app->security->generateRandomString(6);
+                    $oUser->us_group = User::USER_GROUP_MODERATOR;
+                    $oUser->attributes = $aAttr;
+                    $oUser->sectionids = $aSectionId;
+                    $oUser->us_active = User::STATUS_ACTIVE;
+
+                    if( !$oUser->save() ) {
+                        $this->printStr(
+                            "Error save new user: " . print_r($oUser->getErrors(), true) . print_r($oUser->attributes, true) . " [{$nRow}]\n\n"
+                        );
+                    }
+                    else {
+                        $aResultData[] = [
+                            'us_name' => $aAttr['us_name'],
+                            'password' => $aAttr['password'],
+                            'us_description' => $aAttr['us_description'],
+                            'us_email' => $aAttr['us_email'],
+                            'section' => '',
+                        ];
+                    }
+                }
+                else {
+                    $oldSec = $oUser->sectionids;
+                    foreach( $aSectionId as $id ) {
+                        if( !in_array($id, $oldSec) ) {
+                            $oldSec[] = $id;
+                        }
+                    }
+                    $oUser->sectionids = $oldSec;
+
+                    if( !$oUser->save() ) {
+                        $this->printStr(
+                            "Error save exists user: " . print_r($oUser->getErrors(), true) . print_r($oUser->attributes, true) . " [{$nRow}]\n\n"
+                        );
+                    }
+                    else {
+                        $this->printStr(
+                            "New user sections: " . $oUser->us_email . ' ' . implode(', ', $oldSec) . " [{$nRow}]\n\n"
+                        );
+                    }
+                }
+            }
+            fclose($hd);
+            if( count($aResultData) > 0 ) {
+                $sFile = dirname($filename) . DIRECTORY_SEPARATOR . 'users-' . time() . '.csv';
+                $this->printResult($aResultData, $sFile);
+                $this->printStr(
+                    "Users save: " . count($aResultData) . ", file {$sFile}\n\n"
+                );
+            }
+        }
+        else {
+            echo "\n\nCan't open file {$filename}\n\n";
+        }
+    }
+
+    /**
      * Вывод для консоли
      * @param string $s
      *
@@ -305,13 +488,14 @@ class RbacController extends Controller
         $s = '';
         $sSec = '';
         foreach($a As $v) {
-            $v = array_map(function($s){ return iconv('UTF-8', 'CP1251', $s); }, $v);
+            $sPass = $v['password'];
+            $v = array_map(function($s){ $s1 = @iconv('UTF-8', 'CP1251', $s); return ($s1 === false) ? $s : $s1; }, $v);
             if( $sSec !== $v['section'] ) {
                 $sSec = $v['section'];
                 $s .= $sSec . "\n";
 //                continue;
             }
-            $s .= $v['us_name'] . ';' . $v['password'] . ';' . $v['us_email'] . "\n";
+            $s .= $v['us_name'] . ';' . $sPass . ';' . $v['us_email'] . "\n";
         }
         file_put_contents($sfile, $s);
     }
