@@ -33,6 +33,13 @@ class UserController extends Controller
                         'roles' => [User::USER_GROUP_ADMIN],
                     ],
                 ],
+                'rules' => [
+                    [
+                        'allow' => true,
+                        'actions' => ['confirmemail', ],
+                        'roles' => ['?', ],
+                    ],
+                ],
             ],
 
             'verbs' => [
@@ -159,6 +166,7 @@ class UserController extends Controller
                 throw new NotFoundHttpException('Ошибка подтверждения регистрации' . print_r($model->getErrors(), true));
             }
         }
+        throw new NotFoundHttpException('Ошибка подтверждения регистрации - не найдена требуемая информация');
         return '';
     }
 
