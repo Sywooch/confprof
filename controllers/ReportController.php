@@ -99,7 +99,7 @@ class ReportController extends Controller
                     function($model, $index) {
                         /** @var Doclad $model */
                         return $model->doc_type == Doclad::DOC_TYPE_PERSONAL ?
-                            ($model->doc_lider_group . ' / ' . $model->doc_lider_level) :
+                            ($model->doc_lider_group) : //  . ' / ' . $model->doc_lider_level
                             ($model->doc_lider_position . ' / ' . $model->doc_lider_lesson) ;
                     },
                     'status',
