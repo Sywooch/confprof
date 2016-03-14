@@ -218,20 +218,22 @@ $aScenarios = [
         }
     }
 
-    $oTalk = new Doctalk();
-    $oTalk->dtlk_doc_id = $model->doc_id;
-    $searchModel = new DoctalkSearch();
-    $dataProvider = $searchModel->search([$searchModel->formName() => ['dtlk_doc_id' => $model->doc_id,]]);
+    if( Yii::$app->user->can(User::USER_GROUP_MODERATOR) ) {
+        $oTalk = new Doctalk();
+        $oTalk->dtlk_doc_id = $model->doc_id;
+        $searchModel = new DoctalkSearch();
+        $dataProvider = $searchModel->search([$searchModel->formName() => ['dtlk_doc_id' => $model->doc_id,]]);
 
-    echo $this->render(
-        '_talklist',
-        [
-            'daclad' => $model,
-            'model' => $oTalk,
-            'searchModel' => $searchModel,
-            'dataProvider' => $dataProvider,
-        ]
-    );
+        echo $this->render(
+            '_talklist',
+            [
+                'daclad' => $model,
+                'model' => $oTalk,
+                'searchModel' => $searchModel,
+                'dataProvider' => $dataProvider,
+            ]
+        );
+    }
 
     ?>
     <?= '' /*
