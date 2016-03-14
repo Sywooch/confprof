@@ -40,7 +40,9 @@ $aGroups = User::getAllGroups();
                 'filter' => $aGroups,
                 'content' => function ($model, $key, $index, $column) use ($aGroups) {
                     /** @var User $model */
-                    return Html::encode(isset($aGroups[$model->us_group]) ? $aGroups[$model->us_group] : '??');
+
+                    $sDop = ( ($model->us_group == User::USER_GROUP_MODERATOR) && ($model->us_mainmoderator == 1) ) ? '<span class="glyphicon glyphicon-star"></span> ' : '';
+                    return $sDop . Html::encode(isset($aGroups[$model->us_group]) ? $aGroups[$model->us_group] : '??');
                 },
 //                'contentOptions' => [
 //                    'class' => 'griddate commandcell',
