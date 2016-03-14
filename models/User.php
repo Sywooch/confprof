@@ -161,7 +161,7 @@ class User extends \yii\db\ActiveRecord  implements IdentityInterface
             'sectionids' => 'Секции модератора',
             'us_description' => 'Описание',
             'us_name' => 'ФИО',
-            'us_mainmoderator' => 'Главный модератор',
+            'us_mainmoderator' => 'Ответственный',
         ];
     }
 
