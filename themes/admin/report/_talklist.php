@@ -35,7 +35,7 @@ use app\models\Doclad;
         <?= '' // Html::a('Create Doclad', ['create'], ['class' => 'btn btn-success']) ?>
     </p -->
 
-        <?php Pjax::begin(); ?>
+        <?php Pjax::begin(['timeout' => 5000]); ?>
         <?= GridView::widget([
             'dataProvider' => $dataProvider,
             'filterModel' => $searchModel,
