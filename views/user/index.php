@@ -41,12 +41,22 @@ $aGroups = User::getAllGroups();
                 'content' => function ($model, $key, $index, $column) use ($aGroups) {
                     /** @var User $model */
 
-                    $sDop = ( ($model->us_group == User::USER_GROUP_MODERATOR) && ($model->us_mainmoderator == 1) ) ? '<span class="glyphicon glyphicon-star"></span> ' : '';
+                    $sDop = ''; // ( ($model->us_group == User::USER_GROUP_MODERATOR) && ($model->us_mainmoderator == 1) ) ? '<span class="glyphicon glyphicon-star"></span> ' : '';
                     return $sDop . Html::encode(isset($aGroups[$model->us_group]) ? $aGroups[$model->us_group] : '??');
                 },
 //                'contentOptions' => [
 //                    'class' => 'griddate commandcell',
 //                ],
+            ],
+            [
+                'class' => 'yii\grid\DataColumn',
+                'attribute' => 'us_mainmoderator',
+                'filter' => [1 => 'Ответственный'],
+                'content' => function ($model, $key, $index, $column) use ($aGroups) {
+                    /** @var User $model */
+                    $sDop = ( ($model->us_group == User::USER_GROUP_MODERATOR) && ($model->us_mainmoderator == 1) ) ? '<span class="glyphicon glyphicon-star"></span> ' : '';
+                    return $sDop;
+                },
             ],
             [
                 'class' => 'yii\grid\DataColumn',
