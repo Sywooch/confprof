@@ -14,6 +14,7 @@ use app\components\Notificator;
 use app\components\ActionBehavior;
 use app\models\Usersection;
 use app\models\Section;
+use app\models\Doclad;
 
 /**
  * This is the model class for table "{{%user}}".
@@ -29,6 +30,7 @@ use app\models\Section;
  * @property string $us_conference_id
  * @property string $us_description
  * @property string $us_name
+ * @property integer $us_mainmoderator
  */
 class User extends \yii\db\ActiveRecord  implements IdentityInterface
 {
@@ -125,7 +127,7 @@ class User extends \yii\db\ActiveRecord  implements IdentityInterface
         return [
             [['us_email', 'us_group', ], 'required'],
             [['us_group'], 'in', 'range' => array_keys($this->scenario == 'register' ? self::getRegGroups() : self::getAllGroups()), ],
-            [['us_active', 'us_conference_id', ], 'integer'],
+            [['us_active', 'us_conference_id', 'us_mainmoderator', ], 'integer'],
             [['us_created'], 'safe'],
             [['us_group'], 'string', 'max' => 16, ],
             [['us_email'], 'string', 'max' => 64, ],
@@ -159,6 +161,7 @@ class User extends \yii\db\ActiveRecord  implements IdentityInterface
             'sectionids' => 'Секции модератора',
             'us_description' => 'Описание',
             'us_name' => 'ФИО',
+            'us_mainmoderator' => 'Главный модератор',
         ];
     }
 
@@ -398,6 +401,22 @@ class User extends \yii\db\ActiveRecord  implements IdentityInterface
                 }
             }
         }
+    }
+
+    /**
+     * @param Doclad $doclad
+     * @return bool
+     */
+    public function isMainModerator($doclad) {
+        /** @var User $obUser */
+        $obUser = Yii::$app->user->identity;
+
+        if(  Yii::$app->user->can(User::USER_GROUP_ADMIN)
+         || (Yii::$app->user->can(User::USER_GROUP_MODERATOR) && (in_array($doclad->doc_sec_id, $obUser->sectionids) || ($obUser->us_conference_id == $doclad->section->sec_cnf_id)) && $obUser->us_mainmoderator )
+        ) {
+            return true;
+        }
+        return false;
     }
 
 }

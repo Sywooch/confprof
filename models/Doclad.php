@@ -15,7 +15,8 @@ use app\models\Docmedal;
 use app\models\Section;
 use app\models\File;
 use app\components\FilesaveBehavior;
-Use app\components\RustextValidator;
+use app\components\RustextValidator;
+use app\models\Doctalk;
 
 /**
  * This is the model class for table "{{%doclad}}".
@@ -340,6 +341,13 @@ class Doclad extends \yii\db\ActiveRecord
      */
     public function getFiles() {
         return $this->hasMany(File::className(), ['file_doc_id' => 'doc_id']);
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getTalks() {
+        return $this->hasMany(Doctalk::className(), ['dtlk_doc_id' => 'doc_id']);
     }
 
     /**

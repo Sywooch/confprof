@@ -27,6 +27,7 @@ use app\components\Statistics;
  */
 class ReportController extends Controller
 {
+
     public function behaviors()
     {
         return [

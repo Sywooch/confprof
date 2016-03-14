@@ -6,6 +6,9 @@ use yii\helpers\ArrayHelper;
 
 use app\models\Doclad;
 use app\models\File;
+use app\models\User;
+use app\models\Doctalk;
+use app\models\DoctalkSearch;
 
 /* @var $this yii\web\View */
 /* @var $model app\models\Doclad */
@@ -197,19 +200,39 @@ $aScenarios = [
     ]) ?>
 
     <?php
-    if( !in_array($model->scenario, array_keys($aScenarios)) ) {
-        foreach($aScenarios As $k=>$v) {
-            echo Html::a($v['button'], [$v['action'], 'id'=>$model->doc_id], ['class' => 'btn btn-success']) . ' ';
+
+
+    if( Yii::$app->user->identity->isMainModerator($model) ) {
+        if( !in_array($model->scenario, array_keys($aScenarios)) ) {
+            foreach($aScenarios As $k=>$v) {
+                echo Html::a($v['button'], [$v['action'], 'id'=>$model->doc_id], ['class' => 'btn btn-success']) . ' ';
+            }
+        }
+        else {
+            echo $this->render(
+                $aScenarios[$model->scenario]['form'],
+                [
+                    'model' => $model,
+                ]
+            );
         }
     }
-    else {
-        echo $this->render(
-            $aScenarios[$model->scenario]['form'],
-            [
-                'model' => $model,
-            ]
-        );
-    }
+
+    $oTalk = new Doctalk();
+    $oTalk->dtlk_doc_id = $model->doc_id;
+    $searchModel = new DoctalkSearch();
+    $dataProvider = $searchModel->search([$searchModel->formName() => ['dtlk_doc_id' => $model->doc_id,]]);
+
+    echo $this->render(
+        '_talklist',
+        [
+            'daclad' => $model,
+            'model' => $oTalk,
+            'searchModel' => $searchModel,
+            'dataProvider' => $dataProvider,
+        ]
+    );
+
     ?>
     <?= '' /*
         ($model->scenario == 'changestatus') ?

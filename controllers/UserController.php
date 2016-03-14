@@ -32,8 +32,6 @@ class UserController extends Controller
                         'actions' => ['index', 'update', 'create',  'view', 'export', ],
                         'roles' => [User::USER_GROUP_ADMIN],
                     ],
-                ],
-                'rules' => [
                     [
                         'allow' => true,
                         'actions' => ['confirmemail', ],
@@ -116,7 +114,8 @@ class UserController extends Controller
         }
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->us_id]);
+            return $this->redirect(['index', ]);
+//            return $this->redirect(['view', 'id' => $model->us_id]);
         } else {
             return $this->render('update', [
                 'model' => $model,
