@@ -32,8 +32,17 @@ $aGroups = User::getAllGroups();
             // ['class' => 'yii\grid\SerialColumn'],
 
             // 'us_id',
-            'us_email:email',
+//            'us_email:email',
 //            'us_group',
+            [
+                'class' => 'yii\grid\DataColumn',
+                'attribute' => 'us_email',
+                'format' => 'raw',
+                'content' => function ($model, $key, $index, $column) use ($aGroups) {
+                    /** @var User $model */
+                    return Html::encode($model->us_email) . '<br />' . Html::encode($model->us_name);
+                },
+            ],
             [
                 'class' => 'yii\grid\DataColumn',
                 'attribute' => 'us_group',
