@@ -31,14 +31,14 @@ $attributes = [
     ],
     [
         'attribute' => 'status',
-        'value' => Html::encode($model->status),
+        'value' => $model->getFullState(), // Html::encode($model->status),
         'format' => 'raw',
     ],
-    [
-        'attribute' => 'format',
-        'value' => ($model->doc_format != Doclad::DOC_FORMAT_NOFORMAT) ? Html::encode($model->format) : '',
-        'format' => 'raw',
-    ],
+//    [
+//        'attribute' => 'format',
+//        'value' => Html::encode($model->getFormat()), // ($model->doc_format != Doclad::DOC_FORMAT_NOFORMAT) ? Html::encode($model->format) : '',
+//        'format' => 'raw',
+//    ],
     'doc_subject',
     'doc_description:ntext',
     [

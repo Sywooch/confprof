@@ -4,6 +4,7 @@ namespace app\models;
 
 use Yii;
 
+use yii\helpers\Html;
 use yii\db\ActiveRecord;
 use yii\db\Expression;
 use yii\behaviors\TimestampBehavior;
@@ -487,6 +488,70 @@ class Doclad extends \yii\db\ActiveRecord
         return $bShort ?
             ($this->doc_lider_name . ' ' . $this->doc_lider_otch) :
             ($this->doc_lider_fam . ' ' . $this->doc_lider_name . ' ' . $this->doc_lider_otch);
+    }
+
+    /**
+     * Текстовое представление ссостояния доклада
+     *
+     * @param bool $bShort
+     * @return string
+     */
+    public function getFullState() {
+        $s = '';
+        $aStatuses = self::getAllStatuses();
+        $aData = [
+            'icon' => 'hourglass', // 'time'
+            'text' => $this->getStatus(),
+            'color' => '#00cc00',
+        ];
+        switch($this->doc_state) {
+
+            case Doclad::DOC_STATUS_NEW:
+                $aData = array_merge($aData, [
+                    'color' => '#cc0000',
+                ]);
+                break;
+
+            case Doclad::DOC_STATUS_NOT_APPROVE:
+                $aData = array_merge($aData, [
+                    'icon' => 'exclamation-sign',
+                    'color' => '#cc0000',
+                ]);
+                break;
+
+            case Doclad::DOC_STATUS_APPROVE:
+                if( count($this->files) == 0 ){
+                    $aData = array_merge($aData, [
+                        'icon' => 'exclamation-sign',
+                        'color' => '#cc0000',
+                        'text' => $aData['text'] .  ', необходимо загрузить файл',
+                    ]);
+                }
+                else {
+                    $aData = array_merge($aData, [
+                        'icon' => ($this->doc_state != self::DOC_FORMAT_NOFORMAT) ? 'ok' : 'time',
+                        'color' => ($this->doc_state != self::DOC_FORMAT_NOFORMAT) ? $aData['color'] : '#cc0000',
+                        'text' => $aData['text'] .  ', формат выступления: ' . $this->getFormat(),
+                    ]);
+                }
+                break;
+
+            case Doclad::DOC_STATUS_REVISION:
+                $aData = array_merge($aData, [
+                    'icon' => 'exclamation-sign',
+                    'color' => '#cc0000',
+                ]);
+                break;
+
+            default:
+                $aData = array_merge($aData, [
+                    'icon' => 'heart',
+                    'color' => '#ffff33',
+                ]);
+                break;
+        }
+
+        return '<span class="glyphicon glyphicon-'.$aData['icon'].'" style="color: '.$aData['color'].';"></span> ' . Html::encode($aData['text']);
     }
 
 }

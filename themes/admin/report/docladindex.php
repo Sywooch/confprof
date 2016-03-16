@@ -67,6 +67,9 @@ $this->params['breadcrumbs'][] = $this->title;
                         . (Yii::$app->user->identity->isMainModerator($model) ? ' <span class="glyphicon glyphicon-star"></span>' : '')
                         . ($sFiles != '' ? '<br />' : '' )
                         . $sFiles
+                        . '<br />'
+                        . '<br />'
+                        . $model->getFullState()
                     ;
                 },
             ],

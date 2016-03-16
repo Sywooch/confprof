@@ -60,6 +60,8 @@ $this->params['breadcrumbs'][] = $this->title;
                                 ) : ''
                           )
                         . $sFiles
+                        . '<br />'
+                        . $model->getFullState()
                         ;
                 },
             ],
