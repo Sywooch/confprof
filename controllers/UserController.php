@@ -10,7 +10,10 @@ use yii\base\InvalidCallException;
 use yii\filters\AccessControl;
 use yii\web\Response;
 use yii\widgets\ActiveForm;
+use mosedu\multirows\MultirowsBehavior;
+use yii\helpers\Html;
 
+use app\models\UsersectionForm;
 use app\models\User;
 use app\models\UserSearch;
 use app\models\Conference;
@@ -38,6 +41,11 @@ class UserController extends Controller
                         'roles' => ['?', ],
                     ],
                 ],
+            ],
+
+            'validateSections' => [
+                'class' => MultirowsBehavior::className(),
+                'model' => UsersectionForm::className(),
             ],
 
             'verbs' => [
@@ -95,6 +103,27 @@ class UserController extends Controller
     }
 
     /**
+     * @param User $model
+     * @return array
+     */
+    public function validateModel($model) {
+        $aValidate = ActiveForm::validate($model);
+
+        $result = $this->getBehavior('validateSections')->validateData();
+        $data = $this->getBehavior('validateSections')->getData();
+        if( count($data['data']) == 0 ) {
+            $sId = Html::getInputId($model, 'us_email');
+
+            if( !isset($aValidate[$sId]) ) {
+                $aValidate[$sId] = [];
+            }
+            $aValidate[$sId][] = 'Необходимо указать секции.';
+        }
+        $aRes = array_merge($aValidate, $result);
+        return $aRes;
+    }
+
+    /**
      * Updates an existing User model.
      * If update is successful, the browser will be redirected to the 'view' page.
      * @param integer $id
@@ -107,20 +136,29 @@ class UserController extends Controller
         if (Yii::$app->request->isAjax && $model->load(Yii::$app->request->post())) {
             Yii::$app->response->format = Response::FORMAT_JSON;
 
-            $aValidate = ActiveForm::validate($model);
+            $aRes = $this->validateModel($model);
 
-            Yii::trace(self::className() . 'actionUpdate(): return json ' . print_r($aValidate, true));
-            return $aValidate;
+            Yii::trace(self::className() . 'actionUpdate(): return json ' . print_r($aRes, true));
+            return $aRes;
         }
 
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['index', ]);
+        if ($model->load(Yii::$app->request->post()) && $model->validate()) {
+            $aRes = $this->validateModel($model);
+            if( (count($aRes) > 0) || !$model->save() ) {
+                Yii::info('Error save user: ' . print_r($aRes, true) . ' attributes: ' . print_r($model->attributes, true));
+            }
+            else {
+                $data = $this->getBehavior('validateSections')->getData();
+                Yii::trace('data[data] = ' . print_r($data['data'], true));
+                $model->saveSectionsWithPrimary($data['data']);
+                return $this->redirect(['index', ]);
+            }
 //            return $this->redirect(['view', 'id' => $model->us_id]);
-        } else {
-            return $this->render('update', [
-                'model' => $model,
-            ]);
         }
+
+        return $this->render('update', [
+            'model' => $model,
+        ]);
     }
 
     /**

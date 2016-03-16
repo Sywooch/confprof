@@ -46,7 +46,7 @@ class UserSearch extends User
     public function search($params)
     {
         $query = User::find()
-            ->with(['sectionsdata']);
+            ->with(['sections', 'sections.section', ]);
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
@@ -64,15 +64,15 @@ class UserSearch extends User
             'us_id' => $this->us_id,
             'us_active' => $this->us_active,
             'us_created' => $this->us_created,
-            'us_mainmoderator' => $this->us_mainmoderator,
+//            'us_mainmoderator' => $this->us_mainmoderator,
         ]);
 
 
-        if( !empty($this->sectionids) ) {
+        if( !empty($this->sectionids) || !empty($this->us_mainmoderator) ) {
             $ansQuery = (new Query)
                 ->select('usec_user_id')
                 ->from(Usersection::tableName())
-                ->where(['usec_section_id' => $this->sectionids])
+                ->andFilterWhere(['usec_section_id' => $this->sectionids, 'usec_section_primary' => $this->us_mainmoderator, ])
                 ->distinct();
             $query->andFilterWhere(['us_id' => $ansQuery]);
         }

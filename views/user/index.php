@@ -63,7 +63,7 @@ $aGroups = User::getAllGroups();
                 'filter' => [1 => 'Ответственный'],
                 'content' => function ($model, $key, $index, $column) use ($aGroups) {
                     /** @var User $model */
-                    $sDop = ( ($model->us_group == User::USER_GROUP_MODERATOR) && ($model->us_mainmoderator == 1) ) ? '<span class="glyphicon glyphicon-star"></span> ' : '';
+                    $sDop = ( ($model->us_group == User::USER_GROUP_MODERATOR) && array_reduce($model->sections, function($carry, $el){ return $carry || $el->usec_section_primary; }, false) ) ? '<span class="glyphicon glyphicon-star"></span> ' : '';
                     return $sDop;
                 },
             ],
@@ -74,9 +74,11 @@ $aGroups = User::getAllGroups();
                 'content' => function ($model, $key, $index, $column) {
                     /** @var User $model */
                     return implode('<br />', ArrayHelper::map(
-                        $model->sectionsdata,
-                        'sec_id',
-                        'sec_title'
+                        $model->sections,
+                        'usec_id',
+                        function($el) {
+                            return Html::encode($el->section->sec_title) . ($el->usec_section_primary ? ' <span class="glyphicon glyphicon-star"></span>' : '');
+                        }
                     ));
                 },
 //                'contentOptions' => [

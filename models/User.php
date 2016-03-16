@@ -15,6 +15,7 @@ use app\components\ActionBehavior;
 use app\models\Usersection;
 use app\models\Section;
 use app\models\Doclad;
+use app\models\UsersectionForm;
 
 /**
  * This is the model class for table "{{%user}}".
@@ -47,6 +48,8 @@ class User extends \yii\db\ActiveRecord  implements IdentityInterface
     public $password = '';
 
     public $_sectionids = null;
+
+    public $_primeids = null;
 
     public function behaviors() {
         return [
@@ -94,20 +97,20 @@ class User extends \yii\db\ActiveRecord  implements IdentityInterface
                     }
                 }
             ],
-            [
-                'class' => ActionBehavior::className(),
-                'allevents' => [ActiveRecord::EVENT_AFTER_INSERT, ActiveRecord::EVENT_AFTER_UPDATE, ],
-                'action' => function($event) {
-                    /** @var \yii\base\Event $event */
-                    /** @var User $model */
-                    $model = $event->sender;
-                    if( $model->us_group == $model::USER_GROUP_MODERATOR ) {
-                        Yii::trace('Save moderator sections: ' . print_r($model->sectionids, true));
-                        $model->saveAllSections($event);
-                    }
-
-                }
-            ],
+//            [
+//                'class' => ActionBehavior::className(),
+//                'allevents' => [ActiveRecord::EVENT_AFTER_INSERT, ActiveRecord::EVENT_AFTER_UPDATE, ],
+//                'action' => function($event) {
+//                    /** @var \yii\base\Event $event */
+//                    /** @var User $model */
+//                    $model = $event->sender;
+//                    if( $model->us_group == $model::USER_GROUP_MODERATOR ) {
+//                        Yii::trace('Save moderator sections: ' . print_r($model->sectionids, true));
+//                        $model->saveAllSections($event);
+//                    }
+//
+//                }
+//            ],
         ];
     }
 
@@ -136,7 +139,8 @@ class User extends \yii\db\ActiveRecord  implements IdentityInterface
             [['us_pass', 'us_confirmkey', 'us_key'], 'string', 'max' => 255, ],
             [['password'], 'required', 'when' => function($model) { return $model->isNewRecord; }, ],
             [['password'], 'string', 'max' => 64, ],
-            [['sectionids'], 'in', 'range' => array_keys(Section::getSectionList()), 'allowArray' => true, ],
+            [['sectionids', ], 'in', 'range' => array_keys(Section::getSectionList()), 'allowArray' => true, ],
+//            [['primeids', ], 'in', 'range' => $this->sectionids, 'allowArray' => true, 'message' => 'Модератор может быть ответственным в своих секциях', ],
             [['us_description'], 'string', ],
             [['us_name'], 'string', 'max' => 128, ],
         ];
@@ -159,6 +163,7 @@ class User extends \yii\db\ActiveRecord  implements IdentityInterface
             'us_key' => 'API key',
             'us_conference_id' => 'Конференция регистрации',
             'sectionids' => 'Секции модератора',
+//            'primeids' => 'Ответственный',
             'us_description' => 'Описание',
             'us_name' => 'ФИО',
             'us_mainmoderator' => 'Ответственный',
@@ -331,6 +336,29 @@ class User extends \yii\db\ActiveRecord  implements IdentityInterface
             ->via('sections');
     }
 
+//    /**
+//     * @return \yii\db\ActiveQuery
+//     */
+//    public function getPrimedata() {
+//        return $this->hasMany(
+//            Primemoderator::className(),
+//            [
+//                'prime_us_id' => 'us_id'
+//            ]
+//        );
+//    }
+//
+//    /**
+//     * @return \yii\db\ActiveQuery
+//     */
+//    public function getPrimesections() {
+//        return $this
+//            ->hasMany(
+//                Section::className(),
+//                ['sec_id' => 'prime_sec_id'])
+//            ->via('primedata');
+//    }
+
     /**
      * @param $Sections
      */
@@ -361,6 +389,36 @@ class User extends \yii\db\ActiveRecord  implements IdentityInterface
         return $this->_sectionids;
     }
 
+//    /**
+//     * @param $Sections
+//     */
+//    public function setPrimeids($Sections)
+//    {
+//        $this->_primeids = [];
+//        if( !empty($Sections) ) {
+//            if( !is_array($Sections) ) {
+//                $Sections = [$Sections];
+//            }
+//            $this->_primeids = $Sections;
+//        }
+////        Yii::trace('setSectionids(): ' . print_r($Sections, true));
+//    }
+//
+//    /**
+//     *
+//     */
+//    public function getPrimeids()
+//    {
+//        if( $this->_primeids === null ) {
+//            $this->_primeids = ArrayHelper::map(
+//                $this->primedata,
+//                'prime_sec_id',
+//                'prime_sec_id'
+//            );
+//        }
+//        return $this->_sectionids;
+//    }
+
     /**
      *  Сохраняем секции
      * @param Event $event
@@ -373,6 +431,7 @@ class User extends \yii\db\ActiveRecord  implements IdentityInterface
                 [
                     'usec_user_id' => 0,
                     'usec_section_id' => 0,
+                    'usec_section_primary' => 0,
                 ],
                 [
                     'usec_user_id' => $model->us_id,
@@ -395,6 +454,47 @@ class User extends \yii\db\ActiveRecord  implements IdentityInterface
                         ->createCommand(
                             'Insert Into ' . Usersection::tableName() . ' (usec_user_id, usec_section_id) Values (:us_id, :section_id)',
                             [':section_id' => $id, ':us_id' => $model->us_id, ]
+                        )
+                        ->execute();
+//                    Yii::info('Insert relate records : ['.$this->msg_id.', '.$id.']');
+                }
+            }
+        }
+    }
+
+    /**
+     *  Сохраняем секции
+     * @param array $aData
+     */
+    public function saveSectionsWithPrimary($aData = []) {
+        $nCou = Usersection::updateAll(
+            [
+                'usec_user_id' => 0,
+                'usec_section_id' => 0,
+                'usec_section_primary' => 0,
+            ],
+            [
+                'usec_user_id' => $this->us_id,
+            ]
+        );
+
+        if( count($aData) > 0 ) {
+            foreach($aData As $el) {
+                /** @var UsersectionForm $el */
+                Yii::info('saveAllSections(): ' . print_r($el, true));
+                $nUpd = Yii::$app
+                    ->db
+                    ->createCommand(
+                        'Update ' . Usersection::tableName() . ' Set usec_user_id = :us_id, usec_section_id = :section_id, usec_section_primary = :prime Where usec_user_id = 0 Limit 1',
+                        [':section_id' => $el['sectid'], ':us_id' => $this->us_id, ':prime' => $el['isprime'], ]
+                    )
+                    ->execute();
+                if( $nUpd == 0 ) {
+                    Yii::$app
+                        ->db
+                        ->createCommand(
+                            'Insert Into ' . Usersection::tableName() . ' (usec_user_id, usec_section_id, usec_section_primary) Values (:us_id, :section_id, :prime)',
+                            [':section_id' => $el['sectid'], ':us_id' => $this->us_id, ':prime' => $el['isprime'], ]
                         )
                         ->execute();
 //                    Yii::info('Insert relate records : ['.$this->msg_id.', '.$id.']');

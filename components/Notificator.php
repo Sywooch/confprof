@@ -23,6 +23,9 @@ class Notificator {
         $this->template = $template;
     }
 
+    /**
+     * @param string $subject
+     */
     public function notifyMail($subject) {
         $aMails = [];
         $fldEmail = $this->sEmailField;
@@ -41,4 +44,61 @@ class Notificator {
         }
     }
 
+    /**
+     * @param array $aEmail user's email array
+     * @param string $sSubject mail subject
+     * @param string $sHtmltext mail body
+     * @return string
+     */
+    public function massMail($aEmail, $sSubject, $sHtmltext) {
+
+        $data = [
+            'email' => $aEmail,
+            'subject' => $sSubject,
+            'body' => $sHtmltext,
+        ];
+
+        $context = stream_context_create(array(
+            'http' => array(
+                'method' => 'POST',
+                'header' => 'Content-Type:  application/json' . PHP_EOL . 'Host: ' . 'm.educom.ru' . PHP_EOL,
+                'content' => json_encode($data),
+                'timeout' => 15, // sec
+            ),
+        ));
+
+        $res =  file_get_contents(
+//            $file = "http://m.educom.ru/component/mail/gate",
+            $file = "http://10.128.1.195/component/mail/gate",
+            $use_include_path = false,
+            $context);
+
+        $data['res'] = $res;
+        return $data;
+    }
+
+    /**
+     * @param integer $id id mail sending on m.educom.ru
+     * @return array
+     */
+    public function getMailStat($id) {
+        $context = stream_context_create(array(
+            'http' => array(
+                'method' => 'GET',
+                'header' => 'Content-Type:  application/json' . PHP_EOL . 'Host: ' . 'm.educom.ru' . PHP_EOL,
+                'timeout' => 5, // sec
+            ),
+        ));
+
+        $res =  file_get_contents(
+            $file = "http://10.128.1.195/component/mail/gate/" . $id,
+            $use_include_path = false,
+            $context);
+
+        if( $res !== false ) {
+            $res = json_decode($res, true);
+        }
+
+        return $res;
+    }
 }

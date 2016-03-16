@@ -8,6 +8,7 @@ use yii\web\View;
 /* @var $this yii\web\View */
 /* @var $model app\models\User */
 /* @var $form yii\widgets\ActiveForm */
+
 ?>
 
 <div class="user-form">
@@ -33,7 +34,7 @@ use yii\web\View;
         </div>
 
         <div class="col-xs-3 mainmoderatordiv">
-            <?= $form->field($model, 'us_mainmoderator')->checkbox() // textInput() ?>
+            <?= '' // $form->field($model, 'us_mainmoderator')->checkbox() // textInput() ?>
         </div>
         <div class="clearfix"></div>
     </div>
