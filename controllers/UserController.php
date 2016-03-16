@@ -111,7 +111,7 @@ class UserController extends Controller
 
         $result = $this->getBehavior('validateSections')->validateData();
         $data = $this->getBehavior('validateSections')->getData();
-        if( count($data['data']) == 0 ) {
+        if( ($model->us_group == User::USER_GROUP_MODERATOR) && count($data['data']) == 0 ) {
             $sId = Html::getInputId($model, 'us_email');
 
             if( !isset($aValidate[$sId]) ) {
