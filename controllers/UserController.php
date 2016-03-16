@@ -150,7 +150,9 @@ class UserController extends Controller
             else {
                 $data = $this->getBehavior('validateSections')->getData();
                 Yii::trace('data[data] = ' . print_r($data['data'], true));
-                $model->saveSectionsWithPrimary($data['data']);
+                if( $model->us_group == User::USER_GROUP_MODERATOR ) {
+                    $model->saveSectionsWithPrimary($data['data']);
+                }
                 return $this->redirect(['index', ]);
             }
 //            return $this->redirect(['view', 'id' => $model->us_id]);
