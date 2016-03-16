@@ -528,9 +528,10 @@ class Doclad extends \yii\db\ActiveRecord
                     ]);
                 }
                 else {
+                    Yii::info($this->doc_id . ' -> ' . $this->doc_format . ' != ' . self::DOC_FORMAT_NOFORMAT);
                     $aData = array_merge($aData, [
-                        'icon' => ($this->doc_state != self::DOC_FORMAT_NOFORMAT) ? 'ok' : 'time',
-                        'color' => ($this->doc_state != self::DOC_FORMAT_NOFORMAT) ? $aData['color'] : '#cc0000',
+                        'icon' => ($this->doc_format != self::DOC_FORMAT_NOFORMAT) ? 'ok' : 'time',
+                        'color' => ($this->doc_format != self::DOC_FORMAT_NOFORMAT) ? $aData['color'] : '#cc0000',
                         'text' => $aData['text'] .  ', формат выступления: ' . $this->getFormat(),
                     ]);
                 }
@@ -551,7 +552,7 @@ class Doclad extends \yii\db\ActiveRecord
                 break;
         }
 
-        return '<span class="glyphicon glyphicon-'.$aData['icon'].'" style="color: '.$aData['color'].';"></span> ' . Html::encode($aData['text']);
+        return '<span class="glyphicon glyphicon-'.$aData['icon'].'" style="color: '.$aData['color'].';"></span> <strong>' . Html::encode($aData['text']) . '</strong>';
     }
 
 }
