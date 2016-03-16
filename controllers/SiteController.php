@@ -7,8 +7,11 @@ use Yii;
 use yii\filters\AccessControl;
 use yii\web\Controller;
 use yii\filters\VerbFilter;
+
 use app\models\LoginForm;
 use app\models\ContactForm;
+use app\models\RestorepasswordForm;
+use app\components\Notificator;
 
 class SiteController extends Controller
 {
@@ -60,6 +63,32 @@ class SiteController extends Controller
 //            return $this->render('admin');
         }
         return $this->render('index');
+    }
+
+    public function actionRestorepassword()
+    {
+        if (!\Yii::$app->user->isGuest) {
+            return $this->goHome();
+        }
+
+        $model = new RestorepasswordForm();
+        if ($model->load(Yii::$app->request->post()) && $model->validate()) {
+            Yii::$app->session->setFlash('success', 'На Ваш email отправлено письмо с сылкой для установки нового пароля.');
+
+            $oUser = $model->getUser();
+            $oUser->us_key = Yii::$app->security->generateRandomString() . time();
+            $oUser->save(false, ['us_key']);
+
+            $oNotify = new Notificator([$oUser], $oUser, 'restorepassword_mail');
+            $oNotify->notifyMail('Запрос на изменение пароля на сайте "' . Yii::$app->name . '"');
+
+            return $this->refresh();
+//            return $this->redirect('/');
+        }
+
+        return $this->render('restorepassword', [
+            'model' => $model,
+        ]);
     }
 
     public function actionLogin()

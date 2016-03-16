@@ -16,7 +16,7 @@ $this->params['breadcrumbs'][] = $this->title;
     <!-- p>Please fill out the following fields to login:</p -->
 
     <?php $form = ActiveForm::begin([
-        'id' => 'login-form',
+        'id' => 'restorepassword-form',
         'options' => ['class' => 'form-horizontal'],
         'fieldConfig' => [
             'template' => "{label}\n<div class=\"col-lg-3\">{input}</div>\n<div class=\"col-lg-8\">{error}</div>",
@@ -26,23 +26,11 @@ $this->params['breadcrumbs'][] = $this->title;
 
         <?= $form->field($model, 'username') ?>
 
-        <?= $form->field($model, 'password')->passwordInput() ?>
-
-        <?= $form->field($model, 'rememberMe')->checkbox([
-            'template' => "<div class=\"col-lg-offset-1 col-lg-3\">{input} {label}</div>\n<div class=\"col-lg-8\">{error}</div>",
-        ]) ?>
-
         <div class="form-group">
             <div class="col-lg-offset-1 col-lg-11">
-                <?= Html::submitButton('Войти', ['class' => 'btn btn-primary', 'name' => 'login-button']) ?>
+                <?= Html::submitButton('Восстановить пароль', ['class' => 'btn btn-primary', 'name' => 'login-button']) ?>
             </div>
         </div>
-
-    <div class="form-group">
-        <div class="col-lg-offset-1 col-lg-11">
-            <?= Html::a('Восстановить пароль', ['site/restorepassword']) ?>
-        </div>
-    </div>
 
     <?php ActiveForm::end(); ?>
 </div>

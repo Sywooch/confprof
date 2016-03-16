@@ -87,6 +87,19 @@ $conference = $activeController->findConferenceModel();
                     <div class="row">
                         <div class="col-xs-9 component">
                             <div id="system-message-container"></div>
+                            <?php
+                            $aMsg = ['danger', 'success', 'info', 'warning', ];
+                            foreach($aMsg As $v) {
+                                if( Yii::$app->session->hasFlash($v) ) {
+                                    $s = Yii::$app->session->getFlash($v);
+                                    echo '<div class="col-xs-10 col-xs-offset-1" style="margin-top: 15px;">'
+                                        . '<div class="alert alert-'.$v.'" role="alert">'
+                                        . (strpos($s, '<a') !== false ? $s : Html::encode($s))
+                                        . '</div></div>'
+                                        . '<div class="clearfix"></div>';
+                                }
+                            }
+                            ?>
                             <?= $content ?>
                         </div>
                         <div class="col-xs-3">

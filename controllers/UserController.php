@@ -17,6 +17,7 @@ use app\models\UsersectionForm;
 use app\models\User;
 use app\models\UserSearch;
 use app\models\Conference;
+use app\models\NewpasswordForm;
 
 /**
  * UserController implements the CRUD actions for User model.
@@ -37,7 +38,7 @@ class UserController extends Controller
                     ],
                     [
                         'allow' => true,
-                        'actions' => ['confirmemail', ],
+                        'actions' => ['confirmemail', 'setnewpassword', ],
                         'roles' => ['?', ],
                     ],
                 ],
@@ -206,6 +207,46 @@ class UserController extends Controller
             }
         }
         throw new NotFoundHttpException('Ошибка подтверждения регистрации - не найдена требуемая информация');
+        return '';
+    }
+
+    /**
+     * Set new password
+     * @return mixed
+     */
+    public function actionSetnewpassword($key = '')
+    {
+//        $this->layout = 'frontend01';
+        if( $key == '' ) {
+            throw new InvalidCallException('Не указан ключ');
+        }
+
+        /** @var User $oUser */
+        $oUser = User::findOne(['us_key' => $key]);
+
+        if( $oUser !== null ) {
+            $model = new NewpasswordForm();
+            if ($model->load(Yii::$app->request->post()) && $model->validate()) {
+
+                $oUser->password = $model->password;
+                if( $oUser->save() ) {
+                    Yii::$app->session->setFlash('success', 'Вы установили новый пароль.');
+                }
+                else {
+                    Yii::$app->session->setFlash('danger', 'Ошибка сохранения пароля.');
+                    Yii::info('Error set new password: ' . print_r($oUser->getErrors(), true) . ' attributes: ' . print_r($oUser->attributes, true));
+                }
+
+                return $this->refresh();
+//            return $this->redirect('/');
+            }
+
+            return $this->render('newpassword', [
+                'model' => $model,
+            ]);
+
+        }
+        throw new NotFoundHttpException('Ошибка установки пароля - не найдена требуемая информация');
         return '';
     }
 

@@ -77,6 +77,19 @@ UserAsset::register($this);
                     <div class="row">
                         <div class="col-xs-9 component">
                             <div id="system-message-container"></div>
+                            <?php
+                            $aMsg = ['danger', 'success', 'info', 'warning', ];
+                            foreach($aMsg As $v) {
+                                if( Yii::$app->session->hasFlash($v) ) {
+                                    $s = Yii::$app->session->getFlash($v);
+                                    echo '<div class="alert alert-'.$v.'" role="alert" style="margin-top: 15px;">'
+                                        . (strpos($s, '<a') !== false ? $s : Html::encode($s))
+                                        . '</div>'
+                                        . '<div class="clearfix"></div>';
+                                }
+                            }
+                            ?>
+
                             <?= $content ?>
                         </div>
                         <div class="col-xs-3">
