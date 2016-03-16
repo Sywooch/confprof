@@ -49,9 +49,9 @@ class DoctalkSearch extends Doctalk
             'sort'=> [
                 'defaultOrder' => isset($params['sort']) ? $params['sort'] : ['dtlk_id' => SORT_ASC],
             ],
-            'pagination' => [
-                'pageSize' => 4,
-            ],
+//            'pagination' => [
+//                'pageSize' => 4,
+//            ],
 
         ];
 

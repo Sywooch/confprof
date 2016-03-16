@@ -63,7 +63,14 @@ $aGroups = User::getAllGroups();
                 'filter' => [1 => 'Ответственный'],
                 'content' => function ($model, $key, $index, $column) use ($aGroups) {
                     /** @var User $model */
-                    $sDop = ( ($model->us_group == User::USER_GROUP_MODERATOR) && array_reduce($model->sections, function($carry, $el){ return $carry || $el->usec_section_primary; }, false) ) ? '<span class="glyphicon glyphicon-star"></span> ' : '';
+                    $sDop = (
+                        ($model->us_group == User::USER_GROUP_MODERATOR)
+                     && array_reduce(
+                            $model->sections,
+                            function($carry, $el){ return $carry || $el->usec_section_primary; },
+                            false
+                        )
+                    ) ? '<span class="glyphicon glyphicon-star"></span>' : '';
                     return $sDop;
                 },
             ],

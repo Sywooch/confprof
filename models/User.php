@@ -389,36 +389,6 @@ class User extends \yii\db\ActiveRecord  implements IdentityInterface
         return $this->_sectionids;
     }
 
-//    /**
-//     * @param $Sections
-//     */
-//    public function setPrimeids($Sections)
-//    {
-//        $this->_primeids = [];
-//        if( !empty($Sections) ) {
-//            if( !is_array($Sections) ) {
-//                $Sections = [$Sections];
-//            }
-//            $this->_primeids = $Sections;
-//        }
-////        Yii::trace('setSectionids(): ' . print_r($Sections, true));
-//    }
-//
-//    /**
-//     *
-//     */
-//    public function getPrimeids()
-//    {
-//        if( $this->_primeids === null ) {
-//            $this->_primeids = ArrayHelper::map(
-//                $this->primedata,
-//                'prime_sec_id',
-//                'prime_sec_id'
-//            );
-//        }
-//        return $this->_sectionids;
-//    }
-
     /**
      *  Сохраняем секции
      * @param Event $event
@@ -509,10 +479,14 @@ class User extends \yii\db\ActiveRecord  implements IdentityInterface
      */
     public function isMainModerator($doclad) {
         /** @var User $obUser */
+        if( Yii::$app->user->isGuest ) {
+            return false;
+        }
         $obUser = Yii::$app->user->identity;
 
         if(  Yii::$app->user->can(User::USER_GROUP_ADMIN)
-         || (Yii::$app->user->can(User::USER_GROUP_MODERATOR) && (in_array($doclad->doc_sec_id, $obUser->sectionids) || ($obUser->us_conference_id == $doclad->section->sec_cnf_id)) && $obUser->us_mainmoderator )
+         || (Yii::$app->user->can(User::USER_GROUP_MODERATOR)
+                && (in_array($doclad->doc_sec_id, $obUser->sectionids) && (array_reduce($obUser->sections, function($carry, $el) use ($doclad)  { return $carry || (($doclad->doc_sec_id == $el->usec_section_id) && $el->usec_section_primary); }, false ))) )
         ) {
             return true;
         }

@@ -64,9 +64,10 @@ $this->params['breadcrumbs'][] = $this->title;
                     }
                     /** @var $model app\models\Doclad */
                     return Html::encode($model->doc_subject)
-                    . ($sFiles != '' ? '<br />' : '' )
-                    . $sFiles
-                        ;
+                        . (Yii::$app->user->identity->isMainModerator($model) ? ' <span class="glyphicon glyphicon-star"></span>' : '')
+                        . ($sFiles != '' ? '<br />' : '' )
+                        . $sFiles
+                    ;
                 },
             ],
             [
