@@ -500,7 +500,7 @@ class Doclad extends \yii\db\ActiveRecord
         $s = '';
         $aStatuses = self::getAllStatuses();
         $aData = [
-            'icon' => 'hourglass', // 'time'
+            'icon' => 'time', // 'hourglass', // 'time'
             'text' => $this->getStatus(),
             'color' => '#00cc00',
         ];
