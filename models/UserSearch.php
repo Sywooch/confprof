@@ -79,7 +79,7 @@ class UserSearch extends User
 
 
         $query->andFilterWhere(['like', 'us_group', $this->us_group])
-            ->andFilterWhere(['like', 'us_email', $this->us_email])
+            ->andFilterWhere(['or', ['like', 'us_email', $this->us_email], ['like', 'us_name', $this->us_email], ])
             ->andFilterWhere(['like', 'us_pass', $this->us_pass])
             ->andFilterWhere(['like', 'us_confirmkey', $this->us_confirmkey])
             ->andFilterWhere(['like', 'us_key', $this->us_key]);
