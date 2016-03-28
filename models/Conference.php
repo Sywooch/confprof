@@ -24,6 +24,7 @@ use app\models\Section;
  * @property string $cnf_about
  * @property string $cnf_shorttitle
  * @property string $cnf_isconshicshool
+ * @property integer $cnf_guestlimit
  */
 class Conference extends \yii\db\ActiveRecord
 {
@@ -60,7 +61,7 @@ class Conference extends \yii\db\ActiveRecord
             [['cnf_title', 'cnf_shorttitle', ], 'required'],
             [['cnf_description', 'cnf_about'], 'string'],
             [['cnf_created'], 'safe'],
-            [['cnf_isconshicshool'], 'integer'],
+            [['cnf_isconshicshool', 'cnf_guestlimit', ], 'integer'],
             [['cnf_isconshicshool'], 'in', 'range' => [0, 1], ],
             [['cnf_title', 'cnf_controller', 'cnf_pagetitle', 'cnf_shorttitle', ], 'string', 'max' => 255],
             [['cnf_class'], 'string', 'max' => 64]
@@ -83,6 +84,7 @@ class Conference extends \yii\db\ActiveRecord
             'cnf_about' => 'Текст О конференции',
             'cnf_shorttitle' => 'Короткий заголовок',
             'cnf_isconshicshool' => 'Вводить ВУЗ для руководителя',
+            'cnf_guestlimit' => 'Max кол-во гослей',
         ];
     }
 
@@ -147,5 +149,31 @@ class Conference extends \yii\db\ActiveRecord
         }
 
         return $query;
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getSectionwithguests() {
+        $query = $this
+            ->hasMany(
+                Section::className(),
+                ['sec_cnf_id' => 'cnf_id']
+            )
+            ->with('guests');
+        return $query;
+    }
+
+    /**
+     * @return int
+     */
+    public function getGuestcount() {
+        return array_reduce(
+            $this->sectionwithguests,
+            function($carry, $el){
+                return $carry + count($el->guests);
+            },
+            0
+        );
     }
 }

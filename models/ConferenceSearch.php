@@ -18,7 +18,7 @@ class ConferenceSearch extends Conference
     public function rules()
     {
         return [
-            [['cnf_id'], 'integer'],
+            [['cnf_id', 'cnf_guestlimit', ], 'integer'],
             [['cnf_title', 'cnf_class', 'cnf_controller', 'cnf_description', 'cnf_created'], 'safe'],
         ];
     }

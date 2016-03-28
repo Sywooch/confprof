@@ -194,7 +194,7 @@ class Doclad extends \yii\db\ActiveRecord
     public function attributeLabels()
     {
         return [
-            'doc_id' => 'Doc ID',
+            'doc_id' => 'ID',
             'doc_sec_id' => 'Секция',
             'doc_us_id' => 'Пользователь',
             'doc_type' => 'Тип доклада',

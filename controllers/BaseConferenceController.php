@@ -159,7 +159,22 @@ class BaseConferenceController extends Controller
 
         if (Yii::$app->request->isAjax && $model->load(Yii::$app->request->post())) {
             Yii::$app->response->format = Response::FORMAT_JSON;
+            if( ($oConference->cnf_guestlimit > 0) && ($oConference->cnf_guestlimit <= $oConference->getGuestcount() ) ) {
+                return [
+                    Html::getInputId($model, 'prs_fam') => ['Превышено максимальное количество гостей'],
+                ];
+            }
             return ActiveForm::validate($model);
+        }
+
+        if( ($oConference->cnf_guestlimit > 0) && ($oConference->cnf_guestlimit <= $oConference->getGuestcount() ) ) {
+            return $this->render(
+                '//person/_guest_limit_exeeded',
+                [
+                    'oConference' => $oConference,
+                    'model' => $model,
+                ]
+            );
         }
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {

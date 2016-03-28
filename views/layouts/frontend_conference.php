@@ -77,8 +77,6 @@ $conference = $activeController->findConferenceModel();
         </div>
     </div>
 
-
-
     <div class="main_block">
         <div class="container bg_white">
             <div class="row">

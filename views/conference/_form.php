@@ -35,6 +35,8 @@ use yii\widgets\ActiveForm;
 
     <?= $form->field($model, 'cnf_controller')->textInput(['maxlength' => true]) ?>
 
+    <?= $form->field($model, 'cnf_guestlimit')->textInput(['maxlength' => true]) ?>
+
     <?= $form->field($model, 'cnf_description')->textarea(['rows' => 2]) ?>
 
     <?= $form->field($model, 'cnf_pagetitle')->textarea(['rows' => 2]) ?>

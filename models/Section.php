@@ -10,7 +10,7 @@ use yii\helpers\ArrayHelper;
 
 use app\models\Conference;
 use app\models\Doclad;
-
+use app\models\Person;
 
 /**
  * This is the model class for table "{{%section}}".
@@ -107,6 +107,22 @@ class Section extends \yii\db\ActiveRecord
             );
         }
         return self::$_cache[$sKey];
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getGuests() {
+        return $this->hasMany(
+            Person::className(),
+            [
+                'prs_sec_id' => 'sec_id',
+            ]
+        )
+            ->where([
+                'prs_active' => Person::PERSON_STATE_ACTIVE,
+                'prs_type' => Person::PERSON_TYPE_GUEST,
+            ]);
     }
 
 
