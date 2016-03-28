@@ -216,4 +216,4 @@ $this->registerCss($sCss);
     </div>
 </div>
 
-<?php // echo $oConference->cnf_guestlimit . ' .. ' . $oConference->getGuestcount() ?>
+<?php echo '<!-- ' . $oConference->cnf_guestlimit . ' .. ' . $oConference->getGuestcount() . ' -->'; ?>
