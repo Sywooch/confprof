@@ -68,5 +68,15 @@ if( $data->doc_state == Doclad::DOC_STATUS_APPROVE ) {
 <?php
 }
 ?>
-<p>Ссылка для перехода к изменению доклада: <?= Html::a($sLink, $sLink) ?>.</p>
+
+<?php
+if( $data->section->sec_cnf_id != 1 ) {
+    // Для остальных
+?>
+    <p>Ссылка для перехода к изменению доклада: <?= Html::a($sLink, $sLink) ?>.</p>
+<?php
+}
+?>
+
+
 
