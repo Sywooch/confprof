@@ -9,6 +9,7 @@ use yii\bootstrap\Nav;
 
 use app\assets\UserAsset;
 use app\models\Conference;
+use app\components\AppendAppIcons;
 
 UserAsset::register($this);
 
@@ -24,6 +25,7 @@ $conference = $activeController->findConferenceModel();
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <?= Html::csrfMetaTags() ?>
     <title><?= Html::encode($this->title) ?></title>
+    <?= AppendAppIcons::getIconList() ?>
     <?php $this->head() ?>
 </head>
 <body>
