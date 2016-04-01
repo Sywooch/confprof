@@ -20,6 +20,8 @@ use app\models\DocladSearch;
 use app\models\Person;
 use app\components\ExcelexportBehavior;
 use app\components\Statistics;
+use app\models\Usersection;
+use app\models\Section;
 
 
 /**
@@ -36,7 +38,7 @@ class ReportController extends Controller
                 'rules' => [
                     [
                         'allow' => true,
-                        'actions' => ['index', 'view', 'changestatus', 'changeformat', 'export', 'statistics', ],
+                        'actions' => ['index', 'view', 'changestatus', 'changeformat', 'export', 'statistics', 'exportall', ],
                         'roles' => [User::USER_GROUP_MODERATOR, User::USER_GROUP_ADMIN, ],
                     ],
                 ],
@@ -147,6 +149,45 @@ class ReportController extends Controller
 
         $sDir = Yii::getAlias('@webroot/assets');
         $sFileName = $sDir . DIRECTORY_SEPARATOR . 'doclad-'.date('Y-m-d-H-i-s').'.xls';
+        $this->clearDestinationDir($sDir, 'xls', time() - 300);
+        $this->exportToFile($dataProvider, $sFileName);
+
+        Yii::$app->response->sendFile($sFileName);
+
+//        return $this->renderContent(
+//            Html::a(
+//                'Загрузить',
+//                substr($sFileName, str_replace(DIRECTORY_SEPARATOR, '/', strlen($_SERVER['DOCUMENT_ROOT'])))
+//            )
+//        );
+    }
+
+    /**
+     * Export data without division to section
+     * @return mixed
+     */
+    public function actionExportall()
+    {
+        $searchModel = new DocladSearch();
+
+        $searchModel->conferenceid = Yii::$app
+            ->db
+            ->createCommand(
+                'Select s.sec_cnf_id'
+                . ' From ' . Usersection::tableName() . ' us, ' . Section::tableName() . ' s'
+                . ' Where s.sec_id = us.usec_section_id And us.usec_section_primary = 1 And us.usec_user_id = :uid',
+                [
+                    ':uid' => Yii::$app->user->getId()
+                ]
+            )
+            ->queryColumn();
+
+        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+//        echo nl2br(print_r($searchModel->conferenceid, true));
+//        return;
+
+        $sDir = Yii::getAlias('@webroot/assets');
+        $sFileName = $sDir . DIRECTORY_SEPARATOR . 'doclad-all-'.date('Y-m-d-H-i-s').'.xls';
         $this->clearDestinationDir($sDir, 'xls', time() - 300);
         $this->exportToFile($dataProvider, $sFileName);
 

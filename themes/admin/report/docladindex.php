@@ -164,12 +164,22 @@ $this->params['breadcrumbs'][] = $this->title;
 </div>
 
 <div class="row">
-    <div class="col-xs-12">
+    <div class="col-xs-6">
         <?= Html::a(
             'Экспорт в xls',
             array_merge(['export',], $searchModel->getSearchArray()),
             ['class' => 'btn btn-default', ]
         ) ?>
+        <br />
+        Вывод в Excel всех записей из таблицы выше (все страницы, если страниц несколько)
+    </div>
+    <div class="col-xs-6">
+        <?= Html::a(
+            'Экспорт в xls докладов всей конференции',
+            array_merge(['exportall',], $searchModel->getSearchArray()),
+            ['class' => 'btn btn-default', ]
+        ) ?>
+        <br />
         Вывод в Excel всех записей из таблицы выше (все страницы, если страниц несколько)
     </div>
 </div>

@@ -95,11 +95,17 @@ class DocladSearch extends Doclad
         }
         else {
             /** @var User $obUser */
-            $obUser = Yii::$app->user->identity;
-            if( !empty($obUser->sectionids) ) {
-                $aFilters = [
-                    'doc_sec_id' => $obUser->sectionids,
-                ];
+            if( empty($this->conferenceid) ) {
+                // этот if тут для того, чтобы модераторы секций могли выгрузить вообще все доклады из конференции
+                // потому что из-за их изголяния с разделением на персональных участников и от организаций, и разделением секций
+                // по этому признаку, ранее зарегистрированные доклады перехолдят в другие секции и их невоможно увидеть в нужной секции
+                // в контроллере я сюда ($this->conferenceid) загружаю конференции, в которых юзер главный модератор
+                $obUser = Yii::$app->user->identity;
+                if( !empty($obUser->sectionids) ) {
+                    $aFilters = [
+                        'doc_sec_id' => $obUser->sectionids,
+                    ];
+                }
             }
         }
 
