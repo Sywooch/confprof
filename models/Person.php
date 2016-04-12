@@ -133,7 +133,7 @@ class Person extends \yii\db\ActiveRecord
             [['prs_group', 'prs_position', 'prs_lesson'], 'string', 'max' => 64]
         ];
 
-        if( $this->scenario != 'createconsultant' ) {
+        if( ($this->scenario != 'createconsultant') && ($this->scenario != 'createguest') ) {
             $a[] = [['ekis_id', ], 'required'];
         }
         else {
@@ -151,7 +151,7 @@ class Person extends \yii\db\ActiveRecord
                     }
                     return $bEmpty;
                 },
-                'message' => 'Нужно указать или организацию, или ВУЗ руководителя',
+                'message' => 'Нужно указать или организацию, или ВУЗ' . ($this->scenario == 'createconsultant' ? ' руководителя' : ''),
             ];
 
         }
@@ -227,6 +227,7 @@ class Person extends \yii\db\ActiveRecord
             'ekis_id',
             'prs_org',
             'prs_position',
+            'prs_hischool',
         ];
 
         $aRet['confirmemail'] = [ // подтвeрждение регистрации

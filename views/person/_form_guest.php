@@ -187,6 +187,7 @@ $this->registerCss($sCss);
                     <div class="row">
                         <div class="col-xs-6">
                             <?= $form->field($model, 'ekis_id', ['template' => '{label}{input}{error}{hint}'])->widget(Select2::classname(), $ekis_id, ['class'=>'lio_input', 'placeholder'=>$model->getAttributeLabel('ekis_id'), ])->hint('Для поиска организации введите ее название или номер') // ->textInput() ?>
+                            <?= $form->field($model, 'prs_hischool')->textInput(['maxlength' => true, 'class'=>'form-control lio_input', 'placeholder'=>$model->getAttributeLabel('prs_hischool'),]) ?>
                             <?= $form->field($model, 'prs_org', ['template' => "{input}"])->hiddenInput() ?>
                         </div>
                         <div class="col-xs-6">
