@@ -3,6 +3,8 @@
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
 
+use app\models\Conference;
+
 /* @var $this yii\web\View */
 /* @var $model app\models\Conference */
 /* @var $form yii\widgets\ActiveForm */
@@ -25,17 +27,37 @@ use yii\widgets\ActiveForm;
         'validateOnSubmit' => true,
     ]); ?>
 
-    <?= $form->field($model, 'cnf_title')->textInput(['maxlength' => true]) ?>
+    <div class="row">
+        <div class="col-xs-6">
+        <?= $form->field($model, 'cnf_title')->textInput(['maxlength' => true]) ?>
+        </div>
 
-    <?= $form->field($model, 'cnf_shorttitle')->textInput(['maxlength' => true]) ?>
+        <div class="col-xs-6">
+        <?= $form->field($model, 'cnf_shorttitle')->textInput(['maxlength' => true]) ?>
+        </div>
+    </div>
 
-    <?= $form->field($model, 'cnf_class')->textInput(['maxlength' => true]) ?>
+    <div class="row">
+        <div class="col-xs-3">
+            <?= $form->field($model, 'cnf_class')->textInput(['maxlength' => true]) ?>
+        </div>
+
+        <div class="col-xs-3">
+            <?= $form->field($model, 'cnf_flags')->dropDownList(Conference::getAllFlags()) ?>
+        </div>
+
+        <div class="col-xs-3">
+            <?= $form->field($model, 'cnf_controller')->textInput(['maxlength' => true]) ?>
+        </div>
+
+        <div class="col-xs-3">
+            <?= $form->field($model, 'cnf_guestlimit')->textInput(['maxlength' => true]) ?>
+        </div>
+    </div>
+
+
 
     <?= $form->field($model, 'cnf_isconshicshool')->checkbox() ?>
-
-    <?= $form->field($model, 'cnf_controller')->textInput(['maxlength' => true]) ?>
-
-    <?= $form->field($model, 'cnf_guestlimit')->textInput(['maxlength' => true]) ?>
 
     <?= $form->field($model, 'cnf_description')->textarea(['rows' => 2]) ?>
 

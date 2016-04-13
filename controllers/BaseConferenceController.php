@@ -203,8 +203,16 @@ class BaseConferenceController extends Controller
      */
     public function actionRegister()
     {
+        $oConference = $this->findConferenceModel();
+        if( $oConference->cnf_flags == Conference::CONF_FLAG_STOP_REG ) {
+            return $this->render(
+                '//conference/register_finish',
+                [
+                    'model' => $oConference,
+                ]
+            );
+        }
         if( Yii::$app->user->isGuest ) {
-            $oConference = $this->findConferenceModel();
             $model = new User();
             $model->us_conference_id = $oConference->cnf_id;
             $model->scenario = 'register';

@@ -3,6 +3,7 @@
 namespace app\models;
 
 use Yii;
+use yii\behaviors\AttributeBehavior;
 use yii\behaviors\TimestampBehavior;
 use yii\db\ActiveRecord;
 use yii\db\Expression;
@@ -25,9 +26,14 @@ use app\models\Section;
  * @property string $cnf_shorttitle
  * @property string $cnf_isconshicshool
  * @property integer $cnf_guestlimit
+ * @property integer $cnf_flags
  */
 class Conference extends \yii\db\ActiveRecord
 {
+    const CONF_FLAG_DEFAULT = 0;
+    const CONF_FLAG_STOP_REG = 1; // регистрация остановлена
+
+
     public static $_list = null; // список для форм и валидации
     public static $_alllist = null; // все записо
 
@@ -40,6 +46,17 @@ class Conference extends \yii\db\ActiveRecord
                     ActiveRecord::EVENT_BEFORE_INSERT => ['cnf_created'],
                 ],
                 'value' => new Expression('NOW()'),
+            ],
+            [
+                'class' => AttributeBehavior::className(),
+                'attributes' => [
+                    ActiveRecord::EVENT_BEFORE_INSERT => ['cnf_flags'],
+                ],
+                'value' => function($event){
+                    /** @var Conference $model */
+                    $model = $event->sender;
+                    return empty($model->cnf_flags) ? self::CONF_FLAG_DEFAULT : $model->cnf_flags;
+                },
             ],
         ];
     }
@@ -61,7 +78,7 @@ class Conference extends \yii\db\ActiveRecord
             [['cnf_title', 'cnf_shorttitle', ], 'required'],
             [['cnf_description', 'cnf_about'], 'string'],
             [['cnf_created'], 'safe'],
-            [['cnf_isconshicshool', 'cnf_guestlimit', ], 'integer'],
+            [['cnf_isconshicshool', 'cnf_guestlimit', 'cnf_flags', ], 'integer'],
             [['cnf_isconshicshool'], 'in', 'range' => [0, 1], ],
             [['cnf_title', 'cnf_controller', 'cnf_pagetitle', 'cnf_shorttitle', ], 'string', 'max' => 255],
             [['cnf_class'], 'string', 'max' => 64]
@@ -84,7 +101,8 @@ class Conference extends \yii\db\ActiveRecord
             'cnf_about' => 'Текст О конференции',
             'cnf_shorttitle' => 'Короткий заголовок',
             'cnf_isconshicshool' => 'Вводить ВУЗ для руководителя',
-            'cnf_guestlimit' => 'Max кол-во гослей',
+            'cnf_guestlimit' => 'Max кол-во гостей',
+            'cnf_flags' => 'Состояние',
         ];
     }
 
@@ -175,5 +193,26 @@ class Conference extends \yii\db\ActiveRecord
             },
             0
         );
+    }
+
+    /**
+     * @return array
+     */
+    public static function getAllFlags() {
+        return [
+            self::CONF_FLAG_DEFAULT => 'По умолчанию',
+            self::CONF_FLAG_STOP_REG => 'Регистрация окончена',
+        ];
+    }
+
+    /**
+     * @param bool $bReturnDefault
+     * @return string
+     */
+    public function getFlag($bReturnDefault = false) {
+        $a = self::getAllFlags();
+        return isset($a[$this->cnf_flags]) ?
+            ($this->cnf_flags != self::CONF_FLAG_DEFAULT || $bReturnDefault ? $a[$this->cnf_flags] : '') :
+            '???';
     }
 }
