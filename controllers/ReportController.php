@@ -63,6 +63,11 @@ class ReportController extends Controller
                     'Класс / должность',
                     'Согласование',
                     'Формат',
+                    'Описание',
+                    'Создан',
+                    'Участники',
+                    'Руководители',
+                    'Файл',
                 ],
                 'columnWidth' => [
                     30,
@@ -75,6 +80,11 @@ class ReportController extends Controller
                     40,
                     20,
                     20,
+                    20,
+                    60,
+                    20,
+                    30,
+                    30,
                     20,
                 ],
                 'columnValues' => [
@@ -107,6 +117,65 @@ class ReportController extends Controller
                     },
                     'status',
                     'format',
+                    'doc_description',
+                    function($model, $index) {
+                        /** @var Doclad $model */
+                        return date('d.m.Y H:i', strtotime($model->doc_created));
+                    },
+                    function($model, $index) {
+                        /** @var Doclad $model */
+                        $sValue = '';
+                        if( count($model->members) > 0 ) {
+                            $sValue = implode(
+                                "\n",
+                                ArrayHelper::map(
+                                    $model->members,
+                                    'prs_id',
+                                    function($ob, $default) {
+                                        /** @var $ob app\models\Person */
+                                        return $ob->getPersonname(false) . ' ' . $ob->prs_org;
+                                    }
+                                )
+                            );
+                        }
+                        return $sValue;
+                    },
+                    function($model, $index) {
+                        /** @var Doclad $model */
+                        $sValue = '';
+                        if( count($model->persons) > 0 ) {
+                            $sValue = implode(
+                                "\n",
+                                ArrayHelper::map(
+                                    $model->persons,
+                                    'prs_id',
+                                    function($ob, $default) {
+                                        /** @var $ob app\models\Person */
+                                        return $ob->getPersonname(false)  . ' ' . $ob->prs_email . ' ' . $ob->prs_org;
+                                    }
+                                )
+                            );
+                        }
+                        return $sValue;
+                    },
+                    function($model, $index) {
+                        /** @var Doclad $model */
+                        $sValue = '';
+                        $aFiles = $model->files;
+                        if( count($aFiles) > 0 ) {
+                            $sFiles = array_reduce(
+                                $aFiles,
+                                function($sRes, $item){
+                                    /** @var File $item */
+                                    return $item->file_name
+                                    . ($sRes != '' ? "\n" : '')
+                                    . $sRes;
+                                },
+                                ''
+                            );
+                        }
+                        return $sValue;
+                    },
                 ],
             ]
 
