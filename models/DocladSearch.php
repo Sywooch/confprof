@@ -58,6 +58,7 @@ class DocladSearch extends Doclad
         $query = Doclad::find();
         $aWith = [];
         if( isset($aDop['with']) ) {
+            $aWith = $aDop['with'];
             unset($aDop['with']);
         }
         $query->with(

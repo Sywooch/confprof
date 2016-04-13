@@ -91,7 +91,7 @@ class ReportController extends Controller
                     'doc_subject',
                     function($model, $index) {
                         /** @var Doclad $model */
-                        Yii::info('Raw: ' . $index . ' + ' . $model->doc_subject);
+//                        Yii::info('Raw: ' . $index . ' + ' . $model->doc_subject);
                         return $model->typeTitle();
                     },
                     function($model, $index) {
@@ -162,13 +162,13 @@ class ReportController extends Controller
                         /** @var Doclad $model */
                         $sValue = '';
                         $aFiles = $model->files;
-                        Yii::info('Files ['.$model->doc_id.'] = ' . count($aFiles));
                         if( count($aFiles) > 0 ) {
-                            $sFiles = array_reduce(
+                            $sValue = array_reduce(
                                 $aFiles,
                                 function($sRes, $item){
                                     /** @var File $item */
-                                    return $item->file_name
+                                    $s = basename(str_replace('\\', '/', $item->file_name));
+                                    return $s
                                     . ($sRes != '' ? "\n" : '')
                                     . $sRes;
                                 },
