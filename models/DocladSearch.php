@@ -56,10 +56,14 @@ class DocladSearch extends Doclad
     public function search($params, $aDop = [])
     {
         $query = Doclad::find();
+        $aWith = [];
+        if( isset($aDop['with']) ) {
+            unset($aDop['with']);
+        }
         $query->with(
             Yii::$app->user->can(User::USER_GROUP_MODERATOR) ?
-                ['section', 'section.conference', 'files', ] : // 'persons', 'members',
-                ['section', 'section.conference', 'files', ]
+                array_merge(['section', 'section.conference', 'files', ], $aWith) : // 'persons', 'members',
+                array_merge(['section', 'section.conference', 'files', ], $aWith)
         );
         $query->joinWith(['section', 'section.conference', ]);
 

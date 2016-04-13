@@ -162,6 +162,7 @@ class ReportController extends Controller
                         /** @var Doclad $model */
                         $sValue = '';
                         $aFiles = $model->files;
+                        Yii::info('Files ['.$model->doc_id.'] = ' . count($aFiles));
                         if( count($aFiles) > 0 ) {
                             $sFiles = array_reduce(
                                 $aFiles,
@@ -214,7 +215,10 @@ class ReportController extends Controller
     public function actionExport()
     {
         $searchModel = new DocladSearch();
-        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+        $aWith = [
+            'with' => ['persons', 'members', ],
+        ];
+        $dataProvider = $searchModel->search(Yii::$app->request->queryParams, $aWith);
 
         $sDir = Yii::getAlias('@webroot/assets');
         $sFileName = $sDir . DIRECTORY_SEPARATOR . 'doclad-'.date('Y-m-d-H-i-s').'.xls';
