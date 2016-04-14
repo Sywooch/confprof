@@ -10,8 +10,10 @@ use yii\bootstrap\Nav;
 use app\assets\UserAsset;
 use app\models\Conference;
 use app\components\AppendAppIcons;
+use app\assets\EduCounterAsset;
 
 UserAsset::register($this);
+EduCounterAsset::register($this);
 
 $activeController = Yii::$app->controller;
 $conference = $activeController->findConferenceModel();

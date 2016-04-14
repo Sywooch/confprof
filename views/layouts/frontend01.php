@@ -6,8 +6,11 @@
 use yii\helpers\Html;
 use app\assets\UserAsset;
 use app\components\AppendAppIcons;
+use app\assets\EduCounterAsset;
 
 UserAsset::register($this);
+EduCounterAsset::register($this);
+
 ?>
 <?php $this->beginPage() ?>
 <!DOCTYPE html>
