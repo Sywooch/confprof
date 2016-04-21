@@ -7,6 +7,7 @@ use yii\helpers\Html;
 use app\assets\UserAsset;
 use app\components\AppendAppIcons;
 use app\assets\EduCounterAsset;
+use app\components\PageCounters;
 
 UserAsset::register($this);
 EduCounterAsset::register($this);
@@ -40,6 +41,8 @@ foreach($aMsg As $v) {
 ?>
 
 <?= $content ?>
+
+<?= PageCounters::insertCounters(); ?>
 
 <?php $this->endBody() ?>
 </body>

@@ -11,6 +11,7 @@ use app\assets\UserAsset;
 use app\models\Conference;
 use app\components\AppendAppIcons;
 use app\assets\EduCounterAsset;
+use app\components\PageCounters;
 
 UserAsset::register($this);
 EduCounterAsset::register($this);
@@ -129,6 +130,7 @@ EduCounterAsset::register($this);
     </div>
 </div>
 
+<?= PageCounters::insertCounters(); ?>
 <?php $this->endBody() ?>
 </body>
 </html>
